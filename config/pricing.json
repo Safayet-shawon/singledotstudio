@@ -1,0 +1,54 @@
+{
+  "_note": "EVERY NUMBER IN THIS FILE IS A PLACEHOLDER pending the studio's confirmed pricing. Edit freely: the calculator, PDF and service-page cost tables all read from here.",
+  "placeholder": true,
+  "currency": { "code": "INR", "symbol": "₹", "pdfPrefix": "Rs.", "locale": "en-IN", "note": "Currency is a configurable placeholder; set the real one here." },
+  "roundTo": 1000,
+  "rangeSpread": 0.1,
+  "tax": { "enabled": false, "label": "GST", "percent": 0 },
+  "limits": { "minSqft": 200, "maxSqft": 50000, "maxBhk": 8 },
+  "packages": {
+    "essential": { "label": "Essential", "tagline": "Smart, durable basics", "scope": "Standard laminates and finishes, functional storage, essential lighting. Best for tight budgets and rental-ready or first homes." },
+    "premium":   { "label": "Premium",   "tagline": "Refined and well-appointed", "scope": "Upgraded finishes and hardware, custom storage, layered lighting and feature elements. The balanced choice for most homes." },
+    "luxury":    { "label": "Luxury",    "tagline": "Bespoke, high-end detailing", "scope": "Premium natural materials, bespoke joinery, designer lighting and decor. For a fully custom, statement interior." },
+    "bestfit":   { "label": "Best Fit for You", "tagline": "Recommended from your inputs", "scope": "We pick Essential, Premium or Luxury using simple rules applied to your property size, spaces and (optional) target budget. This is rule-based, not AI." }
+  },
+  "bestFit": { "premiumSqft": 1000, "luxurySqft": 2200, "premiumSpaceCount": 6, "luxuryBhk": 4 },
+  "layoutWeights": { "master": 0.17, "bedroom": 0.12, "kitchen": 0.10, "bathroom": 0.05, "living": 0.16, "dining": 0.12 },
+  "items": [
+    { "key": "master",   "group": "residential", "label": "Master bedroom", "basis": "layout", "weight": 0.17, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1100, "premium": 1700, "luxury": 2600 } },
+    { "key": "bedroom",  "group": "residential", "label": "Additional bedrooms", "basis": "layout", "weight": 0.12, "inLayout": true, "maxQty": "bhk-1", "defaultQty": "bhk-1", "rates": { "essential": 1000, "premium": 1500, "luxury": 2300 } },
+    { "key": "kitchen",  "group": "residential", "label": "Kitchen", "basis": "layout", "weight": 0.10, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1800, "premium": 2800, "luxury": 4200 } },
+    { "key": "bathroom", "group": "residential", "label": "Bathrooms", "basis": "layout", "weight": 0.05, "inLayout": true, "maxQty": "bhk", "defaultQty": "bhk", "rates": { "essential": 1500, "premium": 2300, "luxury": 3600 } },
+    { "key": "living",   "group": "residential", "label": "Living room", "basis": "layout", "weight": 0.16, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1100, "premium": 1700, "luxury": 2600 } },
+    { "key": "dining",   "group": "residential", "label": "Dining area", "basis": "layout", "weight": 0.12, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1000, "premium": 1500, "luxury": 2300 } },
+    { "key": "foyer",    "group": "residential", "label": "Foyer and entrance", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 45000, "premium": 80000, "luxury": 140000 } },
+    { "key": "wardrobe", "group": "residential", "label": "Wardrobes and storage (per unit)", "basis": "unit", "maxQty": 8, "defaultQty": 0, "rates": { "essential": 55000, "premium": 90000, "luxury": 150000 } },
+    { "key": "study",    "group": "residential", "label": "Study room", "basis": "layout", "weight": 0.08, "inLayout": false, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 1000, "premium": 1500, "luxury": 2300 } },
+    { "key": "balcony",  "group": "residential", "label": "Balcony", "basis": "unit", "maxQty": 4, "defaultQty": 0, "rates": { "essential": 25000, "premium": 45000, "luxury": 80000 } },
+    { "key": "ceiling",  "group": "residential", "label": "False ceiling and lighting (whole home)", "basis": "flat", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 120, "premium": 200, "luxury": 320 } },
+
+    { "key": "reception",   "group": "office", "label": "Reception", "basis": "unit", "maxQty": 1, "defaultQty": 1, "rates": { "essential": 150000, "premium": 260000, "luxury": 420000 } },
+    { "key": "workstation", "group": "office", "label": "Workstations (per seat)", "basis": "unit", "maxQty": 500, "defaultQty": 10, "rates": { "essential": 18000, "premium": 28000, "luxury": 45000 } },
+    { "key": "cabin",       "group": "office", "label": "Executive cabins", "basis": "unit", "maxQty": 20, "defaultQty": 1, "rates": { "essential": 140000, "premium": 230000, "luxury": 380000 } },
+    { "key": "meeting",     "group": "office", "label": "Meeting rooms", "basis": "unit", "maxQty": 20, "defaultQty": 1, "rates": { "essential": 120000, "premium": 200000, "luxury": 330000 } },
+    { "key": "pantry",      "group": "office", "label": "Pantry", "basis": "unit", "maxQty": 2, "defaultQty": 1, "rates": { "essential": 90000, "premium": 150000, "luxury": 250000 } },
+    { "key": "collab",      "group": "office", "label": "Collaborative and breakout areas", "basis": "share", "share": 0.12, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 900, "premium": 1400, "luxury": 2200 } },
+    { "key": "officestorage", "group": "office", "label": "Storage", "basis": "unit", "maxQty": 10, "defaultQty": 0, "rates": { "essential": 40000, "premium": 70000, "luxury": 120000 } }
+  ],
+  "extras": [
+    { "key": "smart", "label": "Smart-home wiring and controls", "amount": { "essential": 60000, "premium": 100000, "luxury": 180000 } },
+    { "key": "decor", "label": "Furniture and decor styling", "amount": { "essential": 80000, "premium": 160000, "luxury": 320000 } },
+    { "key": "viz", "label": "3D visualisation pack", "amount": { "essential": 25000, "premium": 40000, "luxury": 60000 } }
+  ],
+  "assumptions": [
+    "Figures are indicative ranges generated from the details you entered and a simple area-based model.",
+    "Room areas are estimated from your total size and a standard layout for your configuration.",
+    "Final cost depends on site conditions, scope, material and brand selections confirmed after consultation."
+  ],
+  "exclusions": [
+    "Civil, structural, plumbing and electrical rework not listed",
+    "Loose furniture, appliances and soft furnishings unless an extra is selected",
+    "Government approvals, society charges and applicable taxes unless shown",
+    "Items outside the selected spaces"
+  ]
+}
