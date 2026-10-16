@@ -10,9 +10,9 @@ export function Hero({ slot, compact, children, aside }: { slot: string; compact
   return (
     <section className={`hero${compact ? ' hero--compact' : ''}`} aria-label="Introduction">
       <div className="hero__media">
-        {video ? <HeroVideo src={video} poster={poster} /> : poster ? <img src={poster} alt="" /> : <div className="scene" aria-hidden="true" />}
+        {video ? <HeroVideo src={video} poster={poster} /> : poster ? <img className="kenburns" src={poster} alt="" /> : <div className="scene" aria-hidden="true" />}
       </div>
-      {!video && showNotes && <p className="placeholder-note">Hero video not generated yet (slot: {slot}). See README, Generating videos.</p>}
+      {!video && !poster && showNotes && <p className="placeholder-note">Hero video not generated yet (slot: {slot}). See README, Generating videos.</p>}
       <div className="container">
         <div className="hero__inner">
           <div>{children}</div>
