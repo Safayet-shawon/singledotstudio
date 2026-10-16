@@ -9,6 +9,7 @@ export default function Home() {
     <>
       <Hero
         slot="home"
+        slides={['home-poster', 'living-dining-poster', 'kitchen-poster', 'bedroom-poster', 'bathroom-poster', 'office-poster']}
         aside={<div className="hero__budget"><p>{site.budgetQuote}</p></div>}
       >
         <h1 className="hero__quote">{site.heroQuote}</h1>

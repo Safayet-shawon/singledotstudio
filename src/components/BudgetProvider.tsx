@@ -62,13 +62,15 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
               <button type="button" className="x" aria-label="Dismiss suggestion" onClick={dismiss}><Icon name="close" size={16} /></button>
             </div>
           )}
-          <button type="button" className="fab" onClick={open} aria-haspopup="dialog" aria-label="Calculate your budget">
-            <svg className="fab__ring" viewBox="0 0 128 128" aria-hidden="true">
-              <defs><path id="fabcircle" d="M64 64m-49 0a49 49 0 1 1 98 0a49 49 0 1 1-98 0" /></defs>
-              <text><textPath href="#fabcircle" startOffset="0" textLength="300" lengthAdjust="spacing">Calculate your budget ✦ </textPath></text>
-            </svg>
-            <span className="fab__core"><Icon name="calc" size={22} /></span>
-            <span className="fab__label">Calculate your budget</span>
+          <button type="button" className="fab" onClick={open} aria-haspopup="dialog" aria-label="Calculate your budget now">
+            <span className="fab__pulse" aria-hidden="true" />
+            <span className="fab__badge" aria-hidden="true">Free</span>
+            <span className="fab__core"><Icon name="calc" size={24} /></span>
+            <span className="fab__text">
+              <span className="fab__label">Calculate Now</span>
+              <span className="fab__sub">Your budget in 60 seconds</span>
+            </span>
+            <span className="fab__arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
           </button>
         </>
       )}

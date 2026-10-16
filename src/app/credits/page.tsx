@@ -12,6 +12,13 @@ const credits = [
   { use: 'Living and dining page and service card', author: 'Jarosław Ceborski (jarson)', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Living_room_(Unsplash).jpg` },
   { use: 'About page', author: 'David Hellmann (davidhellmann)', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Flat_in_Budapest_(Unsplash).jpg` },
   { use: 'Services page', author: 'Naomi Hébert (naomish)', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}At_Home_(Unsplash).jpg` },
+  { use: 'Project card: Open Dining Room', author: 'Nirzar Pangarkar', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Round_table_in_a_bright_room_(Unsplash).jpg` },
+  { use: 'Project card: Stone & Linen Living Room', author: 'Alexander Pemberton', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Coffee_table_corner_in_a_London_apartment_(Unsplash).jpg` },
+  { use: 'Project card: Compact Home Kitchen', author: 'NeONBRAND', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Blue_white_kitchen_interior_(Unsplash).jpg` },
+  { use: 'Project card: Executive Cabin', author: 'Breather', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Minimalist_office_decor_at_1540_7th_St_(Unsplash).jpg` },
+  { use: 'Project card: Studio Workspace', author: 'Crew', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Ornate_office_space_(Unsplash).jpg` },
+  { use: 'Why choose us section', author: 'Crew', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Wood_table_in_front_of_white_wall_(Unsplash).jpg` },
+  { use: 'About page studio image', author: 'Breather', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Chairs_in_a_meeting_room_(Unsplash).jpg` },
 ];
 
 export default function Credits() {

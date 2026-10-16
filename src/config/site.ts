@@ -3,7 +3,7 @@
 
 export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://singledotstudio.vercel.app',
-  brand: { name: 'Studio Name', short: 'SN', tagline: 'Interior Design Studio', logo: null as string | null },
+  brand: { name: 'Single Dot Studio', short: 'SD', tagline: 'Interiors · Design & Build', logo: '/logo-mark.svg' as string | null },
   contact: {
     phone: null as string | null,
     email: null as string | null,
