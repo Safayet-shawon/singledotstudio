@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from './Icon';
+import { EstimateRating } from './EstimateRating';
 import { pricing } from '@/lib/pricing';
 import { store, KEYS } from '@/lib/storage';
 import {
@@ -204,6 +205,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
                 <span className="hint" style={{ alignSelf: 'center' }}>WhatsApp sharing is not configured yet.</span>
               )}
             </div>
+            <EstimateRating />
             <ul className="plain-list" style={{ fontSize: '0.9rem' }}>{pricing.exclusions.map((x) => <li key={x}>{x}</li>)}</ul>
           </div>
         </div>

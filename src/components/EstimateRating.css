@@ -1,0 +1,3 @@
+/* Scoped to the estimate rating only. */
+.estimate-rating { display: grid; gap: 8px; justify-items: start; padding-top: 4px; }
+.estimate-rating .hint { margin: 0; }

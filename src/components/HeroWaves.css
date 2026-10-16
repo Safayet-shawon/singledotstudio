@@ -1,0 +1,3 @@
+/* Scoped to the hero wave overlay only. Sits above the hero media (z 0), below the carousel controls (z 3). */
+.hero-waves { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0.55; mix-blend-mode: soft-light; }
+.hero-waves canvas { pointer-events: none; }

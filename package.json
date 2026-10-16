@@ -16,9 +16,12 @@
     "node": ">=22"
   },
   "dependencies": {
+    "@hugeicons/core-free-icons": "^4.3.5",
+    "@hugeicons/react": "^1.1.10",
     "express": "^5.3.0",
     "next": "^16.4.1",
     "nodemailer": "^10.1.1",
+    "ogl": "^1.0.11",
     "pdfkit": "^0.20.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
