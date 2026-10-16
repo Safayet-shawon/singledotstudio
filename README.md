@@ -28,7 +28,7 @@ npm run build && npm start   # production build
 
 - **Logo:** put a file in `public/` and set `site.brand.logo = '/logo.svg'`. Until then a temporary monogram wordmark is shown.
 - **Photos:** drop files into `public/media/img/` named by slot, e.g. `service-kitchen.jpg`, `project-kitchen-1.jpg`, `owner-portrait.jpg`, `why-us.jpg`, `about-studio.jpg`. Slots without a file render a clearly labelled placeholder.
-- **Photo heroes with motion:** if a slot has no video but `public/media/img/<slot>-poster.jpg` exists, the hero shows it with a slow Ken Burns push-in (disabled for reduced motion). `home-poster.jpg` is an **AI-generated concept image** (Runway), not a photo of a real project; replace it with real photography.
+- **Photo heroes with motion:** if a slot has no video but `public/media/img/<slot>-poster.jpg` exists, the hero shows it with a slow Ken Burns push-in (disabled for reduced motion). The `kitchen/bedroom/bathroom/living-dining/office/about/services` heroes and the service-card images are **stand-in Wikimedia Commons photos** (credited at `/credits`, edit `src/app/credits/page.tsx` when you swap them). Project cards stay placeholders because they are concept projects. `home-poster.jpg` is an **AI-generated concept image** (Runway), not a photo of a real project; replace it with real photography.
 - **Statistics:** set `value` in `site.stats`. `null` shows `XX` with a "Placeholder" tag.
 - **Pricing:** `placeholder: true` in `pricing.json` adds "placeholder rates" notices to the calculator, service pages and PDF. Set it to `false` once real rates are in.
 

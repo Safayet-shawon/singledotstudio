@@ -40,7 +40,7 @@ export function Footer() {
         </div>
         <div className="footer__bottom">
           <span>© {new Date().getFullYear()} {site.brand.name}. All rights reserved.</span>
-          <span><Link href="/privacy">Privacy Policy</Link> · <Link href="/terms">Terms and Conditions</Link></span>
+          <span><Link href="/privacy">Privacy Policy</Link> · <Link href="/terms">Terms and Conditions</Link> · <Link href="/credits">Photo credits</Link></span>
         </div>
       </div>
     </footer>
