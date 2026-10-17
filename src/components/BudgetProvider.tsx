@@ -57,18 +57,18 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
         <>
           {teaser && !isOpen && (
             <div className="teaser" role="region" aria-label="Budget calculator suggestion">
-              <p>Planning a project? Get an indicative budget in four quick steps.</p>
+              <p>Planning a project? Get your quotation in a few quick steps.</p>
               <button type="button" className="btn btn--solid" onClick={open} style={{ minHeight: 40, padding: '0.6em 1.2em' }}>Try it</button>
               <button type="button" className="x" aria-label="Dismiss suggestion" onClick={dismiss}><Icon name="close" size={16} /></button>
             </div>
           )}
-          <button type="button" className="fab" onClick={open} aria-haspopup="dialog" aria-label="Calculate your budget now">
+          <button type="button" className="fab" onClick={open} aria-haspopup="dialog" aria-label="Calculate now: get a free quotation">
             <span className="fab__pulse" aria-hidden="true" />
             <span className="fab__badge" aria-hidden="true">Free</span>
             <span className="fab__core"><Icon name="calc" size={24} /></span>
             <span className="fab__text">
               <span className="fab__label">Calculate Now</span>
-              <span className="fab__sub">Your budget in 60 seconds</span>
+              <span className="fab__sub">Free quotation in 60 seconds</span>
             </span>
             <span className="fab__arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
           </button>

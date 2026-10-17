@@ -36,7 +36,7 @@ export function buildEstimatePdf(args: { estimate: Estimate; contact: PdfContact
     doc.text(date.toISOString().slice(0, 10), L, 66, { width: W, align: 'right' });
     doc.y = 100;
     rule();
-    doc.font('Helvetica-Bold').fontSize(15).fillColor(INK).text('Indicative budget estimate');
+    doc.font('Helvetica-Bold').fontSize(15).fillColor(INK).text('Interior design quotation');
     doc.moveDown(0.8);
 
     kv('Prepared for', contact.name);
@@ -46,7 +46,13 @@ export function buildEstimatePdf(args: { estimate: Estimate; contact: PdfContact
     doc.moveDown(0.4);
     const typeLabel = { apartment: 'Apartment', villa: 'Independent house / villa', office: 'Office' }[e.input.propertyType];
     kv('Property', e.input.propertyType === 'office' ? `${typeLabel}, ${e.input.sqft} sq ft` : `${typeLabel}, ${e.input.bhk} BHK, ${e.input.sqft} sq ft`);
+    const chosen = e.input.package === 'bestfit' ? e.tier : e.input.package;
     kv('Package', `${pricing.packages[e.input.package].label}${e.input.package === 'bestfit' ? ` (recommended: ${pricing.packages[e.tier].label})` : ''}`);
+    doc.moveDown(0.8);
+    // Selected package details
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(INK).text(`Your package: ${pricing.packages[chosen].label}`, L);
+    doc.font('Helvetica').fontSize(9.5).fillColor(MUTED).text(pricing.packages[chosen].scope, { width: W });
+    pricing.packages[e.input.package].features.forEach((f) => doc.text(`- ${f}`, { width: W }));
     doc.moveDown(0.8);
 
     // Table
@@ -89,6 +95,17 @@ export function buildEstimatePdf(args: { estimate: Estimate; contact: PdfContact
     doc.font('Helvetica-Bold').fontSize(19).fillColor(INK).text(`${m(e.low)} to ${m(e.high)}`);
     doc.moveDown(1);
 
+    // Other packages, small
+    ensure(90);
+    doc.font('Helvetica-Bold').fontSize(9).fillColor(MUTED).text('OTHER PACKAGES', L, doc.y, { characterSpacing: 1 });
+    doc.font('Helvetica').fontSize(8.5);
+    (['essential', 'premium', 'luxury', 'bestfit'] as const).filter((k) => k !== chosen && k !== e.input.package).forEach((k) => {
+      const p = pricing.packages[k];
+      const tierPrice = k === 'bestfit' ? '' : `  |  about ${m(e.tierTotals[k])}`;
+      doc.fillColor(INK).text(`${p.label}`, L, doc.y, { continued: true }).fillColor(MUTED).text(`  ${p.tagline}${tierPrice}`, { width: W });
+    });
+    doc.moveDown(0.8);
+
     if (e.rationale.length) {
       ensure(60);
       doc.font('Helvetica-Bold').fontSize(10).fillColor(INK).text('Why this package');
@@ -107,7 +124,7 @@ export function buildEstimatePdf(args: { estimate: Estimate; contact: PdfContact
     list('Exclusions', pricing.exclusions);
     list('Next steps', ['Book a consultation so we can confirm scope and measure the space.', 'Receive a detailed design proposal and a final quotation.']);
     doc.font('Helvetica-Oblique').fontSize(8.5).fillColor(MUTED).text(
-      'This document is an indicative estimate, not a quotation or contract.' + (pricing.placeholder ? " Rates used are placeholder values pending the studio's confirmed pricing." : ''), { width: W });
+      'This document is an indicative quotation and not a binding contract. A final quotation follows consultation and site measurement.' + (pricing.placeholder ? " Rates used are placeholder values pending the studio's confirmed pricing." : ''), { width: W });
     doc.moveDown(0.8);
     const c = site.contact;
     doc.font('Helvetica').fontSize(8.5).fillColor(MUTED).text(

@@ -50,7 +50,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           </Reveal>
           <Reveal><div className="portrait" style={{ aspectRatio: '4/3' }}><Photo slot={`service-${s.slug}-detail`} alt={`${s.name} design detail`} label={`${s.slug} detail`} /></div></Reveal>
         </div>
-        <div className="container" style={{ marginTop: 'clamp(40px, 6vw, 80px)' }}>
+        <div className="container" style={{ marginTop: 'clamp(28px, 4vw, 48px)' }}>
           <Reveal className="facts">
             <div><h3>Materials & finishes</h3><ul>{s.materials.map((x) => <li key={x}>{x}</li>)}</ul></div>
             <div><h3>Lighting</h3><ul>{s.lighting.map((x) => <li key={x}>{x}</li>)}</ul></div>

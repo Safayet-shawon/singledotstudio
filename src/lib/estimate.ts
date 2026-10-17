@@ -23,7 +23,7 @@ export interface Pricing {
   rangeSpread: number;
   tax: { enabled: boolean; label: string; percent: number };
   limits: { minSqft: number; maxSqft: number; maxBhk: number };
-  packages: Record<PackageKey, { label: string; tagline: string; scope: string }>;
+  packages: Record<PackageKey, { label: string; tagline: string; scope: string; features: string[] }>;
   bestFit: { premiumSqft: number; luxurySqft: number; premiumSpaceCount: number; luxuryBhk: number };
   items: PricingItem[];
   extras: { key: string; label: string; amount: Record<Tier, number> }[];

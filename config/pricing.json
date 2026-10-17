@@ -1,16 +1,16 @@
 {
   "_note": "EVERY NUMBER IN THIS FILE IS A PLACEHOLDER pending the studio's confirmed pricing. Edit freely: the calculator, PDF and service-page cost tables all read from here.",
   "placeholder": true,
-  "currency": { "code": "INR", "symbol": "₹", "pdfPrefix": "Rs.", "locale": "en-IN", "note": "Currency is a configurable placeholder; set the real one here." },
+  "currency": { "code": "BDT", "symbol": "৳", "pdfPrefix": "BDT", "locale": "en-BD", "note": "Bangladeshi Taka." },
   "roundTo": 1000,
   "rangeSpread": 0.1,
   "tax": { "enabled": false, "label": "GST", "percent": 0 },
   "limits": { "minSqft": 200, "maxSqft": 50000, "maxBhk": 8 },
   "packages": {
-    "essential": { "label": "Essential", "tagline": "Smart, durable basics", "scope": "Standard laminates and finishes, functional storage, essential lighting. Best for tight budgets and rental-ready or first homes." },
-    "premium":   { "label": "Premium",   "tagline": "Refined and well-appointed", "scope": "Upgraded finishes and hardware, custom storage, layered lighting and feature elements. The balanced choice for most homes." },
-    "luxury":    { "label": "Luxury",    "tagline": "Bespoke, high-end detailing", "scope": "Premium natural materials, bespoke joinery, designer lighting and decor. For a fully custom, statement interior." },
-    "bestfit":   { "label": "Best Fit for You", "tagline": "Recommended from your inputs", "scope": "We pick Essential, Premium or Luxury using simple rules applied to your property size, spaces and (optional) target budget. This is rule-based, not AI." }
+    "essential": { "label": "Essential", "tagline": "Smart, durable basics", "scope": "Standard laminates and finishes, functional storage, essential lighting. Best for tight budgets and rental-ready or first homes.", "features": ["Standard laminates and durable finishes", "Functional storage and joinery", "Essential layered lighting", "Space planning and 2D layout"] },
+    "premium":   { "label": "Premium",   "tagline": "Refined and well-appointed", "scope": "Upgraded finishes and hardware, custom storage, layered lighting and feature elements. The balanced choice for most homes.", "features": ["Upgraded finishes and hardware", "Custom storage and wardrobes", "Feature walls and layered lighting", "Space planning, 3D views and material board"] },
+    "luxury":    { "label": "Luxury",    "tagline": "Bespoke, high-end detailing", "scope": "Premium natural materials, bespoke joinery, designer lighting and decor. For a fully custom, statement interior.", "features": ["Premium natural materials and bespoke joinery", "Designer lighting and decor", "Full 3D visualisation and detailed drawings", "Dedicated designer and site supervision"] },
+    "bestfit":   { "label": "Best Fit for You", "tagline": "Recommended from your inputs", "scope": "We pick Essential, Premium or Luxury using simple rules applied to your property size, spaces and (optional) target budget. This is rule-based, not AI.", "features": ["Matched to your size and spaces", "We pick the right tier for you", "Same design process as the tiers", "Adjustable after consultation"] }
   },
   "bestFit": { "premiumSqft": 1000, "luxurySqft": 2200, "premiumSpaceCount": 6, "luxuryBhk": 4 },
   "layoutWeights": { "master": 0.17, "bedroom": 0.12, "kitchen": 0.10, "bathroom": 0.05, "living": 0.16, "dining": 0.12 },
@@ -48,7 +48,7 @@
   "exclusions": [
     "Civil, structural, plumbing and electrical rework not listed",
     "Loose furniture, appliances and soft furnishings unless an extra is selected",
-    "Government approvals, society charges and applicable taxes unless shown",
+    "Government approvals, building or society charges and applicable taxes unless shown",
     "Items outside the selected spaces"
   ]
 }

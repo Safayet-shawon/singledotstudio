@@ -16,4 +16,4 @@ export const store = {
   },
 };
 
-export const KEYS = { prompt: 'bc-prompt-v1', draft: 'bc-draft-v1' };
+export const KEYS = { prompt: 'bc-prompt-v1', draft: 'bc-draft-v2' };

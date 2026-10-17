@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { Hero } from '@/components/Hero';
-import { FeaturedSpaces } from '@/components/FeaturedSpaces';
 import { Icon } from '@/components/Icon';
-import { ConsultSection, GallerySection, OwnerQuote, ServicesSection, StatsSection, WhySection } from '@/components/sections';
+import { ConsultSection, OwnerQuote, ServicesSection, StatsSection, WhySection } from '@/components/sections';
 import { site } from '@/config/site';
 
 export default function Home() {
@@ -18,8 +17,6 @@ export default function Home() {
       </Hero>
       <OwnerQuote />
       <ServicesSection />
-      <FeaturedSpaces />
-      <GallerySection />
       <StatsSection />
       <WhySection />
       <ConsultSection />

@@ -17,7 +17,7 @@ function getTransport() {
 }
 
 /** Never throws; the status reflects the SMTP provider's actual result. */
-export async function sendMail(opts: { to: string | null; subject: string; text: string; replyTo?: string; attachments?: { filename: string; content: Buffer }[] }): Promise<MailStatus> {
+export async function sendMail(opts: { to: string | null; subject: string; text: string; html?: string; replyTo?: string; attachments?: { filename: string; content: Buffer }[] }): Promise<MailStatus> {
   const to = opts.to; if (!mailConfigured() || !to) return 'not_configured';
   try {
     await getTransport().sendMail({ from: process.env.MAIL_FROM, ...opts, to });

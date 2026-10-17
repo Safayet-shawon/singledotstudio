@@ -1,0 +1,4 @@
+/* Scoped to the Our Projects ring. The carousel fills its parent, so the stage supplies the height. */
+.project-ring__stage { position: relative; width: 100%; height: clamp(340px, 40vw, 500px); color: var(--charcoal); }
+.project-ring .filters { margin-bottom: 0.4rem; }
+@media (max-width: 560px) { .project-ring__stage { height: 380px; } }

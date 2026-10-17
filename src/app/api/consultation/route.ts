@@ -1,5 +1,5 @@
 import { sendMail, leadInbox } from '@/lib/mail';
-import { saveLeadLocally } from '@/lib/leads';
+import { saveLead } from '@/lib/leads';
 import { json, rateLimited, readJson, str, validateContact } from '@/lib/guard';
 
 export const runtime = 'nodejs';
@@ -24,7 +24,8 @@ export async function POST(req: Request) {
     text: `${c.name}\n${c.phone}\n${c.email}\n${c.address}\n\n${Object.entries(detail).map(([k, v]) => `${k}: ${v || '-'}`).join('\n')}`,
     replyTo: c.email,
   });
-  const saved = saveLeadLocally('consultation', { contact: c, ...detail });
+  const at = new Date().toISOString();
+  const saved = await saveLead({ reference: `CON-${at.slice(0, 10).replace(/-/g, '')}-${Math.random().toString(16).slice(2, 6).toUpperCase()}`, kind: 'consultation', at, contact: c, ...detail });
 
   if (emailed !== 'sent' && !saved) {
     // Never claim success when nothing was delivered.

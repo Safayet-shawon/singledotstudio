@@ -22,7 +22,7 @@ export function HeroWaves() {
         preset="ocean"
         color="#ffffff"
         backgroundColor="rgba(0,0,0,0)"
-        opacity={0.5}
+        opacity={0.6}
         speed={0.3}
         spacing={11}
         depth={0.38}

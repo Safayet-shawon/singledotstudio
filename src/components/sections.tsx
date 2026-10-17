@@ -3,6 +3,8 @@ import { Photo } from './Photo';
 import { Icon } from './Icon';
 import { Reveal } from './Reveal';
 import { ProjectGallery, type GalleryCard } from './Marquee';
+import { ProjectRing, type RingProject } from './ProjectRing';
+import { findImage } from '@/lib/media';
 import { ServicesSwitcher, type ServiceCard } from './ServicesSwitcher';
 import { ConsultationForm } from './ConsultationForm';
 import { Stats } from './Stats';
@@ -26,6 +28,7 @@ export function ProjectCard({ p }: { p: Project }) {
 
 export function GallerySection({ service, heading = 'Our projects' }: { service?: string; heading?: string }) {
   const list = service ? projects.filter((p) => p.service === service) : projects;
+  const ring: RingProject[] = list.flatMap((p) => { const src = findImage(p.image); return src ? [{ slug: p.slug, category: p.category, src, alt: `${p.title}, concept interior`, title: p.title, subtitle: `${p.status === 'concept' ? 'Concept design' : 'Completed project'} · ${p.category.replace('-', ' & ')}` }] : []; });
   const cards: GalleryCard[] = list.map((p) => ({ id: p.slug, category: p.category, node: <ProjectCard p={p} /> }));
   return (
     <section className="section" id="projects" aria-labelledby="gal-h">
@@ -37,7 +40,7 @@ export function GallerySection({ service, heading = 'Our projects' }: { service?
             <Link className="link-arrow" href="/projects">View all projects <Icon name="arrow" size={16} /></Link>
           </div>
         </Reveal>
-        <ProjectGallery cards={cards} filters={!service} />
+        {service ? <ProjectGallery cards={cards} filters={false} /> : <ProjectRing projects={ring} />}
       </div>
     </section>
   );
@@ -87,7 +90,7 @@ export function OwnerQuote() {
             <span className="eyebrow">A word from the founder</span>
             <blockquote>“{o.quote}”</blockquote>
             <div className="owner__who"><span className="owner__name">{o.name}</span><span className="owner__title">{o.title}</span></div>
-            <p className="hint" style={{ marginTop: 16 }}>Placeholder content: portrait, name and quote are replaced in <code>src/config/site.ts</code>.</p>
+            
           </div>
           <div className="portrait">
             {o.portrait ? <img src={o.portrait} alt={`Portrait of ${o.name}`} /> : <Photo slot="owner-portrait" alt="Founder portrait" label="owner portrait" sizes="(max-width: 820px) 80vw, 40vw" />}

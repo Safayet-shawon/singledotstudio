@@ -1,4 +1,0 @@
-/* Scoped to the landing-page spaces ring. The carousel fills its parent, so the stage supplies the height. */
-.spaces-ring { overflow: hidden; }
-.spaces-ring__stage { position: relative; width: 100%; height: clamp(380px, 48vw, 620px); margin-top: clamp(0.5rem, 2vw, 1.5rem); color: var(--charcoal); }
-@media (max-width: 560px) { .spaces-ring__stage { height: 420px; } }
