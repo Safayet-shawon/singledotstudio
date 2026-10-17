@@ -22,15 +22,15 @@ export function HeroWaves() {
         preset="ocean"
         color="#ffffff"
         backgroundColor="rgba(0,0,0,0)"
-        opacity={0.9}
-        speed={0.45}
-        spacing={10}
-        depth={0.55}
-        shine={1}
+        opacity={0.7}
+        speed={0.3}
+        spacing={11}
+        depth={0.38}
+        shine={0.8}
         fade="edges"
-        fadeSize={0.4}
+        fadeSize={0.6}
         interactive
-        cursorStrength={0.45}
+        cursorStrength={0.3}
       />
     </div>
   );
