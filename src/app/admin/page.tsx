@@ -11,6 +11,7 @@ const bdt = (n: unknown) => (typeof n === 'number' ? `৳${new Intl.NumberFormat
 
 function Row({ l }: { l: LeadRecord }) {
   const c = (l.contact ?? {}) as Record<string, string>;
+  const mail = l.mail as { customer: string; team: string; customerPreview: string | null; teamPreview: string | null } | undefined;
   const e = l.estimate as { input?: { propertyType?: string; sqft?: number; bhk?: number; package?: string }; tier?: string; low?: number; high?: number; lines?: { label: string; qty: number }[]; extras?: { label: string }[] } | undefined;
   return (
     <details className="lead">
@@ -30,6 +31,14 @@ function Row({ l }: { l: LeadRecord }) {
             <dt>Package</dt><dd>{e.input.package}{e.input.package === 'bestfit' ? ` (recommended ${e.tier})` : ''}</dd>
             <dt>Estimate</dt><dd>{bdt(e.low)} to {bdt(e.high)}</dd>
             <dt>Spaces</dt><dd>{e.lines?.map((x) => `${x.label}${x.qty > 1 ? ` × ${x.qty}` : ''}`).join(', ')}{e.extras?.length ? `. Add-ons: ${e.extras.map((x) => x.label).join(', ')}` : ''}</dd>
+          </>}
+          {mail && <>
+            <dt>Emails</dt>
+            <dd>
+              {mail.customer === 'sent' ? 'Quotation emailed to customer; studio copy sent.' : mail.customer === 'sample' ? 'Sample mode (not delivered). ' : `Customer email: ${mail.customer}. `}
+              {mail.customerPreview && <a href={mail.customerPreview} target="_blank" rel="noopener noreferrer">View customer email</a>}
+              {mail.teamPreview && <> · <a href={mail.teamPreview} target="_blank" rel="noopener noreferrer">View studio alert</a></>}
+            </dd>
           </>}
           {l.kind === 'consultation' && <>
             <dt>Segment</dt><dd>{String(l.segment ?? '-')}</dd>

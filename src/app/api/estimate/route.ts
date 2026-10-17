@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { computeEstimate, formatMoney, type EstimateInput } from '@/lib/estimate';
 import { pricing } from '@/lib/pricing';
 import { buildEstimatePdf } from '@/lib/pdf';
-import { sendMail, leadInbox } from '@/lib/mail';
+import { sendMailX, leadInbox } from '@/lib/mail';
 import { saveLead } from '@/lib/leads';
 import { quoteEmail } from '@/lib/quote-mail';
 import { json, rateLimited, readJson, str, validateContact } from '@/lib/guard';
@@ -38,18 +38,30 @@ export async function POST(req: Request) {
     const money = (n: number) => formatMoney(n, pricing, true);
     const summary = `${reference}: ${estimate.input.propertyType}, ${estimate.input.sqft} sq ft, ${pricing.packages[estimate.tier].label} package, ${money(estimate.low)} to ${money(estimate.high)}`;
 
-    const saved = await saveLead({ reference, kind: 'quotation', at: now.toISOString(), contact: c, estimate });
     const q = quoteEmail(estimate, pricing, c.name, reference);
-    const customerEmail = await sendMail({ to: c.email, subject: `Your interior design quotation, ${site.brand.name} (${reference})`, text: q.text, html: q.html, attachments });
-    const teamEmail = await sendMail({
+    const customerMail = await sendMailX({ to: c.email, subject: `Your interior design quotation, ${site.brand.name} (${reference})`, text: q.text, html: q.html, attachments });
+    const teamMail = await sendMailX({
       to: leadInbox(),
       subject: `New quotation request: ${c.name} (${reference})`,
-      text: `A customer requested a quotation.\n\n${c.name}\n${c.phone}\n${c.email}\n${address || '-'}\n\n${summary}\n\nThe customer's copy of the quotation is attached.`,
+      text: `A customer requested a quotation.
+
+${c.name}
+${c.phone}
+${c.email}
+${address || '-'}
+
+${summary}
+
+The customer's copy of the quotation is attached.`,
       replyTo: c.email,
       attachments,
     });
+    const saved = await saveLead({
+      reference, kind: 'quotation', at: now.toISOString(), contact: c, estimate,
+      mail: { customer: customerMail.status, team: teamMail.status, customerPreview: customerMail.preview ?? null, teamPreview: teamMail.preview ?? null },
+    });
 
-    return json({ reference, customerEmail, teamNotified: teamEmail === 'sent' || saved });
+    return json({ reference, customerEmail: customerMail.status, teamNotified: teamMail.status === 'sent' || saved });
   } catch (err) {
     console.error('[estimate]', (err as Error).message);
     return json({ error: 'We could not prepare your quotation. Please try again.' }, 500);
