@@ -14,9 +14,9 @@ export const site = {
   heroQuote: 'Spaces shaped around the way you live.',
   budgetQuote: 'A clear budget is the first well-designed room.',
   owner: {
-    name: 'Founder Name',
-    title: 'Founder & Principal Designer',
-    quote: 'Replace this with the founder’s own words about the studio’s approach to design.',
+    name: 'The Founder',
+    title: 'Founder & Principal Designer, Single Dot Studio',
+    quote: 'A home should not only look beautiful, it should feel like you. We design every space around the way you live, and manage it clearly from the first sketch to the final handover.',
     portrait: null as string | null,
   },
   // Unverified figures: null shows a "Placeholder" tag rather than a made-up number.

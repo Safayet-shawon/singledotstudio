@@ -82,16 +82,23 @@ export function OwnerQuote() {
   return (
     <section className="section" aria-label="Founder’s note">
       <div className="container">
-        <Reveal className="owner">
-          <div>
-            <span className="eyebrow">A word from the founder</span>
-            <blockquote>“{o.quote}”</blockquote>
-            <div className="owner__who"><span className="owner__name">{o.name}</span><span className="owner__title">{o.title}</span></div>
-            
-          </div>
-          <div className="portrait">
-            {o.portrait ? <img src={o.portrait} alt={`Portrait of ${o.name}`} /> : <Photo slot="owner-portrait" alt="Founder portrait" label="owner portrait" sizes="(max-width: 820px) 80vw, 40vw" />}
-          </div>
+        <Reveal>
+          <figure className="owner-card">
+            <div className="owner-card__photo">
+              {o.portrait ? <img src={o.portrait} alt={`Portrait of ${o.name}`} /> : <Photo slot="owner-portrait" alt="Portrait of the studio founder" label="owner portrait" sizes="(max-width: 820px) 80vw, 380px" />}
+              <span className="owner-card__badge">Founder</span>
+            </div>
+            <div className="owner-card__body">
+              <span className="owner-card__mark" aria-hidden="true">“</span>
+              <span className="eyebrow">A word from the founder</span>
+              <blockquote>{o.quote}</blockquote>
+              <figcaption className="owner-card__who">
+                <span className="owner-card__line" aria-hidden="true" />
+                <span className="owner__name">{o.name}</span>
+                <span className="owner__title">{o.title}</span>
+              </figcaption>
+            </div>
+          </figure>
         </Reveal>
       </div>
     </section>
