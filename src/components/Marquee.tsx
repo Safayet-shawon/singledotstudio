@@ -5,7 +5,7 @@ import { categoryFilters, type ProjectCategory } from '@/config/site';
 
 export interface GalleryCard { id: string; category: ProjectCategory; node: ReactNode }
 
-const SPEED = 28; // px per second, right-to-left
+const SPEED = 40; // px per second, left-to-right
 
 export function ProjectGallery({ cards, filters = true }: { cards: GalleryCard[]; filters?: boolean }) {
   const [filter, setFilter] = useState<string>('all');
@@ -52,7 +52,7 @@ function Marquee({ cards }: { cards: GalleryCard[] }) {
     const tick = (now: number) => {
       const dt = Math.min(now - last, 64) / 1000;
       last = now;
-      if (!s.hover && !s.drag && !s.focus && !s.userPaused && !s.reduce && s.visible && !document.hidden) { s.x -= SPEED * dt; apply(); }
+      if (!s.hover && !s.drag && !s.focus && !s.userPaused && !s.reduce && s.visible && !document.hidden) { s.x += SPEED * dt; apply(); }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);

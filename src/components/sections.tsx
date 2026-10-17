@@ -3,8 +3,6 @@ import { Photo } from './Photo';
 import { Icon } from './Icon';
 import { Reveal } from './Reveal';
 import { ProjectGallery, type GalleryCard } from './Marquee';
-import { ProjectRing, type RingProject } from './ProjectRing';
-import { findImage } from '@/lib/media';
 import { ServicesSwitcher, type ServiceCard } from './ServicesSwitcher';
 import { ConsultationForm } from './ConsultationForm';
 import { Stats } from './Stats';
@@ -28,7 +26,6 @@ export function ProjectCard({ p }: { p: Project }) {
 
 export function GallerySection({ service, heading = 'Our projects' }: { service?: string; heading?: string }) {
   const list = service ? projects.filter((p) => p.service === service) : projects;
-  const ring: RingProject[] = list.flatMap((p) => { const src = findImage(p.image); return src ? [{ slug: p.slug, category: p.category, src, alt: `${p.title}, concept interior`, title: p.title, subtitle: `${p.status === 'concept' ? 'Concept design' : 'Completed project'} · ${p.category.replace('-', ' & ')}` }] : []; });
   const cards: GalleryCard[] = list.map((p) => ({ id: p.slug, category: p.category, node: <ProjectCard p={p} /> }));
   return (
     <section className="section" id="projects" aria-labelledby="gal-h">
@@ -40,7 +37,7 @@ export function GallerySection({ service, heading = 'Our projects' }: { service?
             <Link className="link-arrow" href="/projects">View all projects <Icon name="arrow" size={16} /></Link>
           </div>
         </Reveal>
-        {service ? <ProjectGallery cards={cards} filters={false} /> : <ProjectRing projects={ring} />}
+        <ProjectGallery cards={cards} filters={!service} />
       </div>
     </section>
   );
