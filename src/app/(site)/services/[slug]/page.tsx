@@ -3,12 +3,20 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Hero } from '@/components/Hero';
 import { Icon } from '@/components/Icon';
-import { Photo } from '@/components/Photo';
+import { BeforeAfter } from '@/components/BeforeAfter';
 import { Reveal } from '@/components/Reveal';
 import { OpenBudgetButton } from '@/components/BudgetProvider';
 import { ConsultSection, CostTable, CtaBand, GallerySection } from '@/components/sections';
 import { serviceBySlug, services, site } from '@/config/site';
 import { getContent } from '@/server/cms';
+
+const SAMPLES: Record<string, { label: string; src: string }[]> = {
+  kitchen: [{ label: 'Modern kitchen', src: '/media/img/project-kitchen-1.jpg' }, { label: 'Compact kitchen', src: '/media/img/project-kitchen-2.jpg' }],
+  bedroom: [{ label: 'Master bedroom', src: '/media/img/project-bedroom-1.jpg' }],
+  bathroom: [{ label: 'Bathroom', src: '/media/img/project-bathroom-1.jpg' }],
+  'living-dining': [{ label: 'Living room', src: '/media/img/project-living-1.jpg' }, { label: 'Dining room', src: '/media/img/project-dining-1.jpg' }],
+  office: [{ label: 'Workspace', src: '/media/img/project-office-1.jpg' }, { label: 'Meeting area', src: '/media/img/project-office-2.jpg' }],
+};
 
 export const dynamicParams = false;
 export const generateStaticParams = () => services.map((s) => ({ slug: s.slug }));
@@ -51,7 +59,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               </>
             )}
           </Reveal>
-          <Reveal><div className="portrait" style={{ aspectRatio: '4/3' }}><Photo slot={`service-${s.slug}-detail`} alt={`${s.name} design detail`} label={`${s.slug} detail`} /></div></Reveal>
+          <Reveal><BeforeAfter items={(SAMPLES[s.slug] ?? []).map((x) => ({ ...x, alt: `${s.name} ${x.label.toLowerCase()}` }))} /></Reveal>
         </div>
         <div className="container" style={{ marginTop: 'clamp(28px, 4vw, 48px)' }}>
           <Reveal className="facts">
