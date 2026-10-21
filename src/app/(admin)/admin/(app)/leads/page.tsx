@@ -12,7 +12,7 @@ function Row({ l }: { l: LeadRecord }) {
     <details className="lead">
       <summary><span className="lead__ref">{l.reference}</span><span>{c.name}</span><span className={`lead__kind lead__kind--${l.kind}`}>{l.kind === 'quotation' ? 'Quotation' : 'Consultation'}</span><time>{when(l.at)}</time></summary>
       <div className="lead__body"><dl>
-        <dt>Phone</dt><dd><a href={`tel:${c.phone}`}>{c.phone}</a></dd><dt>Email</dt><dd><a href={`mailto:${c.email}`}>{c.email}</a></dd>
+        <dt>Phone</dt><dd><a href={`tel:${c.phone}`}>{c.phone}</a>{(l.contact as { whatsapp?: boolean } | undefined)?.whatsapp ? <> <span className="ad-badge green">WhatsApp</span> <a href={`https://wa.me/${String(c.phone).replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">Chat</a></> : null}</dd><dt>Email</dt><dd><a href={`mailto:${c.email}`}>{c.email}</a></dd>
         {c.address && <><dt>Address</dt><dd>{c.address}</dd></>}
         {e?.input && <><dt>Property</dt><dd>{e.input.propertyType}{e.input.propertyType !== 'office' ? `, ${e.input.bhk} BHK` : ''}, {e.input.sqft} sq ft</dd><dt>Package</dt><dd>{e.input.package}{e.input.package === 'bestfit' ? ` (recommended ${e.tier})` : ''}</dd>
           <dt>Estimate</dt><dd>{typeof e.low === 'number' ? `${bdt(e.low)} to ${bdt(e.high ?? 0)}` : '-'}</dd><dt>Spaces</dt><dd>{e.lines?.map((x) => `${x.label}${x.qty > 1 ? ` × ${x.qty}` : ''}`).join(', ')}{e.extras?.length ? `. Add-ons: ${e.extras.map((x) => x.label).join(', ')}` : ''}</dd></>}

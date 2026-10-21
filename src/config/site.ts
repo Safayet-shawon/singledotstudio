@@ -63,7 +63,7 @@ export const services: Service[] = [
     related: ['living-dining', 'bathroom'],
   },
   {
-    slug: 'bedroom', name: 'Bedroom', short: 'Bedrooms', audience: 'home', costKeys: ['master', 'bedroom'], videoSlot: 'bedroom',
+    slug: 'bedroom', name: 'Bedroom', short: 'Bedrooms', audience: 'home', costKeys: ['master', 'child'], videoSlot: 'bedroom',
     intro: 'Calm, personal bedrooms with considered storage, soft lighting and natural textures.',
     approach: ['We design around sleep, storage and the small rituals of the day.', 'Wardrobes, headboard walls and lighting are planned as one composition.'],
     materials: ['Veneer and laminate wardrobes', 'Upholstered or panelled headboard walls', 'Natural fabrics, wood and soft wall finishes'],
@@ -77,7 +77,7 @@ export const services: Service[] = [
     related: ['living-dining', 'bathroom'],
   },
   {
-    slug: 'bathroom', name: 'Bathroom', short: 'Bathrooms', audience: 'home', costKeys: ['bathroom'], videoSlot: 'bathroom',
+    slug: 'bathroom', name: 'Bathroom', short: 'Bathrooms', audience: 'home', costKeys: ['toilet'], videoSlot: 'bathroom',
     intro: 'Refined bathrooms with smart layouts, durable surfaces and calm, spa-like lighting.',
     approach: ['Layout and waterproofing come first, finishes second.', 'Wet and dry zones are separated and detailed for easy upkeep.'],
     materials: ['Porcelain, stone-look and natural stone tiles', 'Quality sanitaryware and fittings', 'Moisture-resistant vanity materials'],
@@ -90,7 +90,7 @@ export const services: Service[] = [
     related: ['bedroom', 'kitchen'],
   },
   {
-    slug: 'living-dining', name: 'Living & Dining', short: 'Living & Dining', audience: 'home', costKeys: ['living', 'dining'], videoSlot: 'living-dining',
+    slug: 'living-dining', name: 'Living & Dining', short: 'Living & Dining', audience: 'home', costKeys: ['family', 'dining'], videoSlot: 'living-dining',
     intro: 'Open, welcoming living and dining spaces composed for gathering and everyday calm.',
     approach: ['We plan seating, circulation and focal walls together so the room feels resolved.', 'Materials are layered with restraint: wood, stone, textile and light.'],
     materials: ['Feature walls in veneer, stone or texture paint', 'Wood, stone or engineered flooring', 'Bespoke furniture and soft furnishings'],

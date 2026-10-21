@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { BudgetProvider } from '@/components/BudgetProvider';
 import { JsReady } from '@/components/Reveal';
+import { Splash } from '@/components/Splash';
 import { site } from '@/config/site';
 import { FONTS, getContent } from '@/server/cms';
 
@@ -42,6 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <a className="skip" href="#main">Skip to content</a>
         <JsReady />
+        <Splash />
         <BudgetProvider>
           <Header />
           <main id="main">{children}</main>

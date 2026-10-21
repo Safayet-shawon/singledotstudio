@@ -24,14 +24,18 @@ export async function POST(req: Request) {
 
   let estimate;
   try {
-    estimate = computeEstimate(body.estimateInput as EstimateInput, pricing);
+    const input = { ...(body.estimateInput as EstimateInput) };
+    // The size band is display text chosen from a fixed list (or a typed number): accept only that shape.
+    if (typeof input.sizeLabel !== 'string' || !/^(\d{3,5}-\d{3,5}|\d{3,5}\+|\d{3,5} sq ft)$/.test(input.sizeLabel)) delete input.sizeLabel;
+    estimate = computeEstimate(input, pricing);
   } catch (err) {
     return json({ error: (err as Error).message }, 400);
   }
   const address = str(body.address, 300);
   const now = new Date();
   const reference = `QUO-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
-  const c = { ...contact.value, address };
+  const whatsapp = body.whatsapp === true;
+  const c = { ...contact.value, address, whatsapp };
 
   try {
     const pdf = await buildEstimatePdf({ estimate, contact: c, pricing, reference, date: now });
@@ -47,7 +51,7 @@ export async function POST(req: Request) {
       text: `A customer requested a quotation.
 
 ${c.name}
-${c.phone}
+${c.phone}${whatsapp ? ' (WhatsApp)' : ''}
 ${c.email}
 ${address || '-'}
 

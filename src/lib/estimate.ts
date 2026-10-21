@@ -39,6 +39,8 @@ export interface EstimateInput {
   package: PackageKey;
   extras?: string[];
   targetBudget?: number | null;
+  /** Size band picked by the customer, for example "1350-1499". Display only; maths uses `sqft`. */
+  sizeLabel?: string;
 }
 export interface Line { key: string; label: string; qty: number; area: number | null; tier: Tier; amount: number }
 export interface Estimate {

@@ -18,7 +18,7 @@ test('default 2BHK layout areas add up to the flat size', () => {
 
 test('1BHK has no additional bedrooms and still sums to flat size', () => {
   const e = computeEstimate(base({ bhk: 1, sqft: 600, items: defaultSelection(pricing, 'apartment', 1) }), pricing);
-  assert.ok(!e.lines.some((l) => l.key === 'bedroom'));
+  assert.ok(!e.lines.some((l) => l.key === 'child'));
   assert.ok(Math.abs(e.lines.reduce((a, l) => a + (l.area ?? 0), 0) - 600) <= 4);
 });
 

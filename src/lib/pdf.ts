@@ -22,7 +22,8 @@ export async function buildEstimatePdf(args: { estimate: Estimate; contact: PdfC
     ...e.lines.map((l) => ({ description: `${l.label}${l.qty > 1 ? ` (${l.qty})` : ''}${l.area ? `, about ${l.area} sq ft` : ''}`, qty: 1, unit: 'lot', price: l.amount })),
     ...e.extras.map((x) => ({ description: `Add-on: ${x.label}`, qty: 1, unit: 'lot', price: x.amount })),
   ];
-  const prop = e.input.propertyType === 'office' ? `Office, ${e.input.sqft} sq ft` : `${TYPE[e.input.propertyType]}, ${e.input.bhk} BHK, ${e.input.sqft} sq ft`;
+  const size = e.input.sizeLabel ? (e.input.sizeLabel.endsWith('sq ft') ? e.input.sizeLabel : `${e.input.sizeLabel} sq ft`) : `${e.input.sqft} sq ft`;
+  const prop = e.input.propertyType === 'office' ? `Office, ${size}` : `${TYPE[e.input.propertyType]}, ${e.input.bhk} BHK, ${size}`;
   return buildDocumentPdf({
     number: reference, type: 'quotation', version: 1, status: 'sent', company,
     client: { name: contact.name, company: null, phone: contact.phone, email: contact.email, address: contact.address ?? null },

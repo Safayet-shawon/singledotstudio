@@ -10,7 +10,8 @@ export function quoteEmail(e: Estimate, pricing: Pricing, name: string, referenc
   const chosen = e.input.package === 'bestfit' ? e.tier : e.input.package;
   const pk = pricing.packages[e.input.package];
   const others = (['essential', 'premium', 'luxury', 'bestfit'] as const).filter((k) => k !== chosen && k !== e.input.package);
-  const prop = e.input.propertyType === 'office' ? `Office, ${e.input.sqft} sq ft` : `${TYPE[e.input.propertyType]}, ${e.input.bhk} BHK, ${e.input.sqft} sq ft`;
+  const size = e.input.sizeLabel ? (e.input.sizeLabel.endsWith('sq ft') ? e.input.sizeLabel : `${e.input.sizeLabel} sq ft`) : `${e.input.sqft} sq ft`;
+  const prop = e.input.propertyType === 'office' ? `Office, ${size}` : `${TYPE[e.input.propertyType]}, ${e.input.bhk} BHK, ${size}`;
   const spaces = [...e.lines.map((l) => `${l.label}${l.qty > 1 ? ` × ${l.qty}` : ''}`), ...e.extras.map((x) => `Add-on: ${x.label}`)];
 
   const html = `<div style="font-family:Georgia,'Times New Roman',serif;color:#26231f;max-width:600px;margin:auto;padding:28px;background:#f7f2e9">
