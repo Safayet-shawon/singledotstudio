@@ -6,6 +6,8 @@ import { FONTS, type BodyFont, type HeadingFont } from './fonts';
 export { FONTS };
 export type { BodyFont, HeadingFont };
 
+export interface Comparison { id: string; service: string; label: string; before: string; after: string }
+
 export interface SiteContent {
   hero: { quote: string; budgetQuote: string; slides: string[] };
   contact: { phone: string; email: string; address: string; hours: string };
@@ -15,6 +17,7 @@ export interface SiteContent {
   footer: { blurb: string };
   services: Record<string, { intro: string }>;
   portfolio: Project[];
+  comparisons: Comparison[]; // before/after pairs shown on the service pages (media ids)
   images: Record<string, string>; // image slot -> media id
   typography: { heading: HeadingFont; body: BodyFont; headingWeight: 400 | 500 | 600; bodyWeight: 300 | 400 | 500 };
 }
@@ -31,6 +34,7 @@ export function defaultContent(): SiteContent {
     footer: { blurb: site.heroQuote },
     services: Object.fromEntries(services.map((s) => [s.slug, { intro: s.intro }])),
     portfolio: baseProjects.map((p) => ({ ...p })),
+    comparisons: [],
     images: {},
     typography: { heading: 'cormorant', body: 'nunito', headingWeight: 500, bodyWeight: 400 },
   };

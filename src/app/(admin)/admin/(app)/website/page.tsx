@@ -3,7 +3,7 @@ import { q } from '@/server/db';
 import { findImage } from '@/lib/media';
 import { services } from '@/config/site';
 import { DEFAULT_SLIDES, getDraftContent, imageSlots, mediaUrl } from '@/server/cms';
-import { discardAction, publishAction, restoreVersionAction, saveSlidesAction, saveTextAction, saveTypographyAction, savePortfolioAction, setSlotImageAction, updateMediaAction, uploadMediaAction } from '@/server/actions/cms';
+import { discardAction, publishAction, restoreVersionAction, saveSlidesAction, saveTextAction, saveTypographyAction, savePortfolioAction, setSlotImageAction, addComparisonAction, removeComparisonAction, updateMediaAction, uploadMediaAction } from '@/server/actions/cms';
 import { ActionButton, ActionForm } from '@/components/admin/Forms';
 import { PortfolioEditor, PublishBar, SlidesEditor, SlotPicker, TypographyPreview } from '@/components/admin/CmsEditors';
 import { Card, Empty, Tabs, when } from '@/components/admin/Ui';
@@ -21,6 +21,7 @@ export default async function Website({ searchParams }: { searchParams: Promise<
   const tabs = [
     ...(can(u, 'cms.edit_text') ? [{ href: '/admin/website', label: 'Text' }] : []),
     ...(canAny(u, ['cms.upload_images', 'cms.replace_images', 'cms.design']) ? [{ href: '/admin/website?tab=images', label: 'Images' }] : []),
+    ...(can(u, 'cms.upload_images') ? [{ href: '/admin/website?tab=compare', label: 'Before / after' }] : []),
     ...(can(u, 'cms.portfolio') ? [{ href: '/admin/website?tab=portfolio', label: 'Portfolio' }] : []),
     ...(can(u, 'cms.fonts') ? [{ href: '/admin/website?tab=type', label: 'Typography' }] : []),
     ...(canAny(u, ['cms.preview', 'cms.publish']) ? [{ href: '/admin/website?tab=preview', label: 'Preview' }] : []),
@@ -103,6 +104,39 @@ export default async function Website({ searchParams }: { searchParams: Promise<
                       <div className="ad-field"><label>Caption</label><input name="caption" type="text" defaultValue={m.caption ?? ''} /></div>
                     </ActionForm>
                   )}
+                </div>))}</div>
+            )}
+          </Card>
+        </>
+      )}
+
+      {active === 'compare' && can(u, 'cms.upload_images') && (
+        <>
+          <Card title="Add a before / after pair">
+            {media.length < 2 ? <Empty title="Upload two images first">Add the before and after photos in the Images tab, then come back here to pair them.</Empty> : (
+              <ActionForm action={addComparisonAction} submit="Add to draft" resetOnOk>
+                <div className="ad-row">
+                  <div className="ad-field"><label htmlFor="cv-s">Service page</label><select id="cv-s" name="service" required>{services.map((sv) => <option key={sv.slug} value={sv.slug}>{sv.name}</option>)}</select></div>
+                  <div className="ad-field"><label htmlFor="cv-l">Label (the filter button, e.g. Master bedroom)</label><input id="cv-l" name="label" type="text" maxLength={60} placeholder="Master bedroom" /></div>
+                </div>
+                <div className="ad-row">
+                  <div className="ad-field"><label htmlFor="cv-b">Before image (same space, no interior work)</label><select id="cv-b" name="before" required defaultValue="">{[<option key="" value="" disabled>Choose from library</option>, ...media.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)]}</select></div>
+                  <div className="ad-field"><label htmlFor="cv-a">After image (finished interior)</label><select id="cv-a" name="after" required defaultValue="">{[<option key="" value="" disabled>Choose from library</option>, ...media.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)]}</select></div>
+                </div>
+                <p className="muted small">Use photos of the same room from the same angle. Upload images in the Images tab first. Changes go to the draft until you publish.</p>
+              </ActionForm>
+            )}
+          </Card>
+          <Card title="Current pairs">
+            {draft.comparisons.length === 0 ? <Empty title="No pairs yet">Until you add real photos, service pages show a clearly labelled sample.</Empty> : (
+              <div className="ad-grid ad-cols-3">{draft.comparisons.map((cp) => (
+                <div key={cp.id} className="ad-pgroup" style={{ padding: 10, display: 'grid', gap: 8 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+                    <img src={mediaUrl(cp.before)} alt="Before" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 6 }} />
+                    <img src={mediaUrl(cp.after)} alt="After" style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 6 }} />
+                  </div>
+                  <b className="small">{services.find((x) => x.slug === cp.service)?.name ?? cp.service}: {cp.label}</b>
+                  <ActionButton action={removeComparisonAction.bind(null, cp.id)} label="Remove" confirm="Remove this before / after pair from the draft?" />
                 </div>))}</div>
             )}
           </Card>

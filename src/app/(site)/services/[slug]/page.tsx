@@ -8,7 +8,7 @@ import { Reveal } from '@/components/Reveal';
 import { OpenBudgetButton } from '@/components/BudgetProvider';
 import { ConsultSection, CostTable, CtaBand, GallerySection } from '@/components/sections';
 import { serviceBySlug, services, site } from '@/config/site';
-import { getContent } from '@/server/cms';
+import { getContent, mediaUrl } from '@/server/cms';
 
 const SAMPLES: Record<string, { label: string; src: string }[]> = {
   kitchen: [{ label: 'Modern kitchen', src: '/media/img/project-kitchen-1.jpg' }, { label: 'Compact kitchen', src: '/media/img/project-kitchen-2.jpg' }],
@@ -31,7 +31,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const baseSvc = serviceBySlug((await params).slug);
   if (!baseSvc) notFound();
-  const s = { ...baseSvc, intro: (await getContent()).services[baseSvc.slug]?.intro ?? baseSvc.intro };
+  const content = await getContent();
+  const s = { ...baseSvc, intro: content.services[baseSvc.slug]?.intro ?? baseSvc.intro };
+  const pairs = content.comparisons.filter((x) => x.service === s.slug).map((x) => ({ label: x.label, src: mediaUrl(x.after), before: mediaUrl(x.before), alt: `${s.name} ${x.label.toLowerCase()}` }));
   const jsonLd = { '@context': 'https://schema.org', '@type': 'Service', name: `${s.name} interior design`, description: s.intro, provider: { '@type': 'Organization', name: site.brand.name } };
 
   return (
@@ -59,7 +61,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               </>
             )}
           </Reveal>
-          <Reveal><BeforeAfter items={(SAMPLES[s.slug] ?? []).map((x) => ({ ...x, alt: `${s.name} ${x.label.toLowerCase()}` }))} /></Reveal>
+          <Reveal><BeforeAfter items={pairs.length ? pairs : (SAMPLES[s.slug] ?? []).map((x) => ({ ...x, alt: `${s.name} ${x.label.toLowerCase()}` }))} /></Reveal>
         </div>
         <div className="container" style={{ marginTop: 'clamp(28px, 4vw, 48px)' }}>
           <Reveal className="facts">

@@ -5,7 +5,8 @@ import { put } from '@vercel/blob';
 import { q, q1 } from '../db';
 import { assertCan, canAny, Forbidden, type User } from '../auth';
 import { audit, notify } from '../audit';
-import { FONTS, getDraftContent, type SiteContent } from '../cms';
+import { FONTS, getDraftContent, type Comparison, type SiteContent } from '../cms';
+import { services } from '@/config/site';
 import { MAX_BYTES } from '../files';
 import { bad, fail, me, s, UUID } from '../util';
 import type { R } from '@/components/admin/Forms';
@@ -147,6 +148,32 @@ export async function setSlotImageAction(slot: string, mediaId: string | null): 
       if (!UUID.test(mediaId) || !(await q1(`SELECT 1 AS x FROM media WHERE id = $1`, [mediaId]))) throw bad('Unknown image.');
     }
     await patch(u, (c) => { if (mediaId) c.images[slot] = mediaId; else delete c.images[slot]; }, 'cms.image_set', { slot, mediaId });
+    return { ok: true };
+  } catch (e) { return fail(e); }
+}
+
+export async function addComparisonAction(_: R, fd: FormData): Promise<R> {
+  try {
+    const u = await me();
+    assertCan(u, 'cms.upload_images');
+    const service = s(fd, 'service', 40), before = s(fd, 'before', 40), after = s(fd, 'after', 40), label = clip(s(fd, 'label', 60), 60);
+    if (!services.some((x) => x.slug === service)) throw bad('Choose a service.');
+    if (!UUID.test(before) || !UUID.test(after)) throw bad('Choose both a before and an after image.');
+    if (before === after) throw bad('The before and after images must be different.');
+    const found = await q<{ id: string }>(`SELECT id FROM media WHERE id = ANY($1::uuid[])`, [[before, after]]);
+    if (found.length !== 2) throw bad('One of the chosen images no longer exists.');
+    const item: Comparison = { id: crypto.randomUUID(), service, label: label || 'Before and after', before, after };
+    await patch(u, (c) => { if (c.comparisons.length >= 40) throw bad('Too many comparisons. Remove one first.'); c.comparisons.push(item); }, 'cms.comparison_added', { service, before, after });
+    return { ok: true, message: 'Added to the draft. Publish to make it live.' };
+  } catch (e) { return fail(e); }
+}
+
+export async function removeComparisonAction(id: string): Promise<R> {
+  try {
+    const u = await me();
+    assertCan(u, 'cms.upload_images');
+    if (!UUID.test(id)) throw bad('Unknown comparison.');
+    await patch(u, (c) => { c.comparisons = c.comparisons.filter((x) => x.id !== id); }, 'cms.comparison_removed', { id });
     return { ok: true };
   } catch (e) { return fail(e); }
 }
