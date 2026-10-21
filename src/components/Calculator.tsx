@@ -17,11 +17,12 @@ const RANGES = [
 ];
 const BHKS = [1, 2, 3, 4, 5, 6];
 const OPTIONAL = new Set(['foyer', 'wardrobe', 'study', 'balcony', 'ceiling']);
-const PKGS: { key: PackageKey; g: [string, string]; icon: string }[] = [
-  { key: 'essential', g: ['#ef4f8a', '#ff8a65'], icon: 'star' },
-  { key: 'premium', g: ['#0e9aa7', '#5fd3b0'], icon: 'gem' },
-  { key: 'luxury', g: ['#ff9a5a', '#ffd36e'], icon: 'crown' },
+const PKGS: { key: PackageKey; tone: 'sand' | 'olive' | 'night'; no: string; badge?: string }[] = [
+  { key: 'essential', tone: 'sand', no: '01' },
+  { key: 'premium', tone: 'olive', no: '02', badge: 'Most chosen' },
+  { key: 'luxury', tone: 'night', no: '03' },
 ];
+const STEP_NAMES = ['Space', 'Rooms', 'Package', 'Details'];
 
 interface Result { reference: string; customerEmail: 'sent' | 'sample' | 'not_configured' | 'failed'; teamNotified: boolean }
 interface State {
@@ -30,18 +31,6 @@ interface State {
   name: string; email: string; phone: string; whatsapp: boolean; address: string; consent: boolean;
 }
 const initial: State = { step: 1, type: null, range: null, custom: '', bhk: null, items: {}, extras: [], pkg: null, name: '', email: '', phone: '', whatsapp: false, address: '', consent: false };
-
-function PkgIcon({ name }: { name: string }) {
-  const p = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinejoin: 'round', strokeLinecap: 'round' } as const;
-  return (
-    <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true" {...p}>
-      {name === 'star' && <path d="M16 4l3.6 7.4 8.1 1.1-5.9 5.7 1.4 8.1L16 22.4 8.8 26.3l1.4-8.1-5.9-5.7 8.1-1.1z" />}
-      {name === 'gem' && <path d="M7 6h18l5 7-14 15L2 13zM2 13h28M11 6l-3 7 8 15M21 6l3 7-8 15" />}
-      {name === 'crown' && <path d="M4 24l-1-13 7 5 6-9 6 9 7-5-1 13zM4 28h24" />}
-      {name === 'pencil' && <path d="M5 27l2-7 14-14 5 5-14 14zM19 8l5 5M7 20l5 5" />}
-    </svg>
-  );
-}
 
 export default function Calculator({ variant, onClose }: { variant: 'dialog' | 'page'; onClose?: () => void }) {
   const [s, setS] = useState<State>(initial);
@@ -76,7 +65,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
     if (step === 1) {
       if (!type) e.type = 'Please choose what you are designing.';
       if (!(sqft >= pricing.limits.minSqft && sqft <= pricing.limits.maxSqft)) e.size = s.custom.trim() ? `Enter a size between ${pricing.limits.minSqft} and ${pricing.limits.maxSqft} sq ft.` : 'Please select your size.';
-      if (resid && !s.bhk) e.bhk = 'Please choose the BHK type from the dropdown on your size.';
+      if (resid && !s.bhk) e.bhk = 'Please choose how many bedrooms (BHK).';
     }
     if (step === 2 && Object.keys(s.items).length === 0) e.items = 'Please select at least one room.';
     if (step === 3 && !s.pkg) e.pkg = 'Please select a package.';
@@ -123,19 +112,19 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   const err = (k: string) => (errors[k] ? <p className="err" role="alert">{errors[k]}</p> : null);
 
   const titles: Record<number, ReactNode> = {
-    1: <>Select Your <b>{resid ? 'Flat' : 'Office'}</b> Size (sq ft){resid ? <> &amp; <em>BHK</em> Type</> : null}</>,
-    2: <>Select Which <b>Room</b> You Want to <em>Design</em></>,
-    3: <>Pick The <b>Package</b> That Suits You <em>Best</em></>,
-    4: <>Where Should We <b>Send</b> Your <em>Quotation</em>?</>,
+    1: <>Tell us about your <em>{resid ? 'home' : 'office'}</em></>,
+    2: <>Which spaces should we <em>design</em>?</>,
+    3: <>Choose the <em>package</em> that suits you</>,
+    4: <>Where should we send your <em>quotation</em>?</>,
   };
 
   // A plain render helper (not a component) so typing never remounts the inputs.
   const frame = (children: ReactNode, foot: ReactNode) => (
     <div className={`calc-panel cqw${variant === 'page' ? ' calc-panel--page' : ''}`}>
       <div className="cqw-head">
-        <span className="cqw-kicker">Know Your Perfect Interior Budget</span>
+        <span className="cqw-kicker">Interior budget calculator</span>
         {variant === 'dialog' && <button type="button" className="calc__close cqw-x" aria-label="Close" onClick={onClose}><Icon name="close" size={24} /></button>}
-        {!result && <><span className="cqw-step">Step: {s.step}/4</span><h2>{titles[s.step]}</h2><div className="cqw-bar" aria-hidden="true"><i style={{ width: `${(s.step / 4) * 100}%` }} /></div></>}
+        {!result && <><ol className="cqw-steps" aria-label={`Step ${s.step} of 4`}>{STEP_NAMES.map((n, i) => <li key={n} className={s.step === i + 1 ? 'is-now' : s.step > i + 1 ? 'is-done' : ''} aria-current={s.step === i + 1 ? 'step' : undefined}><i>{s.step > i + 1 ? <Icon name="check" size={12} /> : i + 1}</i><span>{n}</span></li>)}</ol><h2>{titles[s.step]}</h2></>}
         {result && <h2>Thank <b>you</b></h2>}
       </div>
       <div className="cqw-body" ref={bodyRef}>{children}</div>
@@ -178,31 +167,28 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
               ))}
             </div>
             {err('type')}
-            <div className="cqw-grid" role="radiogroup" aria-label="Size in square feet">
+            <p className="cqw-sub cqw-sub--first">{resid ? 'Carpet area' : 'Office area'} in sq ft</p>
+            <div className="cqw-sizes" role="radiogroup" aria-label="Size in square feet">
               {RANGES.map((r, i) => {
                 const on = !s.custom.trim() && s.range === r.id;
                 return (
-                  <div key={r.id} className={`cqw-opt cqw-range${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i }} onClick={() => set({ range: r.id, custom: '' })}>
-                    <span className="cqw-radio" aria-hidden="true" />
-                    <button type="button" role="radio" aria-checked={on} className="cqw-range__label" onClick={(e) => { e.stopPropagation(); set({ range: r.id, custom: '' }); }}>{r.label}</button>
-                    {resid && (
-                      <select aria-label={`BHK for ${r.label}`} value={on && s.bhk ? s.bhk : ''} onClick={(e) => e.stopPropagation()} onChange={(e) => set({ range: r.id, custom: '', bhk: Number(e.target.value) || null })}>
-                        <option value="">BHK</option>{BHKS.map((n) => <option key={n} value={n}>{n} BHK{n === 6 ? ' +' : ''}</option>)}
-                      </select>
-                    )}
-                  </div>
+                  <button key={r.id} type="button" role="radio" aria-checked={on} className={`cqw-size${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i }} onClick={() => set({ range: r.id, custom: '' })}>{r.label}</button>
                 );
               })}
             </div>
-            {err('size')}{err('bhk')}
+            {err('size')}
+            {resid && (
+              <>
+                <p className="cqw-sub">Bedrooms (BHK)</p>
+                <div className="cqw-bhks" role="radiogroup" aria-label="BHK type">
+                  {BHKS.map((n) => <button key={n} type="button" role="radio" aria-checked={s.bhk === n} className={`cqw-bhk${s.bhk === n ? ' is-on' : ''}`} onClick={() => set({ bhk: n })}>{n}{n === 6 ? '+' : ''}<small>BHK</small></button>)}
+                </div>
+                {err('bhk')}
+              </>
+            )}
             <div className="cqw-custom">
               <label htmlFor="cqw-sq">Or type your exact size (sq ft)</label>
               <input id="cqw-sq" type="number" inputMode="numeric" placeholder="e.g. 1420" value={s.custom} onChange={(e) => set({ custom: e.target.value, range: e.target.value ? null : s.range })} />
-              {resid && s.custom.trim() !== '' && (
-                <select aria-label="BHK type" value={s.bhk ?? ''} onChange={(e) => set({ bhk: Number(e.target.value) || null })}>
-                  <option value="">BHK</option>{BHKS.map((n) => <option key={n} value={n}>{n} BHK{n === 6 ? ' +' : ''}</option>)}
-                </select>
-              )}
             </div>
           </>
         )}
@@ -231,46 +217,57 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
         {s.step === 3 && (
           <>
             <div className="cqw-pkgs" role="radiogroup" aria-label="Package">
-              {PKGS.map(({ key, g, icon }, i) => {
+              {PKGS.map(({ key, tone, no, badge }, i) => {
                 const p = pricing.packages[key];
                 const on = s.pkg === key;
                 return (
-                  <div key={key} className={`cqw-pkg${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i, ['--g1' as string]: g[0], ['--g2' as string]: g[1] }} onClick={() => set({ pkg: key })}>
-                    <div className="cqw-pkg__top">
-                      <svg className="cqw-pkg__wave" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30c40-30 80-30 120-10s90 28 180-8v58H0z" fill="#fff" fillOpacity=".92" /><path d="M0 44c50-26 90-22 140-4s100 14 160-6v36H0z" fill="#fff" /></svg>
-                      <h3>{p.label}</h3><span className="cqw-pkg__icon"><PkgIcon name={icon} /></span>
-                    </div>
-                    <ul>{p.features.map((f) => <li key={f}><Icon name="check" size={14} />{f}</li>)}</ul>
-                    <button type="button" role="radio" aria-checked={on} className="cqw-select" onClick={(e) => { e.stopPropagation(); set({ pkg: key }); }}>{on ? 'Selected ✓' : 'Select'}</button>
+                  <div key={key} className={`cqw-pkg cqw-pkg--${tone}${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i }} onClick={() => set({ pkg: key })}>
+                    {badge && <span className="cqw-pkg__badge">{badge}</span>}
+                    <span className="cqw-pkg__no" aria-hidden="true">{no}</span>
+                    <h3>{p.label}</h3>
+                    <p className="cqw-pkg__tag">{p.tagline}</p>
+                    <ul>{p.features.map((f) => <li key={f}>{f}</li>)}</ul>
+                    <button type="button" role="radio" aria-checked={on} className="cqw-select" onClick={(e) => { e.stopPropagation(); set({ pkg: key }); }}>{on ? 'Chosen' : 'Choose this'}</button>
                   </div>
                 );
               })}
-              <div className={`cqw-pkg cqw-pkg--custom${s.pkg === 'bestfit' ? ' is-on' : ''}`} style={{ ['--i' as string]: 3 }} onClick={() => set({ pkg: 'bestfit' })}>
-                <span className="cqw-pkg__icon"><PkgIcon name="pencil" /></span>
-                <div className="cqw-custom-text"><p>Design a <b>package</b> that fits you best</p><small>Our designers will get in touch to customise your package.</small></div>
-                <button type="button" role="radio" aria-checked={s.pkg === 'bestfit'} className="cqw-select" onClick={(e) => { e.stopPropagation(); set({ pkg: 'bestfit' }); }}>{s.pkg === 'bestfit' ? 'Selected ✓' : 'Select'}</button>
-              </div>
+            </div>
+            <div className={`cqw-bespoke${s.pkg === 'bestfit' ? ' is-on' : ''}`} onClick={() => set({ pkg: 'bestfit' })}>
+              <div><h3>Not sure yet? Let us shape it</h3><p>We recommend the package that fits your rooms and budget, and a designer will call to refine it.</p></div>
+              <button type="button" role="radio" aria-checked={s.pkg === 'bestfit'} className="cqw-select" onClick={(e) => { e.stopPropagation(); set({ pkg: 'bestfit' }); }}>{s.pkg === 'bestfit' ? 'Chosen' : 'Recommend for me'}</button>
             </div>
             {err('pkg')}
           </>
         )}
 
         {s.step === 4 && (
-          <form className="cqw-form" onSubmit={(e) => { e.preventDefault(); submit(); }}>
-            <div className="field"><label htmlFor="cqw-name">Full name</label><input id="cqw-name" type="text" autoComplete="name" value={s.name} aria-invalid={!!errors.name} onChange={(e) => set({ name: e.target.value })} />{err('name')}</div>
-            <div className="field"><label htmlFor="cqw-email">Email address</label><input id="cqw-email" type="email" autoComplete="email" value={s.email} aria-invalid={!!errors.email} onChange={(e) => set({ email: e.target.value })} />{err('email')}</div>
-            <div className="field">
-              <label htmlFor="cqw-phone">Phone number</label>
-              <input id="cqw-phone" type="tel" autoComplete="tel" value={s.phone} aria-invalid={!!errors.phone} onChange={(e) => set({ phone: e.target.value })} />
-              <label className="check cqw-wa"><input type="checkbox" checked={s.whatsapp} onChange={(e) => set({ whatsapp: e.target.checked })} /><span>This is my <b>WhatsApp</b> number</span></label>
-              {err('phone')}
-            </div>
-            <div className="field"><label htmlFor="cqw-addr">Project address / area</label><input id="cqw-addr" type="text" autoComplete="street-address" value={s.address} onChange={(e) => set({ address: e.target.value })} /></div>
-            <div className="hp" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} /></label></div>
-            <label className="check cqw-form__full"><input type="checkbox" checked={s.consent} onChange={(e) => set({ consent: e.target.checked })} aria-invalid={!!errors.consent} /><span>I agree to be contacted about this quotation, as described in the privacy policy.</span></label>
-            <div className="cqw-form__full">{err('consent')}</div>
-            {serverError && <p className="notice notice--error cqw-form__full" role="alert">{serverError}</p>}
-          </form>
+          <div className="cqw-details">
+            <aside className="cqw-sum" aria-label="Your selection">
+              <span className="cqw-sum__k">Your selection</span>
+              <h3>{TYPE_LABEL[type ?? 'apartment']}</h3>
+              <dl>
+                <dt>Size</dt><dd>{sizeLabel}{sizeLabel.endsWith('sq ft') ? '' : ' sq ft'}{resid && bhk ? `, ${bhk} BHK` : ''}</dd>
+                <dt>Rooms</dt><dd>{roomDefs.filter((d) => s.items[d.key]).map((d) => d.label.replace(' (whole home)', '').replace(' (per unit)', '')).join(', ') || '-'}</dd>
+                <dt>Package</dt><dd>{s.pkg === 'bestfit' ? 'Recommended for you' : s.pkg ? pricing.packages[s.pkg].label : '-'}</dd>
+              </dl>
+              <p>Your quotation is emailed to you and to the studio. No payment is taken.</p>
+            </aside>
+            <form className="cqw-form" onSubmit={(e) => { e.preventDefault(); submit(); }}>
+              <div className="cqw-f"><label htmlFor="cqw-name">Full name</label><span className="cqw-in"><Icon name="user" size={17} /><input id="cqw-name" type="text" autoComplete="name" placeholder="Your name" value={s.name} aria-invalid={!!errors.name} onChange={(e) => set({ name: e.target.value })} /></span>{err('name')}</div>
+              <div className="cqw-f"><label htmlFor="cqw-email">Email address</label><span className="cqw-in"><Icon name="mail" size={17} /><input id="cqw-email" type="email" autoComplete="email" placeholder="you@example.com" value={s.email} aria-invalid={!!errors.email} onChange={(e) => set({ email: e.target.value })} /></span>{err('email')}</div>
+              <div className="cqw-f">
+                <label htmlFor="cqw-phone">Phone number</label>
+                <span className="cqw-in"><Icon name="phone" size={17} /><input id="cqw-phone" type="tel" autoComplete="tel" placeholder="+880 1XXX XXXXXX" value={s.phone} aria-invalid={!!errors.phone} onChange={(e) => set({ phone: e.target.value })} /></span>
+                <label className="cqw-wa"><input type="checkbox" checked={s.whatsapp} onChange={(e) => set({ whatsapp: e.target.checked })} /><span>This is my <b>WhatsApp</b> number</span></label>
+                {err('phone')}
+              </div>
+              <div className="cqw-f"><label htmlFor="cqw-addr">Project address / area</label><span className="cqw-in"><Icon name="pin" size={17} /><input id="cqw-addr" type="text" autoComplete="street-address" placeholder="Area, city" value={s.address} onChange={(e) => set({ address: e.target.value })} /></span></div>
+              <div className="hp" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} /></label></div>
+              <label className="cqw-consent cqw-form__full"><input type="checkbox" checked={s.consent} onChange={(e) => set({ consent: e.target.checked })} aria-invalid={!!errors.consent} /><span>I agree to be contacted about this quotation, as described in the privacy policy.</span></label>
+              <div className="cqw-form__full">{err('consent')}</div>
+              {serverError && <p className="notice notice--error cqw-form__full" role="alert">{serverError}</p>}
+            </form>
+          </div>
         )}
       </div>,
     foot,
