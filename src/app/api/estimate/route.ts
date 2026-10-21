@@ -5,7 +5,7 @@ import { buildEstimatePdf } from '@/lib/pdf';
 import { sendMailX, leadInbox } from '@/lib/mail';
 import { saveLead } from '@/lib/leads';
 import { quoteEmail } from '@/lib/quote-mail';
-import { json, rateLimited, readJson, str, validateContact } from '@/lib/guard';
+import { json, rateLimited, readJson, sameOrigin, str, validateContact } from '@/lib/guard';
 import { site } from '@/config/site';
 
 export const runtime = 'nodejs';
@@ -13,7 +13,8 @@ export const maxDuration = 30;
 
 /** Quotation request: price is never returned to the browser. It goes to the customer and the studio by email, and into the admin panel. */
 export async function POST(req: Request) {
-  if (rateLimited(req, 'estimate', 8, 10 * 60_000)) return json({ error: 'Too many requests. Please try again in a few minutes.' }, 429);
+  if (!sameOrigin(req)) return json({ error: 'Invalid request.' }, 403);
+  if (await rateLimited(req, 'estimate', 8, 10 * 60_000)) return json({ error: 'Too many requests. Please try again in a few minutes.' }, 429);
   const body = await readJson(req);
   if (!body) return json({ error: 'Invalid request.' }, 400);
   if (body.website) return json({ error: 'Invalid request.' }, 400); // honeypot

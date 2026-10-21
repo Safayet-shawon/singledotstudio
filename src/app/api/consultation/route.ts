@@ -1,13 +1,14 @@
 import { sendMail, leadInbox } from '@/lib/mail';
 import { saveLead } from '@/lib/leads';
-import { json, rateLimited, readJson, str, validateContact } from '@/lib/guard';
+import { json, rateLimited, readJson, sameOrigin, str, validateContact } from '@/lib/guard';
 
 export const runtime = 'nodejs';
 
 const SEGMENTS = ['home', 'office'];
 
 export async function POST(req: Request) {
-  if (rateLimited(req, 'consult', 8, 10 * 60_000)) return json({ error: 'Too many requests. Please try again in a few minutes.' }, 429);
+  if (!sameOrigin(req)) return json({ error: 'Invalid request.' }, 403);
+  if (await rateLimited(req, 'consult', 8, 10 * 60_000)) return json({ error: 'Too many requests. Please try again in a few minutes.' }, 429);
   const b = await readJson(req);
   if (!b || b.website) return json({ error: 'Invalid request.' }, 400);
   if (b.consent !== true) return json({ error: 'Please agree to be contacted.' }, 400);

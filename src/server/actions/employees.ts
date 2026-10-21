@@ -7,6 +7,7 @@ import { assertCan, createInvite, getUser, revokeSessions, verifyPassword, Forbi
 import { checkGrant } from '../grants';
 import { audit, notify } from '../audit';
 import { sanitizePerms } from '../perms';
+import { clearFailures, hit, lockedSeconds, recordFailure, waitText } from '../ratelimit';
 import { mailConfigured, sendMailX } from '@/lib/mail';
 import type { R } from '@/components/admin/Forms';
 
@@ -175,45 +176,67 @@ export async function approveSalaryAction(id: string): Promise<R> {
   } catch (e) { return fail(e); }
 }
 
-/* ---------------- ownership transfer (separate, protected operation) ---------------- */
+/* ---------------- ownership transfer (separate, protected, two-party email verification) ---------------- */
+const PHONE = /^\+?[\d\s\-()]{7,20}$/;
+const codeHash = (c: string) => sha256(`transfer-code:${c.trim()}`);
+const same = (a: string, b: string) => { const x = Buffer.from(a), y = Buffer.from(b); return x.length === y.length && crypto.timingSafeEqual(x, y); };
+const maskEmail = (e: string) => e.replace(/^(.).*(@.*)$/, '$1***$2');
 
-export async function requestTransferCodeAction(_: R, fd: FormData): Promise<R> {
+/** Step 1: email one code to the current owner and one to the new owner. Nothing proceeds without working email. */
+export async function requestTransferCodesAction(_: R, fd: FormData): Promise<R> {
   try {
     const u = await me();
     if (!u.isOwner) throw new Forbidden('Only the Main Admin can transfer ownership.');
-    if (!mailConfigured()) return { error: 'Email is not configured, so no verification code can be sent. You can still transfer using your password and the typed confirmation below.' };
-    const target = s(fd, 'target', 40);
-    const code = String(crypto.randomInt(100000, 999999));
-    await q(`INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [`transfer:${u.id}`, JSON.stringify({ hash: sha256(code), exp: Date.now() + 10 * 60_000, target })]);
-    const m = await sendMailX({ to: u.email, subject: 'Ownership transfer verification code', text: `Your verification code is ${code}. It expires in 10 minutes. If you did not request this, ignore this email.` });
-    return m.status === 'sent' ? { ok: true, message: `A code was emailed to ${u.email}.` } : { error: 'The code email could not be sent.' };
+    if (await hit(`transfer-req:${u.id}`, 3, 600)) throw bad('Too many code requests. Please wait a few minutes.');
+    if (!mailConfigured()) throw bad('Email delivery is not set up on this site yet, so verification codes cannot be sent. Ownership cannot be transferred until email is configured.');
+    const target = s(fd, 'target', 40), email = s(fd, 'new_email', 120).toLowerCase(), phone = s(fd, 'new_phone', 30);
+    if (!UUID.test(target) || target === u.id) throw bad('Choose another active employee as the new owner.');
+    if (!EMAIL.test(email)) throw bad("Enter the new owner's email address.");
+    if (!PHONE.test(phone)) throw bad("Enter the new owner's phone number.");
+    const t = await q1<{ name: string; status: string }>(`SELECT name, status FROM users WHERE id = $1`, [target]);
+    if (!t || t.status !== 'active') throw bad('The new owner must be an active account.');
+    if (await q1(`SELECT 1 AS x FROM users WHERE email = $1 AND id <> $2`, [email, target])) throw bad('That email already belongs to a different account.');
+    const ownerCode = String(crypto.randomInt(100000, 999999)), newCode = String(crypto.randomInt(100000, 999999));
+    await q(`INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [`transfer:${u.id}`, JSON.stringify({ a: codeHash(ownerCode), b: codeHash(newCode), exp: Date.now() + 10 * 60_000, target, email, phone })]);
+    const note = 'Never share this code. It expires in 10 minutes. If you did not expect this, ignore it and change your password.';
+    const m1 = await sendMailX({ to: u.email, subject: 'Ownership transfer: your verification code', text: `Your code to approve transferring Main Admin ownership to ${t.name} is ${ownerCode}.\n\n${note}` });
+    const m2 = await sendMailX({ to: email, subject: 'Ownership transfer: your verification code', text: `${u.name} is transferring Main Admin ownership of Single Dot Studio to you. Your code to accept is ${newCode}.\n\n${note}` });
+    if (m1.status !== 'sent' || m2.status !== 'sent') {
+      await q(`DELETE FROM settings WHERE key = $1`, [`transfer:${u.id}`]);
+      throw bad('One of the two emails could not be sent, so the transfer was not started. Check the email settings and try again.');
+    }
+    await audit(u, 'ownership.codes_sent', 'user', target, { newEmail: maskEmail(email) });
+    return { ok: true, message: `Two codes were emailed: one to you (${maskEmail(u.email)}) and one to ${email}. Enter both below within 10 minutes.` };
   } catch (e) { return fail(e); }
 }
 
+/** Step 2: needs your password, both emailed codes and the typed phrase. */
 export async function transferOwnershipAction(_: R, fd: FormData): Promise<R> {
   try {
     const u = await me();
     if (!u.isOwner) throw new Forbidden('Only the Main Admin can transfer ownership.');
-    const target = s(fd, 'target', 40), pw = String(fd.get('password') ?? ''), phrase = s(fd, 'phrase', 40), code = s(fd, 'code', 10);
-    if (!UUID.test(target) || target === u.id) throw bad('Choose another active employee.');
+    const key = `transfer-fail:${u.id}`;
+    const wait = await lockedSeconds(key);
+    if (wait > 0) throw bad(`Too many incorrect attempts. Try again in ${waitText(wait)}.`);
+    const wrong = async (m: string) => { await recordFailure(key, 5, 600, 900); return bad(m); };
+    const target = s(fd, 'target', 40), pw = String(fd.get('password') ?? ''), phrase = s(fd, 'phrase', 40), codeA = s(fd, 'owner_code', 10), codeB = s(fd, 'new_code', 10);
     const self = await q1<{ password_hash: string | null }>(`SELECT password_hash FROM users WHERE id = $1`, [u.id]);
-    if (!verifyPassword(pw, self?.password_hash ?? null)) throw bad('Your password is not correct.');
+    if (!verifyPassword(pw, self?.password_hash ?? null)) throw await wrong('Your password is not correct.');
     if (phrase !== 'TRANSFER OWNERSHIP') throw bad('Type TRANSFER OWNERSHIP exactly to confirm.');
-    if (mailConfigured()) {
-      const c = await q1<{ value: { hash: string; exp: number; target: string } }>(`SELECT value FROM settings WHERE key = $1`, [`transfer:${u.id}`]);
-      if (!c || c.value.exp < Date.now() || c.value.target !== target || c.value.hash !== sha256(code)) throw bad('The verification code is missing, wrong or expired.');
-      await q(`DELETE FROM settings WHERE key = $1`, [`transfer:${u.id}`]);
-    }
+    const c = await q1<{ value: { a: string; b: string; exp: number; target: string; email: string; phone: string } }>(`SELECT value FROM settings WHERE key = $1`, [`transfer:${u.id}`]);
+    if (!c || c.value.exp < Date.now() || c.value.target !== target) throw bad('The codes have expired or were never requested. Request new codes first.');
+    if (!same(c.value.a, codeHash(codeA)) || !same(c.value.b, codeHash(codeB))) throw await wrong('One of the codes is wrong. Both codes are required.');
     const t = await q1<{ name: string; status: string }>(`SELECT name, status FROM users WHERE id = $1`, [target]);
     if (!t || t.status !== 'active') throw bad('The new owner must be an active account.');
     await tx([
       [`UPDATE users SET is_owner = false, perms = '{}', position = CASE WHEN position = 'Main Admin' THEN NULL ELSE position END WHERE id = $1 AND is_owner`, [u.id]],
-      [`UPDATE users SET is_owner = true, perms = '{}', position = coalesce(position, 'Main Admin') WHERE id = $1`, [target]],
+      [`UPDATE users SET is_owner = true, perms = '{}', email = $2, phone = $3, position = coalesce(position, 'Main Admin') WHERE id = $1`, [target, c.value.email, c.value.phone]],
+      [`DELETE FROM settings WHERE key = $1`, [`transfer:${u.id}`]],
     ]);
+    await clearFailures(key);
     await revokeSessions(u.id); await revokeSessions(target);
-    await audit(u, 'ownership.transferred', 'user', target, { from: u.id, to: target, toName: t.name });
+    await audit(u, 'ownership.transferred', 'user', target, { from: u.id, to: target, toName: t.name, verifiedBy: 'two email codes' });
     await notify([target], 'ownership', 'You are now the Main Admin', 'Ownership was transferred to you.', '/admin');
     return { ok: true, redirect: '/admin/login' };
   } catch (e) { return fail(e); }
 }
-

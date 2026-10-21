@@ -3,7 +3,7 @@ import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { q, q1 } from './db';
 
-export const SESSION_COOKIE = 'sds_session';
+export const SESSION_COOKIE = process.env.NODE_ENV === 'production' ? '__Host-sds_session' : 'sds_session';
 const SESSION_DAYS = 7;
 
 export interface User {
@@ -22,20 +22,23 @@ export const USER_COLUMNS = 'id,email,name,phone,employee_code,position,departme
 export { toUser };
 
 /* ---------- hashing ---------- */
+// scrypt with N=2^16, r=8, p=1 (OWASP-recommended class). Older hashes (lower N) still verify and are upgraded at next sign-in.
+const SCRYPT_N = 65536;
+const MAXMEM = 256 * 1024 * 1024;
 export function hashPassword(pw: string): string {
   const salt = crypto.randomBytes(16);
-  const N = 16384;
-  const hash = crypto.scryptSync(pw, salt, 64, { N, r: 8, p: 1 });
-  return `scrypt$${N}$${salt.toString('base64')}$${hash.toString('base64')}`;
+  const hash = crypto.scryptSync(pw, salt, 64, { N: SCRYPT_N, r: 8, p: 1, maxmem: MAXMEM });
+  return `scrypt$${SCRYPT_N}$${salt.toString('base64')}$${hash.toString('base64')}`;
 }
 export function verifyPassword(pw: string, stored: string | null): boolean {
   if (!stored) return false;
   const [kind, n, salt, hash] = stored.split('$');
-  if (kind !== 'scrypt') return false;
+  if (kind !== 'scrypt' || !n || !salt || !hash) return false;
   const expected = Buffer.from(hash, 'base64');
-  const actual = crypto.scryptSync(pw, Buffer.from(salt, 'base64'), expected.length, { N: Number(n), r: 8, p: 1 });
+  const actual = crypto.scryptSync(pw, Buffer.from(salt, 'base64'), expected.length, { N: Number(n), r: 8, p: 1, maxmem: MAXMEM });
   return crypto.timingSafeEqual(actual, expected);
 }
+export const needsRehash = (stored: string | null) => !stored || Number(stored.split('$')[1]) < SCRYPT_N;
 export const sha256 = (s: string) => crypto.createHash('sha256').update(s).digest('hex');
 export const newToken = () => crypto.randomBytes(32).toString('base64url');
 
@@ -45,18 +48,11 @@ export function passwordProblem(pw: string): string | null {
   return null;
 }
 
-/* ---------- rate limiting (best effort, per instance) ---------- */
-const hits = new Map<string, { n: number; reset: number }>();
-export function throttled(key: string, max: number, windowMs: number) {
-  const now = Date.now();
-  if (hits.size > 3000) for (const [k, v] of hits) if (v.reset < now) hits.delete(k);
-  const r = hits.get(key);
-  if (!r || r.reset < now) { hits.set(key, { n: 1, reset: now + windowMs }); return false; }
-  return ++r.n > max;
-}
+/* ---------- client address ---------- */
+/** Prefers the platform-set headers (not spoofable on Vercel); falls back to the first forwarded address. */
 export async function clientIp() {
   const h = await headers();
-  return h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'unknown';
+  return h.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || h.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
 }
 
 /* ---------- sessions ---------- */

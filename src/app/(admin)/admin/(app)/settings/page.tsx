@@ -2,7 +2,7 @@ import { requireUser, pageCan, can } from '@/server/auth';
 import { q } from '@/server/db';
 import { getCompany } from '@/server/settings';
 import { mailConfigured } from '@/lib/mail';
-import { requestTransferCodeAction, transferOwnershipAction } from '@/server/actions/employees';
+import { requestTransferCodesAction, transferOwnershipAction } from '@/server/actions/employees';
 import { saveCompanyAction } from '@/server/actions/finance';
 import { ActionForm } from '@/components/admin/Forms';
 import { Card } from '@/components/admin/Ui';
@@ -32,18 +32,26 @@ export default async function Settings() {
 
       {u.isOwner && (
         <Card title="Transfer ownership">
-          <p className="ad-msg warn">This makes another person the Main Admin. You will lose owner-level access, every session is signed out, and the change is recorded in the audit log. It cannot be done from the employee permission editor.</p>
+          <p className="ad-msg warn">This makes another person the Main Admin. You lose owner-level access, every session is signed out, and it is recorded in the audit log. It needs your password and two emailed codes: one sent to you and one sent to the new owner. It cannot be done from the permission editor.</p>
+          {!mailConfigured() && <p className="ad-msg err">Email delivery is not configured, so the two verification codes cannot be sent. Ownership transfer stays locked until it is.</p>}
           {candidates.length === 0 ? <p className="muted">There is no other active account to transfer to.</p> : (
             <>
-              {mailConfigured() && (
-                <ActionForm action={requestTransferCodeAction} submit="Email me a verification code" className="ad-form">
-                  <div className="ad-field"><label htmlFor="tc1">New owner</label><select id="tc1" name="target" required>{candidates.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}</select></div>
-                </ActionForm>
-              )}
+              <h3 style={{ marginTop: 8 }}>Step 1: send the two codes</h3>
+              <ActionForm action={requestTransferCodesAction} submit="Email both codes" className="ad-form">
+                <div className="ad-field"><label htmlFor="tc1">New owner (an active account)</label><select id="tc1" name="target" required>{candidates.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}</select></div>
+                <div className="ad-row">
+                  <div className="ad-field"><label htmlFor="tc1e">New owner&apos;s email (receives code 2)</label><input id="tc1e" name="new_email" type="email" required autoComplete="off" /></div>
+                  <div className="ad-field"><label htmlFor="tc1p">New owner&apos;s phone number</label><input id="tc1p" name="new_phone" type="tel" required autoComplete="off" /></div>
+                </div>
+              </ActionForm>
+              <h3 style={{ marginTop: 18 }}>Step 2: confirm with both codes</h3>
               <ActionForm action={transferOwnershipAction} submit="Transfer ownership">
                 <div className="ad-field"><label htmlFor="tc2">New owner</label><select id="tc2" name="target" required>{candidates.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}</select></div>
+                <div className="ad-row">
+                  <div className="ad-field"><label htmlFor="tc4">Code 1 (sent to your email)</label><input id="tc4" name="owner_code" type="text" inputMode="numeric" autoComplete="one-time-code" required /></div>
+                  <div className="ad-field"><label htmlFor="tc6">Code 2 (sent to the new owner)</label><input id="tc6" name="new_code" type="text" inputMode="numeric" autoComplete="off" required /></div>
+                </div>
                 <div className="ad-field"><label htmlFor="tc3">Your password</label><input id="tc3" name="password" type="password" autoComplete="current-password" required /></div>
-                {mailConfigured() && <div className="ad-field"><label htmlFor="tc4">Verification code from your email</label><input id="tc4" name="code" type="text" inputMode="numeric" /></div>}
                 <div className="ad-field"><label htmlFor="tc5">Type TRANSFER OWNERSHIP to confirm</label><input id="tc5" name="phrase" type="text" autoComplete="off" required /></div>
               </ActionForm>
             </>

@@ -1,20 +1,21 @@
-// Small helpers shared by API routes: best-effort rate limit, validation, safe JSON parsing.
-// NOTE: the rate limiter is per server instance (in memory). It slows casual abuse but is not a hard
-// guarantee on serverless; add Vercel Firewall rate-limiting or a shared store for strict limits.
+// Helpers shared by public API routes: shared rate limit, same-origin check, validation, safe JSON parsing.
 
-const hits = new Map<string, { count: number; reset: number }>();
+import { hit } from '@/server/ratelimit';
 
 export function clientIp(req: Request) {
-  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+  return req.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
 }
 
-export function rateLimited(req: Request, bucket: string, max: number, windowMs: number) {
-  const key = `${bucket}:${clientIp(req)}`;
-  const now = Date.now();
-  if (hits.size > 5000) for (const [k, v] of hits) if (v.reset < now) hits.delete(k);
-  const rec = hits.get(key);
-  if (!rec || rec.reset < now) { hits.set(key, { count: 1, reset: now + windowMs }); return false; }
-  return ++rec.count > max;
+/** Shared (database-backed) request limit. Fails open only if the limiter itself is down, so forms keep working. */
+export async function rateLimited(req: Request, bucket: string, max: number, windowMs: number) {
+  try { return await hit(`${bucket}:${clientIp(req)}`, max, Math.round(windowMs / 1000)); } catch { return false; }
+}
+
+/** Browsers always send Origin on cross-site POSTs. Reject any whose origin is not this site. */
+export function sameOrigin(req: Request) {
+  const origin = req.headers.get('origin');
+  if (!origin) return true; // non-browser clients (no cookies are involved on these public endpoints)
+  try { return new URL(origin).host === (req.headers.get('x-forwarded-host') || req.headers.get('host')); } catch { return false; }
 }
 
 export const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');

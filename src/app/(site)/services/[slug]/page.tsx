@@ -28,7 +28,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <Hero slot={s.videoSlot} compact>
         <span className="eyebrow" style={{ color: 'var(--sand)' }}>{s.audience === 'office' ? 'Office interiors' : 'Home interiors'}</span>
         <h1>{s.name} interior design</h1>

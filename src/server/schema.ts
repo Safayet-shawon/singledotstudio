@@ -1,5 +1,5 @@
 // Postgres schema for the management system. Applied automatically (idempotent) the first time the database is used.
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export const SCHEMA: string[] = [
   `CREATE TABLE IF NOT EXISTS schema_meta (id int PRIMARY KEY, version int NOT NULL)`,
@@ -243,6 +243,12 @@ export const SCHEMA: string[] = [
     published_by uuid REFERENCES users(id) ON DELETE SET NULL,
     note text,
     created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS rate_limits (
+    key text PRIMARY KEY,
+    fails int NOT NULL DEFAULT 0,
+    window_start timestamptz NOT NULL DEFAULT now(),
+    locked_until timestamptz
   )`,
   `CREATE TABLE IF NOT EXISTS settings (
     key text PRIMARY KEY,

@@ -12,3 +12,4 @@ data/leads.jsonl
 
 .vercel
 .env*
+SETUP-KEY.txt

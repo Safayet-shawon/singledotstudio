@@ -62,7 +62,6 @@ See `.env.example`. Set the same names in **Vercel > Project > Settings > Enviro
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Enables WhatsApp sharing (public by nature) |
 | `NEXT_PUBLIC_SITE_URL` | Canonical URL, sitemap |
 | `MUAPI_API_KEY` | Video generation (server/CLI only, never `NEXT_PUBLIC_`) |
-| `VIDEO_ADMIN_TOKEN` | Enables the admin-only `/api/video`; leave empty on production |
 
 **Leads on Vercel:** the filesystem is read-only there, so leads are delivered by email (`NOTIFY_TO`) only. With no inbox
 configured, the consultation form tells the visitor honestly that online requests are not enabled instead of showing a false
@@ -95,7 +94,7 @@ about -> `about`, services -> `services`, each service page -> its own slug.
 - Models are a strict allowlist in `src/lib/muapi.ts` (constraints copied from the Open Higgsfield catalog). Prompt, aspect ratio, duration and resolution are validated.
 - The submit call is never auto-retried (it costs money); polling retries transient errors with backoff and times out after 10 minutes.
 - Provider responses are not echoed to logs or clients.
-- `POST/GET /api/video` exists for admin use, is **404 unless `VIDEO_ADMIN_TOKEN` is set**, needs a bearer token, and is rate limited. It never downloads files (read-only filesystem); use the CLI to save outputs.
+- Video generation is a local CLI only (`npm run video`). There is no public video API.
 - **Compress before committing**: keep hero videos small (aim for under ~4 MB, 1080p, H.264). Install ffmpeg, e.g. `ffmpeg -i in.mp4 -vf scale=1920:-2 -an -crf 28 -movflags +faststart public/media/video/home.mp4`.
 - Verify each file plays in the browser before publishing. Check the model's cost in your Muapi dashboard first.
 
