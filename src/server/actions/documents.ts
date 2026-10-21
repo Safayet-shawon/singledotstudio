@@ -9,7 +9,8 @@ import { bad, fail, isDate, me, nextNumber, pad, s, UUID } from '../util';
 import { computeTotals, isInvoiceKind, normaliseDoc, typeInfo, DOC_TYPES, type DocData } from '../doc-math';
 import { buildDocumentPdf } from '../doc-pdf';
 import { getCompany } from '../settings';
-import { mailConfigured, sendMailX } from '@/lib/mail';
+import { leadInbox, mailConfigured, sendMailX } from '@/lib/mail';
+import { docEmail } from '../doc-mail';
 import type { R } from '@/components/admin/Forms';
 
 const allowed = async (u: User, type: string, act: DocAct) => docAllowed(u, type, act);
@@ -119,7 +120,7 @@ export async function approveDocumentAction(id: string): Promise<R> {
 async function renderPdf(d: DocRow, version: number) {
   const v = await q1<{ data: DocData }>(`SELECT data FROM document_versions WHERE document_id = $1 AND version = $2`, [d.id, version]);
   if (!v) throw bad('Unknown version.');
-  const client = d.client_id ? await q1<{ name: string; company: string | null; phone: string | null; email: string | null; address: string | null }>(`SELECT name, company, phone, email, address FROM clients WHERE id = $1`, [d.client_id]) : null;
+  const client = d.client_id ? await q1<{ name: string; company: string | null; phone: string | null; email: string | null; address: string | null; taxId: string | null }>(`SELECT name, company, phone, email, address, tax_id AS "taxId" FROM clients WHERE id = $1`, [d.client_id]) : null;
   const project = d.project_id ? await q1<{ name: string; code: string; location: string | null }>(`SELECT name, code, location FROM projects WHERE id = $1`, [d.project_id]) : null;
   const pdf = await buildDocumentPdf({ number: d.number, type: d.type, version, status: d.status, data: v.data, company: await getCompany(), client, project, paid: await paidOf(d.id) });
   return { pdf, client };
@@ -136,14 +137,24 @@ export async function emailDocumentAction(id: string): Promise<R> {
     const { pdf, client } = await renderPdf(d, d.current_version);
     if (!client?.email) throw bad('This client has no email address on file.');
     const co = await getCompany();
-    const m = await sendMailX({ to: client.email, subject: `${typeInfo(d.type).label} ${d.number} from ${co.name}`, text: `Hello ${client.name},\n\nPlease find ${d.number} attached.\n\n${co.name}`, attachments: [{ filename: `${d.number}.pdf`, content: pdf }] });
+    const total = num(d.total);
+    const dueRow = await q1<{ due: string | null }>(`SELECT data->>'dueDate' AS due FROM document_versions WHERE document_id = $1 AND version = $2`, [d.id, d.current_version]);
+    const label = typeInfo(d.type).label;
+    const mail = docEmail({ company: co, label, number: d.number, clientName: client.name, total, due: dueRow?.due ?? null, isInvoice: isInvoiceKind(d.type) });
+    const attachments = [{ filename: `${d.number}${d.current_version > 1 ? `-v${d.current_version}` : ''}.pdf`, content: pdf }];
+    const m = await sendMailX({ to: client.email, subject: `${label} ${d.number} from ${co.name}`, text: mail.text, html: mail.html, attachments, replyTo: co.email || undefined });
     await q(`INSERT INTO audit_log (actor_id, actor_name, action, entity, entity_id, detail) VALUES ($1,$2,'document.email_attempt','document',$3,$4)`, [u.id, u.name, id, JSON.stringify({ status: m.status, version: d.current_version })]);
     if (m.status !== 'sent') {
       throw bad(m.status === 'sample' || m.status === 'not_configured' ? 'Email delivery is not configured on this site, so nothing was sent. Download the PDF and send it yourself, then use "Mark as sent manually".' : 'The email provider rejected the message, so nothing was sent.');
     }
+    // Owner copy: the studio inbox if set, otherwise the Main Admin. Failure here never undoes the client delivery.
+    const ownerRow = await q1<{ email: string }>(`SELECT email FROM users WHERE is_owner AND status = 'active' LIMIT 1`);
+    const copyTo = leadInbox() || ownerRow?.email || null;
+    const copyMail = docEmail({ company: co, label, number: d.number, clientName: client.name, total, due: dueRow?.due ?? null, isInvoice: isInvoiceKind(d.type), copyNote: `Studio copy. This was sent to ${client.name} (${client.email}).` });
+    const copy = copyTo ? await sendMailX({ to: copyTo, subject: `Copy: ${label} ${d.number} sent to ${client.name}`, text: copyMail.text, html: copyMail.html, attachments }) : { status: 'not_configured' as const };
     await q(`UPDATE documents SET status = 'sent', sent_at = now(), sent_via = 'email', updated_at = now() WHERE id = $1`, [id]);
     revalidatePath(`/admin/documents/${id}`);
-    return { ok: true, message: `Emailed to ${client.email}.` };
+    return { ok: true, message: `Emailed to ${client.email}.${copy.status === 'sent' ? ' A copy was sent to the studio inbox.' : ' The studio copy could not be sent.'}` };
   } catch (e) { return fail(e); }
 }
 

@@ -31,7 +31,10 @@ export function DocBuilder({ action, initial, types, clients, projects, docId, t
             <select id="dp" name="project_id" defaultValue={projectId ?? ''}><option value="">None</option>{shownProjects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
         </div>
       )}
-      <div className="ad-field"><label htmlFor="ti">Title / subject</label><input id="ti" type="text" value={d.title} onChange={(e) => set({ title: e.target.value })} placeholder="e.g. Interior design for 3-bedroom apartment" /></div>
+      <div className="ad-row">
+        <div className="ad-field"><label htmlFor="ti">Title / subject</label><input id="ti" type="text" value={d.title} onChange={(e) => set({ title: e.target.value })} placeholder="e.g. Interior design for 3-bedroom apartment" /></div>
+        <div className="ad-field"><label htmlFor="rf">Client PO / work-order no. (optional)</label><input id="rf" type="text" value={d.reference ?? ''} onChange={(e) => set({ reference: e.target.value })} /></div>
+      </div>
       <div className="ad-row">
         <div className="ad-field"><label htmlFor="is">Issue date</label><input id="is" type="date" value={d.issueDate} onChange={(e) => set({ issueDate: e.target.value })} required /></div>
         <div className="ad-field"><label htmlFor="du">Valid until / due date</label><input id="du" type="date" value={d.dueDate ?? ''} onChange={(e) => set({ dueDate: e.target.value || null })} /></div>

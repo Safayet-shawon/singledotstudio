@@ -1,134 +1,38 @@
-import PDFDocument from 'pdfkit';
+import { buildDocumentPdf } from '@/server/doc-pdf';
+import { getCompany } from '@/server/settings';
 import { formatMoney, type Estimate, type Pricing } from './estimate';
-import { site } from '@/config/site';
-
-const INK = '#2a2622';
-const MUTED = '#7b7268';
-const OLIVE = '#6b6b4a';
-const LINE = '#ddd3c3';
 
 export interface PdfContact { name: string; phone: string; email: string; address?: string }
 
-export function buildEstimatePdf(args: { estimate: Estimate; contact: PdfContact; pricing: Pricing; reference: string; date: Date }): Promise<Buffer> {
+const TYPE = { apartment: 'Apartment', villa: 'Independent house / villa', office: 'Office' } as const;
+const day = (d: Date) => d.toISOString().slice(0, 10);
+
+/**
+ * The calculator's quotation uses the same branded template as every other document, so customers always receive
+ * one consistent, professional layout. Lines carry the per-space amounts from the estimate; the range is stated in the notes.
+ */
+export async function buildEstimatePdf(args: { estimate: Estimate; contact: PdfContact; pricing: Pricing; reference: string; date: Date }): Promise<Buffer> {
   const { estimate: e, contact, pricing, reference, date } = args;
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ size: 'A4', margin: 54, info: { Title: `Budget estimate ${reference}`, Author: site.brand.name } });
-    const chunks: Buffer[] = [];
-    doc.on('data', (c: Buffer) => chunks.push(c));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', reject);
-
-    const m = (n: number) => formatMoney(n, pricing, true);
-    const L = doc.page.margins.left;
-    const W = doc.page.width - L - doc.page.margins.right;
-    const rule = () => { doc.moveTo(L, doc.y).lineTo(L + W, doc.y).strokeColor(LINE).lineWidth(0.7).stroke(); doc.moveDown(0.6); };
-    const kv = (k: string, v: string) => {
-      const y = doc.y;
-      doc.font('Helvetica').fontSize(9.5).fillColor(MUTED).text(k, L, y, { width: 110 });
-      doc.fillColor(INK).text(v, L + 115, y, { width: W - 115 });
-    };
-    const ensure = (h: number) => { if (doc.y + h > doc.page.height - 80) doc.addPage(); };
-
-    // Header (replaceable wordmark)
-    doc.font('Helvetica-Bold').fontSize(20).fillColor(INK).text(site.brand.name.toUpperCase(), L, 54, { characterSpacing: 3 });
-    doc.font('Helvetica').fontSize(9).fillColor(OLIVE).text(site.brand.tagline.toUpperCase(), { characterSpacing: 2 });
-    doc.font('Helvetica').fontSize(9).fillColor(MUTED).text(`Reference ${reference}`, L, 54, { width: W, align: 'right' });
-    doc.text(date.toISOString().slice(0, 10), L, 66, { width: W, align: 'right' });
-    doc.y = 100;
-    rule();
-    doc.font('Helvetica-Bold').fontSize(15).fillColor(INK).text('Interior design quotation');
-    doc.moveDown(0.8);
-
-    kv('Prepared for', contact.name);
-    kv('Phone', contact.phone);
-    kv('Email', contact.email);
-    if (contact.address) kv('Project address', contact.address);
-    doc.moveDown(0.4);
-    const typeLabel = { apartment: 'Apartment', villa: 'Independent house / villa', office: 'Office' }[e.input.propertyType];
-    kv('Property', e.input.propertyType === 'office' ? `${typeLabel}, ${e.input.sqft} sq ft` : `${typeLabel}, ${e.input.bhk} BHK, ${e.input.sqft} sq ft`);
-    const chosen = e.input.package === 'bestfit' ? e.tier : e.input.package;
-    kv('Package', `${pricing.packages[e.input.package].label}${e.input.package === 'bestfit' ? ` (recommended: ${pricing.packages[e.tier].label})` : ''}`);
-    doc.moveDown(0.8);
-    // Selected package details
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(INK).text(`Your package: ${pricing.packages[chosen].label}`, L);
-    doc.font('Helvetica').fontSize(9.5).fillColor(MUTED).text(pricing.packages[chosen].scope, { width: W });
-    pricing.packages[e.input.package].features.forEach((f) => doc.text(`- ${f}`, { width: W }));
-    doc.moveDown(0.8);
-
-    // Table
-    const col = { a: L, q: L + 240, ar: L + 290, amt: L + 380 };
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(MUTED);
-    const hy = doc.y;
-    doc.text('SPACE / ITEM', col.a, hy); doc.text('QTY', col.q, hy); doc.text('AREA (SQ FT)', col.ar, hy);
-    doc.text('ESTIMATE', col.amt, hy, { width: L + W - col.amt, align: 'right' });
-    doc.moveDown(0.5); rule();
-    doc.font('Helvetica').fontSize(10).fillColor(INK);
-    for (const l of e.lines) {
-      ensure(24);
-      const y = doc.y;
-      doc.text(l.label, col.a, y, { width: 230 });
-      const rowEnd = doc.y;
-      doc.text(String(l.qty), col.q, y); doc.text(l.area === null ? '-' : String(l.area), col.ar, y);
-      doc.text(m(l.amount), col.amt, y, { width: L + W - col.amt, align: 'right' });
-      doc.y = Math.max(rowEnd, y + 14) + 4;
-    }
-    for (const x of e.extras) {
-      ensure(24);
-      const y = doc.y;
-      doc.text(`Extra: ${x.label}`, col.a, y, { width: 230 });
-      doc.text(m(x.amount), col.amt, y, { width: L + W - col.amt, align: 'right' });
-      doc.y = y + 18;
-    }
-    rule();
-    const sum = (k: string, v: string, bold = false) => {
-      const y = doc.y;
-      doc.font(bold ? 'Helvetica-Bold' : 'Helvetica').fillColor(INK).text(k, col.ar, y, { width: 90 });
-      doc.text(v, col.amt, y, { width: L + W - col.amt, align: 'right' });
-      doc.y = y + 16;
-    };
-    sum('Subtotal', m(e.subtotal));
-    if (pricing.tax.enabled) sum(`${pricing.tax.label} (${pricing.tax.percent}%)`, m(e.tax));
-    sum('Central estimate', m(e.total), true);
-    doc.moveDown(0.8);
-    ensure(80);
-    doc.font('Helvetica').fontSize(9.5).fillColor(MUTED).text('Estimated budget range', L, doc.y);
-    doc.font('Helvetica-Bold').fontSize(19).fillColor(INK).text(`${m(e.low)} to ${m(e.high)}`);
-    doc.moveDown(1);
-
-    // Other packages, small
-    ensure(90);
-    doc.font('Helvetica-Bold').fontSize(9).fillColor(MUTED).text('OTHER PACKAGES', L, doc.y, { characterSpacing: 1 });
-    doc.font('Helvetica').fontSize(8.5);
-    (['essential', 'premium', 'luxury', 'bestfit'] as const).filter((k) => k !== chosen && k !== e.input.package).forEach((k) => {
-      const p = pricing.packages[k];
-      const tierPrice = k === 'bestfit' ? '' : `  |  about ${m(e.tierTotals[k])}`;
-      doc.fillColor(INK).text(`${p.label}`, L, doc.y, { continued: true }).fillColor(MUTED).text(`  ${p.tagline}${tierPrice}`, { width: W });
-    });
-    doc.moveDown(0.8);
-
-    if (e.rationale.length) {
-      ensure(60);
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(INK).text('Why this package');
-      doc.font('Helvetica').fontSize(9).fillColor(MUTED);
-      e.rationale.forEach((r) => doc.text(`- ${r}`, { width: W }));
-      doc.moveDown(0.8);
-    }
-    const list = (title: string, items: string[]) => {
-      ensure(30 + items.length * 14);
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(INK).text(title, L);
-      doc.font('Helvetica').fontSize(9).fillColor(MUTED);
-      items.forEach((t) => doc.text(`- ${t}`, { width: W }));
-      doc.moveDown(0.8);
-    };
-    list('Assumptions', pricing.assumptions);
-    list('Exclusions', pricing.exclusions);
-    list('Next steps', ['Book a consultation so we can confirm scope and measure the space.', 'Receive a detailed design proposal and a final quotation.']);
-    doc.font('Helvetica-Oblique').fontSize(8.5).fillColor(MUTED).text(
-      'This document is an indicative quotation and not a binding contract. A final quotation follows consultation and site measurement.' + (pricing.placeholder ? " Rates used are placeholder values pending the studio's confirmed pricing." : ''), { width: W });
-    doc.moveDown(0.8);
-    const c = site.contact;
-    doc.font('Helvetica').fontSize(8.5).fillColor(MUTED).text(
-      `Contact: ${c.phone ?? '[phone to be added]'}  |  ${c.email ?? '[email to be added]'}  |  ${c.address ?? '[address to be added]'}`, { width: W });
-    doc.end();
+  const company = await getCompany();
+  const chosen = e.input.package === 'bestfit' ? e.tier : e.input.package;
+  const pk = pricing.packages[chosen];
+  const m = (n: number) => formatMoney(n, pricing, true);
+  const valid = new Date(date.getTime() + company.quotationValidDays * 86_400_000);
+  const lines = [
+    ...e.lines.map((l) => ({ description: `${l.label}${l.qty > 1 ? ` (${l.qty})` : ''}${l.area ? `, about ${l.area} sq ft` : ''}`, qty: 1, unit: 'lot', price: l.amount })),
+    ...e.extras.map((x) => ({ description: `Add-on: ${x.label}`, qty: 1, unit: 'lot', price: x.amount })),
+  ];
+  const prop = e.input.propertyType === 'office' ? `Office, ${e.input.sqft} sq ft` : `${TYPE[e.input.propertyType]}, ${e.input.bhk} BHK, ${e.input.sqft} sq ft`;
+  return buildDocumentPdf({
+    number: reference, type: 'quotation', version: 1, status: 'sent', company,
+    client: { name: contact.name, company: null, phone: contact.phone, email: contact.email, address: contact.address ?? null },
+    project: null,
+    data: {
+      title: `${pk.label} package: ${prop}`, reference: '', issueDate: day(date), dueDate: day(valid), lines,
+      discountKind: 'none', discountValue: 0, taxLabel: pricing.tax.label, taxPercent: pricing.tax.enabled ? pricing.tax.percent : 0,
+      paymentTerms: company.defaultPaymentTerms,
+      notes: `${pk.scope} Indicative budget range: ${m(e.low)} to ${m(e.high)}. This estimate is based on the details you entered and a standard layout; the final quotation follows consultation and site measurement.`,
+      terms: `Assumptions: ${pricing.assumptions.join(' ')} Exclusions: ${pricing.exclusions.join('; ')}.`,
+    },
   });
 }

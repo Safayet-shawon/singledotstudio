@@ -16,8 +16,8 @@ export async function createClientAction(_: R, fd: FormData): Promise<R> {
     const name = s(fd, 'name', 100), email = s(fd, 'email', 120);
     if (name.length < 2) throw bad('Enter the client name.');
     if (email && !EMAIL.test(email)) throw bad('Enter a valid email address.');
-    const r = await q1<{ id: string }>(`INSERT INTO clients (name, company, phone, email, address, notes, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
-      [name, s(fd, 'company', 100) || null, s(fd, 'phone', 30) || null, email || null, s(fd, 'address', 300) || null, s(fd, 'notes', 2000) || null, u.id]);
+    const r = await q1<{ id: string }>(`INSERT INTO clients (name, company, phone, email, address, notes, tax_id, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+      [name, s(fd, 'company', 100) || null, s(fd, 'phone', 30) || null, email || null, s(fd, 'address', 300) || null, s(fd, 'notes', 2000) || null, s(fd, 'tax_id', 40) || null, u.id]);
     await audit(u, 'client.created', 'client', r!.id, { name });
     revalidatePath('/admin/clients');
     return { ok: true, redirect: `/admin/clients/${r!.id}` };
@@ -36,7 +36,7 @@ export async function updateClientAction(_: R, fd: FormData): Promise<R> {
     if (can(u, 'client.view_contact')) {
       const email = s(fd, 'email', 120);
       if (email && !EMAIL.test(email)) throw bad('Enter a valid email address.');
-      await q(`UPDATE clients SET name=$2, company=$3, phone=$4, email=$5, address=$6, status=$7, notes=$8 WHERE id=$1`, [id, name, s(fd, 'company', 100) || null, s(fd, 'phone', 30) || null, email || null, s(fd, 'address', 300) || null, status, s(fd, 'notes', 2000) || null]);
+      await q(`UPDATE clients SET name=$2, company=$3, phone=$4, email=$5, address=$6, status=$7, notes=$8, tax_id=$9 WHERE id=$1`, [id, name, s(fd, 'company', 100) || null, s(fd, 'phone', 30) || null, email || null, s(fd, 'address', 300) || null, status, s(fd, 'notes', 2000) || null, s(fd, 'tax_id', 40) || null]);
     } else {
       // Without contact access, only non-contact fields can change; contact details stay untouched.
       await q(`UPDATE clients SET name=$2, company=$3, status=$4, notes=$5 WHERE id=$1`, [id, name, s(fd, 'company', 100) || null, status, s(fd, 'notes', 2000) || null]);

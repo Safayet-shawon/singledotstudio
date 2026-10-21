@@ -20,7 +20,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const v = await q1<{ data: DocData }>(`SELECT data FROM document_versions WHERE document_id = $1 AND version = $2`, [id, want]);
   if (!v) return new Response('Not found', { status: 404 });
   const [client, project, paid] = await Promise.all([
-    d.client_id ? q1<{ name: string; company: string | null; phone: string | null; email: string | null; address: string | null }>(`SELECT name, company, phone, email, address FROM clients WHERE id = $1`, [d.client_id]) : null,
+    d.client_id ? q1<{ name: string; company: string | null; phone: string | null; email: string | null; address: string | null; taxId: string | null }>(`SELECT name, company, phone, email, address, tax_id AS "taxId" FROM clients WHERE id = $1`, [d.client_id]) : null,
     d.project_id ? q1<{ name: string; code: string; location: string | null }>(`SELECT name, code, location FROM projects WHERE id = $1`, [d.project_id]) : null,
     q1<{ n: string }>(`SELECT coalesce(sum(amount),0)::text AS n FROM payments WHERE document_id = $1`, [id]),
   ]);

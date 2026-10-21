@@ -3,6 +3,7 @@
 export interface Line { description: string; qty: number; unit: string; price: number }
 export interface DocData {
   title: string;
+  reference: string;           // client PO / work-order number (optional)
   issueDate: string;           // YYYY-MM-DD
   dueDate: string | null;      // invoice due date or quotation validity
   lines: Line[];
@@ -63,7 +64,7 @@ export function normaliseDoc(raw: unknown): { error: string } | { data: DocData 
   if (taxPercent > 100) return { error: 'Tax cannot exceed 100%.' };
   const issueDate = date(o.issueDate);
   if (!issueDate) return { error: 'Choose an issue date.' };
-  return { data: { title: str(o.title, 160), issueDate, dueDate: date(o.dueDate) || null, lines, discountKind: kind, discountValue, taxLabel: str(o.taxLabel, 20) || 'Tax', taxPercent, paymentTerms: str(o.paymentTerms, 600), notes: str(o.notes, 2000), terms: str(o.terms, 3000) } };
+  return { data: { title: str(o.title, 160), reference: str(o.reference, 60), issueDate, dueDate: date(o.dueDate) || null, lines, discountKind: kind, discountValue, taxLabel: str(o.taxLabel, 20) || 'Tax', taxPercent, paymentTerms: str(o.paymentTerms, 600), notes: str(o.notes, 2000), terms: str(o.terms, 3000) } };
 }
 
 /** Status shown to people: stored status for the workflow, payments for money status. Never inferred from "sent". */
@@ -79,4 +80,4 @@ export function displayStatus(type: string, stored: string, total: number, paid:
 
 export const STATUS_LABEL: Record<string, string> = { draft: 'Draft', pending: 'Pending Approval', approved: 'Approved', sent: 'Sent', partial: 'Partially Paid', paid: 'Paid', overdue: 'Overdue', cancelled: 'Cancelled' };
 
-export const emptyDoc = (today: string): DocData => ({ title: '', issueDate: today, dueDate: null, lines: [{ description: '', qty: 1, unit: 'pcs', price: 0 }], discountKind: 'none', discountValue: 0, taxLabel: 'VAT', taxPercent: 0, paymentTerms: '', notes: '', terms: '' });
+export const emptyDoc = (today: string): DocData => ({ title: '', reference: '', issueDate: today, dueDate: null, lines: [{ description: '', qty: 1, unit: 'pcs', price: 0 }], discountKind: 'none', discountValue: 0, taxLabel: 'VAT', taxPercent: 0, paymentTerms: '', notes: '', terms: '' });

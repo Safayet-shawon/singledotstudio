@@ -21,6 +21,18 @@ export default async function Settings() {
           <div className="ad-row"><div className="ad-field"><label htmlFor="n">Company name</label><input id="n" name="name" type="text" defaultValue={co.name} /></div><div className="ad-field"><label htmlFor="t">Tagline</label><input id="t" name="tagline" type="text" defaultValue={co.tagline} /></div></div>
           <div className="ad-row three"><div className="ad-field"><label htmlFor="p">Phone</label><input id="p" name="phone" type="text" defaultValue={co.phone} /></div><div className="ad-field"><label htmlFor="e">Email</label><input id="e" name="email" type="text" defaultValue={co.email} /></div><div className="ad-field"><label htmlFor="w">Website</label><input id="w" name="website" type="text" defaultValue={co.website} /></div></div>
           <div className="ad-field"><label htmlFor="a">Address</label><input id="a" name="address" type="text" defaultValue={co.address} /></div>
+          <div className="ad-row three">
+            <div className="ad-field"><label htmlFor="tl2">Trade licence no.</label><input id="tl2" name="tradeLicense" type="text" defaultValue={co.tradeLicense} /></div>
+            <div className="ad-field"><label htmlFor="tin">TIN</label><input id="tin" name="tin" type="text" defaultValue={co.tin} /></div>
+            <div className="ad-field"><label htmlFor="bin">BIN (VAT registration)</label><input id="bin" name="bin" type="text" defaultValue={co.bin} /></div>
+          </div>
+          <div className="ad-row three">
+            <div className="ad-field"><label htmlFor="sn">Signatory name</label><input id="sn" name="signatoryName" type="text" defaultValue={co.signatoryName} /></div>
+            <div className="ad-field"><label htmlFor="st">Signatory title</label><input id="st" name="signatoryTitle" type="text" defaultValue={co.signatoryTitle} /></div>
+            <div className="ad-field"><label htmlFor="qv">Quotation valid for (days)</label><input id="qv" name="quotationValidDays" type="number" min="1" max="365" defaultValue={co.quotationValidDays} /></div>
+          </div>
+          <div className="ad-field"><label htmlFor="mb">Mobile banking (bKash / Nagad / Rocket numbers)</label><input id="mb" name="mobileBanking" type="text" defaultValue={co.mobileBanking} /></div>
+          <div className="ad-field"><label htmlFor="inf">Footer thank-you line</label><input id="inf" name="invoiceFooter" type="text" defaultValue={co.invoiceFooter} /></div>
           <div className="ad-field"><label htmlFor="b">Bank / payment details (printed on invoices)</label><textarea id="b" name="bank" defaultValue={co.bank} style={{ minHeight: 70 }} /></div>
           <div className="ad-row"><div className="ad-field"><label htmlFor="tl">Default tax label</label><input id="tl" name="taxLabel" type="text" defaultValue={co.taxLabel} /></div><div className="ad-field"><label htmlFor="tp">Default tax %</label><input id="tp" name="taxPercent" type="number" min="0" max="100" step="any" defaultValue={co.taxPercent} /></div></div>
           <div className="ad-field"><label htmlFor="pt">Default payment terms</label><textarea id="pt" name="defaultPaymentTerms" defaultValue={co.defaultPaymentTerms} style={{ minHeight: 70 }} /></div>

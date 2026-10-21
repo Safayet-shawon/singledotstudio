@@ -61,7 +61,7 @@ export async function saveCompanyAction(_: R, fd: FormData): Promise<R> {
     const tax = Number(s(fd, 'taxPercent', 6) || 0);
     if (!Number.isFinite(tax) || tax < 0 || tax > 100) throw bad('Tax must be between 0 and 100.');
     await saveCompany({ ...cur, name: s(fd, 'name', 80) || cur.name, tagline: s(fd, 'tagline', 80), address: s(fd, 'address', 240), phone: s(fd, 'phone', 40), email: s(fd, 'email', 120), website: s(fd, 'website', 120),
-      bank: s(fd, 'bank', 400), defaultTerms: s(fd, 'defaultTerms', 1500), defaultPaymentTerms: s(fd, 'defaultPaymentTerms', 500), taxLabel: s(fd, 'taxLabel', 20) || 'VAT', taxPercent: tax });
+      bank: s(fd, 'bank', 400), mobileBanking: s(fd, 'mobileBanking', 200), tradeLicense: s(fd, 'tradeLicense', 60), tin: s(fd, 'tin', 40), bin: s(fd, 'bin', 40), signatoryName: s(fd, 'signatoryName', 80), signatoryTitle: s(fd, 'signatoryTitle', 80) || 'Authorised signatory', quotationValidDays: Math.min(365, Math.max(1, Math.round(Number(s(fd, 'quotationValidDays', 4)) || 15))), invoiceFooter: s(fd, 'invoiceFooter', 200), defaultTerms: s(fd, 'defaultTerms', 1500), defaultPaymentTerms: s(fd, 'defaultPaymentTerms', 500), taxLabel: s(fd, 'taxLabel', 20) || 'VAT', taxPercent: tax });
     await audit(u, 'settings.company_saved', 'settings', 'company');
     revalidatePath('/admin/settings');
     return { ok: true, message: 'Company details saved. New PDFs use them.' };

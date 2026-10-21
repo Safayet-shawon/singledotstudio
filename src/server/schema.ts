@@ -1,5 +1,5 @@
 // Postgres schema for the management system. Applied automatically (idempotent) the first time the database is used.
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export const SCHEMA: string[] = [
   `CREATE TABLE IF NOT EXISTS schema_meta (id int PRIMARY KEY, version int NOT NULL)`,
@@ -47,6 +47,7 @@ export const SCHEMA: string[] = [
     created_by uuid REFERENCES users(id) ON DELETE SET NULL,
     created_at timestamptz NOT NULL DEFAULT now()
   )`,
+  `ALTER TABLE clients ADD COLUMN IF NOT EXISTS tax_id text`,
   `CREATE TABLE IF NOT EXISTS client_access (
     client_id uuid NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,

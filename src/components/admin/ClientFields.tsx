@@ -1,4 +1,4 @@
-export interface ClientVals { name?: string; company?: string | null; phone?: string | null; email?: string | null; address?: string | null; notes?: string | null; status?: string }
+export interface ClientVals { tax_id?: string | null; name?: string; company?: string | null; phone?: string | null; email?: string | null; address?: string | null; notes?: string | null; status?: string }
 
 export function ClientFields({ v, contact }: { v?: ClientVals; contact: boolean }) {
   return (
@@ -13,7 +13,10 @@ export function ClientFields({ v, contact }: { v?: ClientVals; contact: boolean 
             <div className="ad-field"><label htmlFor="cp">Phone</label><input id="cp" name="phone" type="tel" defaultValue={v?.phone ?? ''} /></div>
             <div className="ad-field"><label htmlFor="ce">Email</label><input id="ce" name="email" type="email" defaultValue={v?.email ?? ''} /></div>
           </div>
-          <div className="ad-field"><label htmlFor="ca">Address</label><input id="ca" name="address" type="text" defaultValue={v?.address ?? ''} /></div>
+          <div className="ad-row">
+            <div className="ad-field"><label htmlFor="ca">Billing address</label><input id="ca" name="address" type="text" defaultValue={v?.address ?? ''} /></div>
+            <div className="ad-field"><label htmlFor="ct">BIN / TIN (business clients)</label><input id="ct" name="tax_id" type="text" defaultValue={v?.tax_id ?? ''} /></div>
+          </div>
         </>
       ) : <p className="muted small">Contact details are restricted for your account.</p>}
       <div className="ad-row">
