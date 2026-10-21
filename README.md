@@ -111,3 +111,16 @@ Or with the CLI: `npm i -g vercel && vercel login && vercel link && vercel --pro
 ## Testing
 
 `npm run lint` (tsc), `npm test` (pricing engine), `npm run build`. Browser behaviour (gallery autoscroll, hover pause, drag, calculator flow, form validation, once-only prompt, mobile drawer) was checked with an automated Chrome script during development; that script is not part of the repository.
+
+
+## Studio OS (admin panel)
+
+`/admin` is a private management system: employees with individually granted permissions, projects, tasks with review workflow,
+clients, quotations and invoices (PDF, version history, payments in BDT), expenses, a website CMS, notifications and an
+append-only audit log. It uses Postgres (Neon via the Vercel Marketplace) and a private Vercel Blob store.
+
+- First run: open `/admin/setup`, enter the `SETUP_TOKEN` from the server environment and create the Main Admin. The page disappears once an owner exists.
+- Employees are created from **Employees > Create employee account** and receive a one-time link to set their own password.
+- Every page, action and download re-checks permissions and record-level access on the server (`src/server/access.ts`).
+- Local development without a cloud database: `LOCAL_DB=pglite npm run dev` (embedded Postgres in the OS temp folder).
+- Email: without SMTP settings nothing is delivered and the UI says so; manual-send links are shown instead.

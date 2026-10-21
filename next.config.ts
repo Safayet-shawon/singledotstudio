@@ -1,11 +1,13 @@
 import type { NextConfig } from 'next';
 
 const config: NextConfig = {
-  serverExternalPackages: ['pdfkit', 'nodemailer'],
+  serverExternalPackages: ['pdfkit', 'nodemailer', '@electric-sql/pglite'],
   outputFileTracingIncludes: {
     '/api/estimate': ['./node_modules/pdfkit/js/data/**/*'],
+    '/admin/documents/[id]/pdf': ['./node_modules/pdfkit/js/data/**/*'],
   },
   poweredByHeader: false,
+  experimental: { serverActions: { bodySizeLimit: '5mb' } },
   async headers() {
     return [
       {

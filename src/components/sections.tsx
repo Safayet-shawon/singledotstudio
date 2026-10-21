@@ -7,7 +7,8 @@ import { ServicesSwitcher, type ServiceCard } from './ServicesSwitcher';
 import { ConsultationForm } from './ConsultationForm';
 import { Stats } from './Stats';
 import { OpenBudgetButton } from './BudgetProvider';
-import { services, projects, site, whyUs, type Project, type Service } from '@/config/site';
+import { services, site, whyUs, type Project, type Service } from '@/config/site';
+import { getContent } from '@/server/cms';
 import { formatMoney } from '@/lib/estimate';
 import { pricing } from '@/lib/pricing';
 
@@ -24,7 +25,8 @@ export function ProjectCard({ p }: { p: Project }) {
   );
 }
 
-export function GallerySection({ service, heading = 'Our projects' }: { service?: string; heading?: string }) {
+export async function GallerySection({ service, heading = 'Our projects' }: { service?: string; heading?: string }) {
+  const projects = (await getContent()).portfolio;
   const list = service ? projects.filter((p) => p.service === service) : projects;
   const cards: GalleryCard[] = list.map((p) => ({ id: p.slug, category: p.category, node: <ProjectCard p={p} /> }));
   return (
@@ -43,24 +45,25 @@ export function GallerySection({ service, heading = 'Our projects' }: { service?
   );
 }
 
-function ServiceCardNode({ s, i }: { s: Service; i: number }) {
+function ServiceCardNode({ s, i, intro }: { s: Service; i: number; intro: string }) {
   return (
     <Link href={`/services/${s.slug}`} className="svc">
       <div className="media"><Photo slot={`service-${s.slug}`} alt={`${s.name} interior design`} sizes={i < 2 ? '(max-width: 820px) 100vw, 50vw' : '(max-width: 820px) 100vw, 33vw'} /></div>
       <div className="svc__body">
         <h3>{s.name}</h3>
-        <p>{s.intro}</p>
+        <p>{intro}</p>
         <span className="more">Explore {s.short.toLowerCase()} →</span>
       </div>
     </Link>
   );
 }
 
-export function ServicesSection() {
+export async function ServicesSection() {
+  const intros = (await getContent()).services;
   const home = services.filter((s) => s.audience === 'home');
   const cards: ServiceCard[] = [
-    ...home.map((s, i) => ({ slug: s.slug, audience: 'home' as const, node: <ServiceCardNode s={s} i={i} /> })),
-    ...services.filter((s) => s.audience === 'office').map((s, i) => ({ slug: s.slug, audience: 'office' as const, node: <ServiceCardNode s={s} i={i} /> })),
+    ...home.map((s, i) => ({ slug: s.slug, audience: 'home' as const, node: <ServiceCardNode s={s} i={i} intro={intros[s.slug]?.intro ?? s.intro} /> })),
+    ...services.filter((s) => s.audience === 'office').map((s, i) => ({ slug: s.slug, audience: 'office' as const, node: <ServiceCardNode s={s} i={i} intro={intros[s.slug]?.intro ?? s.intro} /> })),
   ];
   const office = services.find((s) => s.slug === 'office')!;
   return (
@@ -77,15 +80,15 @@ export function ServicesSection() {
   );
 }
 
-export function OwnerQuote() {
-  const o = site.owner;
+export async function OwnerQuote() {
+  const o = (await getContent()).founder;
   return (
     <section className="section" aria-label="Founder’s note">
       <div className="container">
         <Reveal>
           <figure className="owner-card">
             <div className="owner-card__photo">
-              {o.portrait ? <img src={o.portrait} alt={`Portrait of ${o.name}`} /> : <Photo slot="owner-portrait" alt="Portrait of the studio founder" label="owner portrait" sizes="(max-width: 820px) 80vw, 380px" />}
+              <Photo slot="owner-portrait" alt={`Portrait of ${o.name}`} label="owner portrait" sizes="(max-width: 820px) 80vw, 380px" />
               <span className="owner-card__badge">Founder</span>
             </div>
             <div className="owner-card__body">
@@ -105,11 +108,13 @@ export function OwnerQuote() {
   );
 }
 
-export function StatsSection() {
+export async function StatsSection() {
+  const st = (await getContent()).stats;
+  const stats = site.stats.map((x) => ({ ...x, value: (st as Record<string, number | null>)[x.key] ?? null }));
   return (
     <section className="section section--dark" aria-label="Studio in numbers">
       <div className="container">
-        <Reveal><Stats stats={site.stats} /></Reveal>
+        <Reveal><Stats stats={stats} /></Reveal>
       </div>
     </section>
   );
@@ -138,8 +143,9 @@ export function WhySection() {
 
 const tbd = (v: string | null, label: string) => (v ? v : <span className="tbd">[{label} to be added]</span>);
 
-export function ConsultSection({ defaultService, id = 'consultation' }: { defaultService?: string; id?: string }) {
-  const c = site.contact;
+export async function ConsultSection({ defaultService, id = 'consultation' }: { defaultService?: string; id?: string }) {
+  const raw = (await getContent()).contact;
+  const c = { phone: raw.phone || null, email: raw.email || null, address: raw.address || null };
   return (
     <section className="section section--cream" id={id} aria-labelledby="consult-h">
       <div className="container consult">

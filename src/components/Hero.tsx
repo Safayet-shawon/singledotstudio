@@ -1,15 +1,16 @@
 import type { ReactNode } from 'react';
-import { findImage, findVideo } from '@/lib/media';
+import { findVideo } from '@/lib/media';
+import { resolveImage } from '@/server/cms-image';
 import { HeroVideo } from './HeroVideo';
 import { HeroCarousel } from './HeroCarousel';
 import { HeroWaves } from './HeroWaves';
 
 const showNotes = process.env.NEXT_PUBLIC_SHOW_PLACEHOLDER_NOTES !== 'false';
 
-export function Hero({ slot, compact, children, aside, slides }: { slot: string; compact?: boolean; children: ReactNode; aside?: ReactNode; slides?: string[] }) {
+export async function Hero({ slot, compact, children, aside, slides }: { slot: string; compact?: boolean; children: ReactNode; aside?: ReactNode; slides?: string[] }) {
   const video = findVideo(slot);
-  const poster = findImage(`${slot}-poster`);
-  const photos = (slides ?? []).map((n) => findImage(n)).filter((x): x is string => !!x);
+  const poster = await resolveImage(`${slot}-poster`);
+  const photos = (await Promise.all((slides ?? []).map((n) => resolveImage(n)))).filter((x): x is string => !!x);
   return (
     <section className={`hero${compact ? ' hero--compact' : ''}`} aria-label="Introduction">
       <div className="hero__media">

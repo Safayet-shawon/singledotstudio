@@ -1,18 +1,20 @@
 import Link from 'next/link';
 import { Brand } from './Brand';
 import { services, site } from '@/config/site';
+import { getContent } from '@/server/cms';
 
 const tbd = (v: string | null, label: string) => (v ? v : <span className="tbd">[{label} to be added]</span>);
 
-export function Footer() {
-  const c = site.contact;
+export async function Footer() {
+  const content = await getContent();
+  const c = { phone: content.contact.phone || null, email: content.contact.email || null, address: content.contact.address || null };
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer__grid">
           <div>
             <Brand />
-            <p style={{ maxWidth: '34ch' }}>{site.heroQuote}</p>
+            <p style={{ maxWidth: '34ch' }}>{content.footer.blurb}</p>
           </div>
           <div>
             <h4>Explore</h4>
