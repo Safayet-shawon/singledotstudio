@@ -232,17 +232,32 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
 
         {s.step === 4 && (
           <div className="cqw-details">
-            <aside className="cqw-sum" aria-label="Your selection">
-              <span className="cqw-sum__k">Your selection</span>
-              <h3>{TYPE_LABEL[type ?? 'apartment']}</h3>
-              <dl>
-                <dt>Size</dt><dd>{sizeLabel}{sizeLabel.endsWith('sq ft') ? '' : ' sq ft'}{resid && bhk ? `, ${bhk} BHK` : ''}</dd>
-                <dt>Rooms</dt><dd>{roomDefs.filter((d) => s.items[d.key]).map((d) => d.label.replace(' (whole home)', '').replace(' (per unit)', '')).join(', ') || '-'}</dd>
-                <dt>Package</dt><dd>{s.pkg === 'bestfit' ? 'Recommended for you' : s.pkg ? pricing.packages[s.pkg].label : '-'}</dd>
-              </dl>
-              <p>Your quotation is emailed to you and to the studio. No payment is taken.</p>
+            <aside className="cqw-art" aria-hidden="true">
+              <div className="cqw-art__top">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-mark.svg" alt="" width={34} height={42} />
+                <p>Almost there.<br />Let&apos;s shape <b>your space</b>.</p>
+              </div>
+              <svg className="cqw-scene" viewBox="0 0 420 330" role="presentation">
+                <ellipse className="sc-rug" cx="250" cy="318" rx="130" ry="10" />
+                <g className="sc-arch">
+                  <path className="sc-win" d="M40 318V160c0-62 38-104 90-120 52 16 90 58 90 120v158z" />
+                  <path className="sc-arch__line" pathLength="1" d="M40 318V160c0-62 38-104 90-120 52 16 90 58 90 120v158" />
+                  <path className="sc-pane" d="M130 52v266M62 190h136" />
+                </g>
+                <circle className="sc-dot" cx="130" cy="22" r="13" />
+                <g className="sc-frame"><rect x="262" y="96" width="78" height="56" rx="3" /><path d="M270 144l20-22 14 14 12-12 24 20z" /><circle cx="318" cy="112" r="5" /></g>
+                <g className="sc-chair"><rect className="sc-back" x="262" y="188" width="86" height="64" rx="22" /><rect className="sc-seat" x="250" y="236" width="110" height="38" rx="14" /><rect className="sc-arm" x="244" y="222" width="20" height="52" rx="10" /><rect className="sc-arm" x="346" y="222" width="20" height="52" rx="10" /><path className="sc-leg" d="M268 274l-6 40M342 274l6 40" /></g>
+                <g className="sc-lamp"><circle className="sc-glow" cx="396" cy="170" r="34" /><path className="sc-leg" d="M396 318V182" /><path className="sc-shade" d="M380 184l8-30h16l8 30z" /></g>
+                <g className="sc-plant"><path className="sc-pot" d="M8 318l6-38h34l6 38z" /><g className="sc-leaves"><ellipse cx="31" cy="238" rx="9" ry="34" transform="rotate(-8 31 238)" /><ellipse cx="14" cy="252" rx="8" ry="26" transform="rotate(-38 14 252)" /><ellipse cx="50" cy="250" rx="8" ry="26" transform="rotate(34 50 250)" /></g></g>
+                <path className="sc-floor" d="M0 318h420" />
+              </svg>
             </aside>
             <form className="cqw-form" onSubmit={(e) => { e.preventDefault(); submit(); }}>
+              <div className="cqw-form__full cqw-form__head">
+                <h3>Your details</h3>
+                <p>{TYPE_LABEL[type ?? 'apartment']} · {sizeLabel}{sizeLabel.endsWith('sq ft') ? '' : ' sq ft'}{resid && bhk ? ` · ${bhk} BHK` : ''} · {s.pkg === 'bestfit' ? 'Custom Package' : s.pkg ? pricing.packages[s.pkg].label : ''}</p>
+              </div>
               <div className="cqw-f"><label htmlFor="cqw-name">Full name</label><span className="cqw-in"><Icon name="user" size={17} /><input id="cqw-name" type="text" autoComplete="name" placeholder="Your name" value={s.name} aria-invalid={!!errors.name} onChange={(e) => set({ name: e.target.value })} /></span>{err('name')}</div>
               <div className="cqw-f"><label htmlFor="cqw-email">Email address</label><span className="cqw-in"><Icon name="mail" size={17} /><input id="cqw-email" type="email" autoComplete="email" placeholder="you@example.com" value={s.email} aria-invalid={!!errors.email} onChange={(e) => set({ email: e.target.value })} /></span>{err('email')}</div>
               <div className="cqw-f">
