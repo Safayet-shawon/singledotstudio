@@ -15,11 +15,11 @@ export function BeforeAfter({ items }: { items: Item[] }) {
       {items.length > 1 && (
         <div className="ba__filter" role="tablist" aria-label="Choose a space">
           {items.map((x, n) => (
-            <button key={x.label} type="button" role="tab" aria-selected={n === i} className={n === i ? 'is-on' : ''} onClick={() => { setI(n); setPos(50); }}>{x.label}</button>
+            <button key={x.label} id={`ba-tab-${n}`} type="button" role="tab" aria-controls="ba-panel" aria-selected={n === i} className={n === i ? 'is-on' : ''} onClick={() => { setI(n); setPos(50); }}>{x.label}</button>
           ))}
         </div>
       )}
-      <div className="ba__stage" style={{ ['--pos' as string]: `${pos}%` }}>
+      <div className="ba__stage" role="tabpanel" id="ba-panel" aria-labelledby={`ba-tab-${i}`} style={{ ['--pos' as string]: `${pos}%` }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="ba__img" src={it.src} alt={`${it.alt}, after`} loading="lazy" draggable={false} />
         {/* eslint-disable-next-line @next/next/no-img-element */}

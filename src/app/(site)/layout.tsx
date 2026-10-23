@@ -27,7 +27,8 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(site.url),
     title: { default: c.seo.title, template: `%s | ${site.brand.name}` },
     description: c.seo.description,
-    openGraph: { type: 'website', siteName: site.brand.name, title: c.seo.title, description: c.hero.quote },
+    openGraph: { type: 'website', siteName: site.brand.name, title: c.seo.title, description: c.hero.quote, images: [{ url: '/media/img/home-poster.jpg', alt: site.brand.name }] },
+    twitter: { card: 'summary_large_image', title: c.seo.title, description: c.hero.quote, images: ['/media/img/home-poster.jpg'] },
     alternates: { canonical: '/' },
   };
 }

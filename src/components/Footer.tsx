@@ -17,7 +17,7 @@ export async function Footer() {
             <p style={{ maxWidth: '34ch' }}>{content.footer.blurb}</p>
           </div>
           <div>
-            <h4>Explore</h4>
+            <p className="footer__title">Explore</p>
             <ul>
               <li><Link href="/">Home</Link></li>
               <li><Link href="/about">About</Link></li>
@@ -27,11 +27,11 @@ export async function Footer() {
             </ul>
           </div>
           <div>
-            <h4>Services</h4>
+            <p className="footer__title">Services</p>
             <ul>{services.map((s) => <li key={s.slug}><Link href={`/services/${s.slug}`}>{s.name}</Link></li>)}</ul>
           </div>
           <div>
-            <h4>Contact</h4>
+            <p className="footer__title">Contact</p>
             <ul>
               <li>{tbd(c.phone, 'Phone')}</li>
               <li>{tbd(c.email, 'Email')}</li>

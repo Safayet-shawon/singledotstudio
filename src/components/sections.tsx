@@ -88,7 +88,7 @@ export async function OwnerQuote() {
     <section className="section" aria-label="Founder’s note">
       <div className="container">
         <Reveal>
-          <figure className="owner-card">
+          <div className="owner-card">
             <div className="owner-card__photo">
               <Photo slot="owner-portrait" alt={`Portrait of ${o.name}`} label="owner portrait" sizes="(max-width: 820px) 80vw, 380px" />
               <span className="owner-card__badge">Founder</span>
@@ -97,13 +97,13 @@ export async function OwnerQuote() {
               <span className="owner-card__mark" aria-hidden="true">“</span>
               <span className="eyebrow">A word from the founder</span>
               <blockquote>{o.quote}</blockquote>
-              <figcaption className="owner-card__who">
+              <div className="owner-card__who">
                 <span className="owner-card__line" aria-hidden="true" />
                 <span className="owner__name">{o.name}</span>
                 <span className="owner__title">{o.title}</span>
-              </figcaption>
+              </div>
             </div>
-          </figure>
+          </div>
         </Reveal>
       </div>
     </section>

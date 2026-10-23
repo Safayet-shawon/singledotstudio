@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Hero } from '@/components/Hero';
+import { JsonLd } from '@/components/JsonLd';
+import { breadcrumbLd } from '@/lib/seo';
 import { Photo } from '@/components/Photo';
 import { Reveal } from '@/components/Reveal';
 import { ConsultSection, OwnerQuote, StatsSection, WhySection } from '@/components/sections';
@@ -14,6 +16,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
+      <JsonLd data={breadcrumbLd([['Home', '/'], ['About', '/about']])} />
       <Hero slot="about" compact>
         <span className="eyebrow" style={{ color: 'var(--sand)' }}>About us</span>
         <h1>Design that feels considered, not decorated</h1>

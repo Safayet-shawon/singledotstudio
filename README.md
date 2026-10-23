@@ -34,22 +34,30 @@ npm run build && npm start   # production build
 
 ## Pages
 
-`/`, `/services`, `/services/{kitchen,bedroom,bathroom,living-dining,office}`, `/about`, `/projects`,
-`/projects/{slug}`, `/contact`, `/calculate-budget`, `/privacy`, `/terms`, plus custom 404, `sitemap.xml`, `robots.txt`.
-Privacy and Terms are **draft templates** and need legal review.
+`/`, `/services`, `/services/{kitchen,bedroom,bathroom,living-dining,office,showroom}`, `/about`, `/projects`,
+`/projects/{slug}`, `/contact`, `/calculate-budget`, `/privacy`, `/terms`, `/credits`, the staff area under `/admin`,
+plus custom 404, `sitemap.xml`, `robots.txt`. Privacy and Terms are **draft templates** and need legal review.
+
+The header menu and the home services switcher have three segments: **Home, Office, Showroom**.
+Each service page has a before/after slider with a space filter. Until real photos are uploaded (admin: Website, Before / after)
+it shows clearly labelled stock-photo samples.
 
 ## Budget calculator
 
-Four steps (property, spaces, package, details) with a progress indicator, shared by the floating
-"Calculate your budget" button (dialog) and `/calculate-budget` (inline). Same component, same saved draft.
+Four guided steps (space, rooms, package, details), shared by the floating "Calculate Now" button (dialog) and
+`/calculate-budget` (inline). The next unfinished group glows, later groups wait in the shadow, finished choices stay visible.
 
-- Maths lives in `src/lib/estimate.ts` (pure, unit-tested) and is **recomputed on the server** before the PDF is made.
-- **Best Fit for You** is rule-based (size, number of spaces, BHK, optional target budget) and explains its reasoning. It is not AI.
-- The automatic teaser prompt appears at most once per browser (`localStorage`: shown, dismissed, opened or completed). The floating button is always available.
-- The visitor's in-progress answers persist across refreshes; "Start a new estimate" clears them.
-- `POST /api/estimate` returns the estimate and the PDF (base64). The browser downloads it, so **PDF download works with no email set up**.
-- Email: sent only if SMTP is configured; the UI reports `sent`, `not configured` or `failed` truthfully.
-- WhatsApp: the share button appears only when `NEXT_PUBLIC_WHATSAPP_NUMBER` is set. It opens a prefilled `wa.me` link; that does not mean a message was sent.
+- **Space:** Home, Office or Showroom; a size band (or an exact figure); BHK for homes only.
+- **Rooms:** nothing is preselected. Home: master, child, guest, family living, drawing, dining, kitchen, open kitchen, toilet, prayer.
+  Office and showroom have their own lists. One add-on: smart-home wiring.
+- **Package:** Essential, Premium, Luxury and a Custom Package card.
+- **Details:** name, email, phone (with a "this is my WhatsApp number" box) and address.
+- Maths lives in `src/lib/estimate.ts` (pure, unit-tested) and is **recomputed on the server**. The price is **not shown in the browser**:
+  it goes to the customer and the studio by email (branded PDF attached) and into the admin leads list.
+- **Best fit** is rule-based (size, number of spaces, BHK, optional target budget). It is not AI.
+- Email is sent only if SMTP is configured (`SMTP_*`, `MAIL_FROM`, `NOTIFY_TO`). Without it the request is still stored and the
+  admin shows the mail as not delivered. The owner receives a copy of every quotation.
+- The visitor's in-progress choices persist across refreshes (`localStorage`); the one-time teaser appears at most once per browser.
 
 ## Configuration (environment variables)
 
@@ -63,9 +71,7 @@ See `.env.example`. Set the same names in **Vercel > Project > Settings > Enviro
 | `NEXT_PUBLIC_SITE_URL` | Canonical URL, sitemap |
 | `MUAPI_API_KEY` | Video generation (server/CLI only, never `NEXT_PUBLIC_`) |
 
-**Leads on Vercel:** the filesystem is read-only there, so leads are delivered by email (`NOTIFY_TO`) only. With no inbox
-configured, the consultation form tells the visitor honestly that online requests are not enabled instead of showing a false
-success. In local development leads are also appended to `data/leads.jsonl` (git-ignored).
+**Leads:** every quotation and consultation request is stored (database when `DATABASE_URL` is set) and shown in the staff area under Leads, and emailed to `NOTIFY_TO` when SMTP is configured. With nothing configured to store or send, the form tells the visitor honestly that online requests are not enabled instead of showing a false success.
 
 **Spam/abuse:** honeypot field, server validation, 20 KB body limit, and a best-effort in-memory rate limit per instance.
 For strict limits on production, add a Vercel Firewall rate-limit rule for `/api/*`.

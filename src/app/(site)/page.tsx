@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { Hero } from '@/components/Hero';
+import { JsonLd } from '@/components/JsonLd';
+import { organizationLd } from '@/lib/seo';
 import { Icon } from '@/components/Icon';
 import { ConsultSection, GallerySection, ServicesSection, StatsSection, WhySection } from '@/components/sections';
 import { getContent } from '@/server/cms';
@@ -8,6 +10,7 @@ export default async function Home() {
   const c = await getContent();
   return (
     <>
+      <JsonLd data={organizationLd()} />
       <Hero
         slot="home"
         slides={c.hero.slides}

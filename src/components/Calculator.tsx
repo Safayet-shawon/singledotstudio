@@ -282,7 +282,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
                 <label className="cqw-wa"><input type="checkbox" checked={s.whatsapp} onChange={(e) => set({ whatsapp: e.target.checked })} /><span>This is my <b>WhatsApp</b> number</span></label>
                 {err('phone')}
               </div>
-              <div className="cqw-f"><label htmlFor="cqw-addr">Project address / area</label><span className="cqw-in"><Icon name="pin" size={17} /><input id="cqw-addr" type="text" autoComplete="street-address" placeholder="Area, city" value={s.address} onChange={(e) => set({ address: e.target.value })} /></span></div>
+              <div className="cqw-f"><label htmlFor="cqw-addr">Project address / area</label><span className="cqw-in"><Icon name="pin" size={17} /><input id="cqw-addr" type="text" autoComplete="address-line1" placeholder="Area, city" value={s.address} onChange={(e) => set({ address: e.target.value })} /></span></div>
               <div className="hp" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} /></label></div>
               <label className="cqw-consent cqw-form__full"><input type="checkbox" checked={s.consent} onChange={(e) => set({ consent: e.target.checked })} aria-invalid={!!errors.consent} /><span>I agree to be contacted about this quotation, as described in the privacy policy.</span></label>
               <div className="cqw-form__full">{err('consent')}</div>

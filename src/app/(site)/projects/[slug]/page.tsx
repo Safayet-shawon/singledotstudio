@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { JsonLd } from '@/components/JsonLd';
+import { breadcrumbLd } from '@/lib/seo';
 import { Photo } from '@/components/Photo';
 import { Reveal } from '@/components/Reveal';
 import { Icon } from '@/components/Icon';
@@ -25,6 +27,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const svc = serviceBySlug(p.service)!;
   return (
     <>
+      <JsonLd data={breadcrumbLd([['Home', '/'], ['Projects', '/projects'], [p.title, `/projects/${p.slug}`]])} />
       <div className="container page-head">
         <Link href="/projects" className="link-arrow" style={{ marginBottom: 28 }}>← All projects</Link>
         <span className="eyebrow" style={{ marginTop: 24 }}>{p.status === 'concept' ? 'Concept design, not a completed client project' : 'Completed project'} · {p.category.replace('-', ' & ')}</span>
@@ -37,6 +40,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <section className="section">
         <div className="container split">
           <Reveal>
+            <h2 className="sr-only">Project details</h2>
             <span className="eyebrow">Design narrative</span>
             <p className="lede">{p.narrative}</p>
           </Reveal>

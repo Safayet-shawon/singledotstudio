@@ -48,7 +48,7 @@ export function ConsultationForm({ defaultService = '' }: { defaultService?: str
       <div className="field"><label htmlFor="c-name">Full name</label><input id="c-name" name="name" type="text" autoComplete="name" aria-invalid={!!errors.name} /><Err k="name" /></div>
       <div className="field"><label htmlFor="c-phone">Phone number</label><input id="c-phone" name="phone" type="tel" autoComplete="tel" aria-invalid={!!errors.phone} /><Err k="phone" /></div>
       <div className="field"><label htmlFor="c-email">Email</label><input id="c-email" name="email" type="email" autoComplete="email" aria-invalid={!!errors.email} /><Err k="email" /></div>
-      <div className="field"><label htmlFor="c-address">Project address / location</label><input id="c-address" name="address" type="text" autoComplete="street-address" aria-invalid={!!errors.address} /><Err k="address" /></div>
+      <div className="field"><label htmlFor="c-address">Project address / location</label><input id="c-address" name="address" type="text" autoComplete="address-line1" aria-invalid={!!errors.address} /><Err k="address" /></div>
       <div className="field">
         <span className="label" id="c-seg">This project is for</span>
         <div className="seg" role="radiogroup" aria-labelledby="c-seg">

@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Hero } from '@/components/Hero';
+import { JsonLd } from '@/components/JsonLd';
+import { breadcrumbLd, faqLd } from '@/lib/seo';
 import { Icon } from '@/components/Icon';
 import { BeforeAfter } from '@/components/BeforeAfter';
 import { Photo } from '@/components/Photo';
@@ -40,9 +42,9 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
+      <JsonLd data={[jsonLd, faqLd(s.faqs), breadcrumbLd([['Home', '/'], ['Services', '/services'], [s.name, `/services/${s.slug}`]])]} />
       <Hero slot={s.videoSlot} compact>
-        <span className="eyebrow" style={{ color: 'var(--sand)' }}>{s.audience === 'office' ? 'Office interiors' : 'Home interiors'}</span>
+        <span className="eyebrow" style={{ color: 'var(--sand)' }}>{s.audience === 'office' ? 'Office interiors' : s.audience === 'showroom' ? 'Showroom interiors' : 'Home interiors'}</span>
         <h1>{s.name} interior design</h1>
         <p className="hero__sub">{s.intro}</p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>

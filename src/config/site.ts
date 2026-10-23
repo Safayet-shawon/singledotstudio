@@ -191,10 +191,14 @@ export const projects: Project[] = [
     narrative: 'A space-efficient L-shaped kitchen concept making the most of a compact apartment footprint.', materials: ['Matte laminate', 'Quartz counter', 'Ribbed glass'], scope: ['Space planning', 'Cabinetry', 'Task lighting'] },
   { slug: 'concept-executive-cabin', title: 'Executive Cabin', category: 'office', service: 'office', status: 'concept', location: null, image: 'project-office-2',
     narrative: 'An executive cabin concept with built-in storage, a considered desk wall and glare-free lighting.', materials: ['Walnut veneer', 'Leather accents', 'Glass partition'], scope: ['Joinery', 'Furniture', 'Lighting'] },
+  { slug: 'concept-boutique-showroom', title: 'Boutique Display Showroom', category: 'showroom', service: 'showroom', status: 'concept', location: null, image: 'project-showroom-1',
+    narrative: 'A showroom concept built around low glass-topped display units, even ceiling lighting and a clear central walkway, so each product is seen at its best.', materials: ['Glass-topped display units', 'Light stone-effect tiles', 'Recessed track lighting'], scope: ['Customer flow planning', 'Display unit design', 'Lighting plan'] },
+  { slug: 'concept-open-retail-floor', title: 'Open Retail Floor', category: 'showroom', service: 'showroom', status: 'concept', location: null, image: 'project-showroom-2',
+    narrative: 'An open retail floor concept with exposed services, warm timber fixtures, a feature display wall and flexible zones that can change with the season.', materials: ['Polished concrete floor', 'Timber display fixtures', 'Linear pendant lighting'], scope: ['Zoning', 'Feature wall', 'Fixture and lighting layout'] },
 ];
 
 export const categoryFilters: { key: 'all' | ProjectCategory; label: string }[] = [
   { key: 'all', label: 'All' }, { key: 'residential', label: 'Residential' }, { key: 'kitchen', label: 'Kitchen' }, { key: 'bedroom', label: 'Bedroom' },
-  { key: 'bathroom', label: 'Bathroom' }, { key: 'living-dining', label: 'Living & Dining' }, { key: 'office', label: 'Office' },
+  { key: 'bathroom', label: 'Bathroom' }, { key: 'living-dining', label: 'Living & Dining' }, { key: 'office', label: 'Office' }, { key: 'showroom', label: 'Showroom' },
 ];
 export const matchesFilter = (p: Project, f: string) => f === 'all' || (f === 'residential' ? p.category !== 'office' && p.category !== 'showroom' : p.category === f);
