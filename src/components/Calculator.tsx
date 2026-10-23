@@ -227,6 +227,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
                 const on = s.pkg === key;
                 return (
                   <div key={key} className={`cqw-pkg cqw-pkg--${tone}${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i }} onClick={() => set({ pkg: key })}>
+                    <span className="cqw-pkg__fill" aria-hidden="true"><i /></span>
                     <h3 className="cqw-pkg__name">{p.label}</h3>
                     <div className="cqw-pkg__blob">
                       <svg viewBox="0 0 280 140" preserveAspectRatio="none" aria-hidden="true">

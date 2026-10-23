@@ -670,30 +670,37 @@ button.chip[aria-pressed='true']::before { content: '✓ '; color: #e7a67a; }
 .cqw-chip:hover { transform: translateY(-2px) scale(1.05); background: var(--sand); }
 .cqw-chip[aria-pressed='true'] { background: var(--charcoal); border: 1px solid var(--charcoal); color: #fff; }
 
-/* packages: four colour cards, the colour floods the card from the header on hover */
-.cqw-pkgs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; align-items: stretch; padding: 8px 4px 14px; }
-.cqw-pkg { --c1: #e0379b; --c2: #f0508a; position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 22px 0 0; border-radius: 28px; cursor: pointer; background: #fff; color: #4a4642; box-shadow: 0 18px 34px -20px rgba(38, 35, 31, 0.45); animation: cqwIn 0.6s var(--ease) both; animation-delay: calc(var(--i, 0) * 90ms); transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease), color 0.5s var(--ease); }
+/* packages: four colour cards. Only transform and opacity are animated, so every frame is composited on the GPU. */
+.cqw-pkgs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; align-items: stretch; padding: 14px 4px 20px; }
+.cqw-pkg { --c1: #e0379b; --c2: #f0508a; --pe: cubic-bezier(0.22, 0.61, 0.36, 1); position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 22px 0 0; border-radius: 28px; cursor: pointer; background: #fff; color: #4a4642; box-shadow: 0 16px 30px -22px rgba(38, 35, 31, 0.5); will-change: transform; transform: translateZ(0); transition: transform 0.6s var(--pe), color 0.45s var(--pe); animation: cqwIn 0.6s var(--ease) both; animation-delay: calc(var(--i, 0) * 90ms); }
 .cqw-pkg--c1 { --c1: #d4268f; --c2: #f25c8c; }
 .cqw-pkg--c2 { --c1: #1a8fb3; --c2: #4fd0d8; }
 .cqw-pkg--c3 { --c1: #ee7a14; --c2: #f8b53c; }
 .cqw-pkg--c4 { --c1: #5b3fd1; --c2: #9b7df2; }
-.cqw-pkg::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: linear-gradient(165deg, var(--c1), var(--c2)); clip-path: circle(0% at 50% 24%); transition: clip-path 0.9s var(--ease); }
-.cqw-pkg:hover, .cqw-pkg.is-on { transform: translateY(-10px) scale(1.04); box-shadow: 0 34px 44px -22px var(--c1); color: #fff; z-index: 3; }
-.cqw-pkg:hover::before, .cqw-pkg.is-on::before { clip-path: circle(150% at 50% 24%); }
-.cqw-pkg__name { font-size: 1.15rem; font-weight: 700; margin: 0 0 14px; color: #26231f; letter-spacing: 0; transition: color 0.5s var(--ease); }
+/* the lift shadow lives on its own layer and only fades in */
+.cqw-pkg::after { content: ''; position: absolute; inset: 0; z-index: -2; border-radius: inherit; box-shadow: 0 36px 46px -24px var(--c1); opacity: 0; transition: opacity 0.6s var(--pe); pointer-events: none; }
+/* colour fill: a big circle that scales out from the header, clipped by the card */
+.cqw-pkg__fill { position: absolute; inset: 0; z-index: -1; border-radius: inherit; overflow: hidden; pointer-events: none; transform: translateZ(0); }
+.cqw-pkg__fill i { position: absolute; left: 50%; top: 22%; width: 420%; aspect-ratio: 1; margin: calc(-420% / 2) 0 0 calc(-420% / 2); border-radius: 50%; background: linear-gradient(165deg, var(--c1), var(--c2)); transform: scale(0); will-change: transform; transition: transform 0.85s var(--pe); }
+.cqw-pkg:hover, .cqw-pkg.is-on { transform: translate3d(0, -10px, 0) scale(1.03); color: #fff; z-index: 3; }
+.cqw-pkg:hover::after, .cqw-pkg.is-on::after { opacity: 1; }
+.cqw-pkg:hover .cqw-pkg__fill i, .cqw-pkg.is-on .cqw-pkg__fill i { transform: scale(1); }
+.cqw-pkg__name { font-size: 1.15rem; font-weight: 700; margin: 0 0 14px; color: #26231f; letter-spacing: 0; transition: color 0.45s var(--pe); }
 .cqw-pkg:hover .cqw-pkg__name, .cqw-pkg.is-on .cqw-pkg__name { color: #fff; }
 .cqw-pkg__blob { position: relative; width: calc(100% - 40px); height: 150px; display: grid; place-items: start center; padding: 28px 22px 0; color: #fff; }
-.cqw-pkg__blob svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 12px 12px rgba(0, 0, 0, 0.14)); transition: transform 0.7s var(--ease), opacity 0.6s var(--ease); }
-.cqw-pkg:hover .cqw-pkg__blob svg, .cqw-pkg.is-on .cqw-pkg__blob svg { transform: scale(1.03); opacity: 0.55; }
-.cqw-pkg__tag { position: relative; margin: 0; font-size: 0.98rem; font-weight: 600; line-height: 1.25; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.18); }
+.cqw-pkg__blob svg { position: absolute; inset: 0; width: 100%; height: 100%; will-change: transform, opacity; transition: transform 0.7s var(--pe), opacity 0.6s var(--pe); }
+.cqw-pkg:hover .cqw-pkg__blob svg, .cqw-pkg.is-on .cqw-pkg__blob svg { transform: scale(1.03); opacity: 0.5; }
+.cqw-pkg__tag { position: relative; margin: 0; font-size: 0.98rem; font-weight: 600; line-height: 1.25; }
 .cqw-pkg ul { list-style: none; margin: 16px 0 18px; padding: 0 22px; display: grid; gap: 11px; font-size: 0.82rem; line-height: 1.35; flex: 1; width: 100%; }
 .cqw-pkg li { color: inherit; opacity: 0.82; }
 .cqw-pkg__ribbon { position: relative; width: calc(100% + 18px); margin: 0 -9px 22px; }
 .cqw-pkg__ribbon::before, .cqw-pkg__ribbon::after { content: ''; position: absolute; bottom: -7px; width: 12px; height: 12px; background: rgba(38, 35, 31, 0.55); z-index: -1; }
 .cqw-pkg__ribbon::before { left: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
 .cqw-pkg__ribbon::after { right: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
-.cqw-select { display: block; width: 100%; padding: 0.85em 1em; border: 0; border-radius: 3px; background: linear-gradient(90deg, var(--c1), var(--c2)); color: #fff; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; box-shadow: 0 8px 16px -8px var(--c1); transition: background 0.5s var(--ease), color 0.5s var(--ease); }
-.cqw-pkg:hover .cqw-select, .cqw-pkg.is-on .cqw-select { background: #fff; color: var(--c1); }
+.cqw-select { position: relative; isolation: isolate; overflow: hidden; display: block; width: 100%; padding: 0.85em 1em; border: 0; border-radius: 3px; background: linear-gradient(90deg, var(--c1), var(--c2)); color: #fff; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; box-shadow: 0 8px 16px -10px var(--c1); transition: color 0.45s var(--pe); }
+.cqw-select::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #fff; opacity: 0; transition: opacity 0.5s var(--pe); }
+.cqw-pkg:hover .cqw-select, .cqw-pkg.is-on .cqw-select { color: var(--c1); }
+.cqw-pkg:hover .cqw-select::before, .cqw-pkg.is-on .cqw-select::before { opacity: 1; }
 
 /* guided order: active group glows, waiting groups sit in the shadow, finished groups stay put */
 .cqw-sec { position: relative; border-radius: 22px; padding: 6px clamp(10px, 2vw, 22px) 18px; margin: 0 0 14px; transition: opacity 0.6s var(--ease), filter 0.6s var(--ease), box-shadow 0.6s var(--ease), background 0.6s var(--ease), transform 0.6s var(--ease); }
