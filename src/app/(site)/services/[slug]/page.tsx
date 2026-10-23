@@ -16,6 +16,7 @@ const SAMPLES: Record<string, { label: string; src: string }[]> = {
   bedroom: [{ label: 'Master bedroom', src: '/media/img/project-bedroom-1.jpg' }],
   bathroom: [{ label: 'Bathroom', src: '/media/img/project-bathroom-1.jpg' }],
   'living-dining': [{ label: 'Living room', src: '/media/img/project-living-1.jpg' }, { label: 'Dining room', src: '/media/img/project-dining-1.jpg' }],
+  showroom: [{ label: 'Showroom', src: '/media/img/service-showroom-detail.jpg' }],
   office: [{ label: 'Workspace', src: '/media/img/project-office-1.jpg' }, { label: 'Meeting area', src: '/media/img/project-office-2.jpg' }],
 };
 
@@ -64,7 +65,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           </Reveal>
           <Reveal>
             {pairs.length || SAMPLES[s.slug]
-              ? <BeforeAfter items={pairs.length ? pairs : (SAMPLES[s.slug] ?? []).map((x) => ({ ...x, alt: `${s.name} ${x.label.toLowerCase()}` }))} />
+              ? <BeforeAfter items={pairs.length ? pairs : (SAMPLES[s.slug] ?? []).map((x) => ({ ...x, sample: true, before: `/media/img/before-${s.slug}.jpg`, alt: `${s.name} ${x.label.toLowerCase()}` }))} />
               : <div className="portrait" style={{ aspectRatio: '4/3' }}><Photo slot={`service-${s.slug}-detail`} alt={`${s.name} design detail`} label={`${s.slug} detail`} /></div>}
           </Reveal>
         </div>
