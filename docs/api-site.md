@@ -8,6 +8,7 @@ The site's own server routes (Next.js). The staff area uses server actions behin
 | `POST /api/consultation` | Consultation request | Validates, stores the lead and emails the studio |
 | `GET /api/health` | Uptime probe | `{"status":"ok"}`, no configuration details, never cached |
 | `GET /cms-media/{id}` | An image uploaded in the admin | Public, served from private storage |
+| `GET /q/{reference}?t={token}` | Quotation PDF for the WhatsApp link the studio sends from the admin | Signed with `QUOTE_LINK_SECRET` (falls back to `DATABASE_URL`); 404 without a valid token; not indexed |
 | `GET /llms.txt` | Summary for AI assistants | Generated from site content |
 | `GET /sitemap.xml`, `/robots.txt` | Search engines | |
 | `GET /.well-known/security.txt` | Security contact (RFC 9116) | Returns 404 until the `SECURITY_CONTACT` variable (an email or https URL) is set |

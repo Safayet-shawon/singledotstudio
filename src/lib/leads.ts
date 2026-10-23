@@ -52,3 +52,19 @@ export async function listLeads(limit = 200): Promise<LeadRecord[]> {
     return [];
   }
 }
+
+/** One lead by reference (used for the customer's quotation link). */
+export async function getLead(reference: string): Promise<LeadRecord | null> {
+  if (!/^[A-Z]{3}-\d{8}-[0-9A-F]{4}$/.test(reference)) return null;
+  if (hasBlob()) {
+    try {
+      const { blobs } = await list({ prefix: 'leads/', limit: 1000 });
+      const hit = blobs.find((b) => b.pathname.endsWith(`_${reference}.json`));
+      if (!hit) return null;
+      const res = await get(hit.pathname, { access: 'private' });
+      if (!res || res.statusCode !== 200) return null;
+      return JSON.parse(await new Response(res.stream).text()) as LeadRecord;
+    } catch { return null; }
+  }
+  return (await listLeads(1000)).find((l) => l.reference === reference) ?? null;
+}
