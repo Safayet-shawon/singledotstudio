@@ -36,9 +36,10 @@ sign-up and no default account.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `PORT` | `8080` | HTTP port |
 | `COOKIE_SAMESITE` | `lax` | Use `lax` when the site and API share a registrable domain (`www.` and `api.`) |
 | `SESSION_TIMEOUT` | `30m` | Idle time before a staff session expires |
+| `DB_SCHEMA` | `public` | Schema for this API's tables, for a database shared with other apps (set to `sds_api` on the Vercel deployment) |
+| `PORT` | `8080` | Port the server listens on. On Vercel's container runtime set `PORT=8080` |
 | `DB_POOL_MAX` | `10` | Maximum database connections |
 | `TRUSTED_PROXY_REGEX` | private ranges | Which proxy addresses may set `X-Forwarded-For`. Rate limits depend on this being right |
 | `APP_COMPANY_NAME`, `_TAGLINE`, `_ADDRESS`, `_PHONE`, `_EMAIL`, `_WEBSITE` | blank or studio name | Printed on the quotation PDF. Leave blank until verified |

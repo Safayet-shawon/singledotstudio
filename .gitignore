@@ -21,3 +21,4 @@ backend/target/
 !backend/.mvn/wrapper/maven-wrapper.jar
 .idea/
 *.iml
+backend/ADMIN-LOGIN.txt

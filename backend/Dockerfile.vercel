@@ -1,0 +1,20 @@
+# Container image for Vercel (Container Runtime). Same build as Dockerfile, plus settings for a small instance.
+FROM eclipse-temurin:25-jdk AS build
+WORKDIR /src
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+# The script may arrive with Windows line endings or without its executable bit: normalise and run it through sh.
+RUN sed -i 's/\r$//' mvnw && sh mvnw -B -q dependency:go-offline
+COPY src src
+RUN sh mvnw -B -q package -DskipTests
+
+FROM eclipse-temurin:25-jre
+RUN useradd --system --uid 10001 --no-create-home app
+WORKDIR /app
+COPY --from=build /src/target/singledotstudio-backend-*.jar app.jar
+USER app
+# Vercel sends traffic to $PORT (set PORT=8080 in the project's environment variables).
+ENV PORT=8080
+EXPOSE 8080
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -XX:+ExitOnOutOfMemoryError"
+ENTRYPOINT ["java", "-jar", "app.jar"]

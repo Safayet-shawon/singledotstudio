@@ -23,9 +23,35 @@ visitors --> static host / CDN (frontend/)  --fetch-->  api.<your domain>  -->  
 * **HTTPS everywhere.** Terminate TLS at the platform or proxy and forward `X-Forwarded-For`/`X-Forwarded-Proto`. Set
   `TRUSTED_PROXY_REGEX` to match your proxy so rate limits see real client addresses.
 
-Verify current platform support and prices on the provider's own pages before choosing. Platforms that run containers or
-Java apps and offer managed PostgreSQL include Railway, Render, Fly.io and the large clouds; a platform built for Node
-serverless functions (such as Vercel) is **not** a place to run this Java API.
+Verify current platform support and prices on the provider's own pages before choosing. Platforms that run containers or Java apps and
+offer managed PostgreSQL include Railway, Render, Fly.io and the large clouds. **Vercel can also run this API**: since 2026 its
+Container Runtime (Beta, all plans) runs any Dockerfile as a Vercel Function, and Vercel Services puts the static site and the API in one
+project behind one domain. A plain Node-only Vercel project cannot run Java; the container runtime is what makes it possible. This is how
+the first deployment was done (next section). Trade-offs: the beta status, and a Spring Boot container that has been idle for 5 minutes
+scales to zero, so the first request after a quiet period waits for the JVM to start (expect several seconds).
+
+## Deploying on Vercel (what was done)
+
+One Vercel project with two services behind one domain (`deploy/vercel.json`):
+
+* `frontend/` is served as static files.
+* `backend/` is built from `backend/Dockerfile.vercel` and receives `/api/*` and `/actuator/*`.
+
+Because both share one origin, the site calls the API with relative URLs (`apiBase` is empty in `config.js`), there is no CORS, and the
+staff cookie is first-party.
+
+```bash
+sh deploy/stage.sh ~/deploy/singledotstudio-v2      # copies vercel.json + frontend + backend into a clean folder
+cd ~/deploy/singledotstudio-v2
+vercel link --yes --project singledotstudio-v2       # first time only
+# set the variables in docs/environment-variables.md as sensitive Vercel variables, plus PORT=8080
+vercel deploy --prod --yes
+```
+
+Variables specific to this setup: `PORT=8080` (the container must listen on it), `TRUSTED_PROXY_REGEX=.*` (Vercel's edge overwrites
+`X-Forwarded-For`, and the container is reachable only through it; without this every visitor would share one rate-limit bucket),
+`SPRING_FLYWAY_SCHEMAS` and `SPRING_FLYWAY_DEFAULT_SCHEMA` to keep this API's tables in their own schema (`sds_api`), and `currentSchema=sds_api`
+on the JDBC URL. The database is Neon PostgreSQL; use the **unpooled** connection string, with a small pool (`DB_POOL_MAX=4`).
 
 ## Steps
 
