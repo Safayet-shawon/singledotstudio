@@ -1,0 +1,66 @@
+{
+  "_note": "EVERY NUMBER IN THIS FILE IS A PLACEHOLDER pending the studio's confirmed pricing. Edit freely: the calculator, PDF and service-page cost tables all read from here.",
+  "placeholder": true,
+  "currency": { "code": "BDT", "symbol": "৳", "pdfPrefix": "BDT", "locale": "en-BD", "note": "Bangladeshi Taka." },
+  "roundTo": 1000,
+  "rangeSpread": 0.1,
+  "tax": { "enabled": false, "label": "GST", "percent": 0 },
+  "limits": { "minSqft": 200, "maxSqft": 50000, "maxBhk": 8 },
+  "packages": {
+    "essential": { "label": "Essential", "tagline": "Smart, durable basics", "scope": "Standard laminates and finishes, functional storage, essential lighting. Best for tight budgets and rental-ready or first homes.", "features": ["Affordable Pricing", "Functional 2D Layout", "Convenient 3D Design", "Standard Accessories", "Durable Materials", "Max 3 Items In a room", "Execution"] },
+    "premium":   { "label": "Premium",   "tagline": "Refined and well-appointed", "scope": "Upgraded finishes and hardware, custom storage, layered lighting and feature elements. The balanced choice for most homes.", "features": ["Value Driven Pricing", "Functional 2D Layout", "High-end 3D Design", "Wide Range Accessories", "High Grade Materials", "Laminates", "Max 4 Items In a room", "Execution"] },
+    "luxury":    { "label": "Luxury",    "tagline": "Bespoke, high-end detailing", "scope": "Premium natural materials, bespoke joinery, designer lighting and decor. For a fully custom, statement interior.", "features": ["Exclusive Pricing", "Functional 2D Layout", "Luxury 3D Design", "Branded Accessories", "Premium Materials", "Laminates, Acrylic & Mirror Sheet", "Decor Items", "Max 3 Items In a room", "Execution"] },
+    "bestfit":   { "label": "Custom Package", "tagline": "Designed around you", "scope": "Our designers get in touch to customise a package that fits you best. Your quotation starts from the tier that best matches your size and spaces (rule-based, not AI).", "features": ["Tailored to your space and budget", "Our designers get in touch with you", "Same design process as the other packages", "Adjustable after consultation"] }
+  },
+  "bestFit": { "premiumSqft": 1000, "luxurySqft": 2200, "premiumSpaceCount": 6, "luxuryBhk": 4 },
+  "layoutWeights": { "master": 0.17, "bedroom": 0.12, "kitchen": 0.10, "bathroom": 0.05, "living": 0.16, "dining": 0.12 },
+  "items": [
+    { "key": "master", "group": "residential", "label": "Master Bedroom", "basis": "layout", "weight": 0.17, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1100, "premium": 1700, "luxury": 2600 } },
+    { "key": "child", "group": "residential", "label": "Child Bedroom", "basis": "layout", "weight": 0.12, "inLayout": true, "maxQty": "bhk-1", "defaultQty": "bhk-1", "rates": { "essential": 1000, "premium": 1500, "luxury": 2300 } },
+    { "key": "guest", "group": "residential", "label": "Guest Bedroom", "basis": "layout", "weight": 0.10, "inLayout": false, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 1000, "premium": 1500, "luxury": 2300 } },
+    { "key": "family", "group": "residential", "label": "Family Living", "basis": "layout", "weight": 0.16, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1100, "premium": 1700, "luxury": 2600 } },
+    { "key": "drawing", "group": "residential", "label": "Drawing Room", "basis": "layout", "weight": 0.10, "inLayout": false, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 1100, "premium": 1700, "luxury": 2600 } },
+    { "key": "dining", "group": "residential", "label": "Dining Room", "basis": "layout", "weight": 0.12, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1000, "premium": 1500, "luxury": 2300 } },
+    { "key": "kitchen", "group": "residential", "label": "Kitchen", "basis": "layout", "weight": 0.10, "inLayout": true, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1800, "premium": 2800, "luxury": 4200 } },
+    { "key": "openkitchen", "group": "residential", "label": "Open Kitchen", "basis": "layout", "weight": 0.08, "inLayout": false, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 2000, "premium": 3100, "luxury": 4600 } },
+    { "key": "toilet", "group": "residential", "label": "Toilet", "basis": "layout", "weight": 0.05, "inLayout": true, "maxQty": "bhk", "defaultQty": "bhk", "rates": { "essential": 1500, "premium": 2300, "luxury": 3600 } },
+    { "key": "prayer", "group": "residential", "label": "Prayer Space", "basis": "layout", "weight": 0.03, "inLayout": false, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 1200, "premium": 1800, "luxury": 2800 } },
+    { "key": "foyer",    "group": "residential", "label": "Foyer and entrance", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 45000, "premium": 80000, "luxury": 140000 } },
+    { "key": "wardrobe", "group": "residential", "label": "Wardrobes and storage (per unit)", "basis": "unit", "maxQty": 8, "defaultQty": 0, "rates": { "essential": 55000, "premium": 90000, "luxury": 150000 } },
+    { "key": "study",    "group": "residential", "label": "Study room", "basis": "layout", "weight": 0.08, "inLayout": false, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 1000, "premium": 1500, "luxury": 2300 } },
+    { "key": "balcony",  "group": "residential", "label": "Balcony", "basis": "unit", "maxQty": 4, "defaultQty": 0, "rates": { "essential": 25000, "premium": 45000, "luxury": 80000 } },
+    { "key": "ceiling",  "group": "residential", "label": "False ceiling and lighting (whole home)", "basis": "flat", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 120, "premium": 200, "luxury": 320 } },
+
+    { "key": "reception",   "group": "office", "label": "Reception", "basis": "unit", "maxQty": 1, "defaultQty": 1, "rates": { "essential": 150000, "premium": 260000, "luxury": 420000 } },
+    { "key": "workstation", "group": "office", "label": "Workstations (per seat)", "basis": "unit", "maxQty": 500, "defaultQty": 10, "rates": { "essential": 18000, "premium": 28000, "luxury": 45000 } },
+    { "key": "cabin",       "group": "office", "label": "Executive cabins", "basis": "unit", "maxQty": 20, "defaultQty": 1, "rates": { "essential": 140000, "premium": 230000, "luxury": 380000 } },
+    { "key": "meeting",     "group": "office", "label": "Meeting rooms", "basis": "unit", "maxQty": 20, "defaultQty": 1, "rates": { "essential": 120000, "premium": 200000, "luxury": 330000 } },
+    { "key": "pantry",      "group": "office", "label": "Pantry", "basis": "unit", "maxQty": 2, "defaultQty": 1, "rates": { "essential": 90000, "premium": 150000, "luxury": 250000 } },
+    { "key": "collab",      "group": "office", "label": "Collaborative and breakout areas", "basis": "share", "share": 0.12, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 900, "premium": 1400, "luxury": 2200 } },
+    { "key": "officestorage", "group": "office", "label": "Storage", "basis": "unit", "maxQty": 10, "defaultQty": 0, "rates": { "essential": 40000, "premium": 70000, "luxury": 120000 } },
+    { "key": "showfloor",   "group": "showroom", "label": "Main display floor", "basis": "share", "share": 0.55, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1000, "premium": 1600, "luxury": 2600 } },
+    { "key": "showentry",   "group": "showroom", "label": "Entrance and facade", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 180000, "premium": 320000, "luxury": 560000 } },
+    { "key": "showcounter", "group": "showroom", "label": "Reception and billing counter", "basis": "unit", "maxQty": 1, "defaultQty": 1, "rates": { "essential": 120000, "premium": 200000, "luxury": 340000 } },
+    { "key": "showunits",   "group": "showroom", "label": "Display units and shelving (per unit)", "basis": "unit", "maxQty": 200, "defaultQty": 10, "rates": { "essential": 20000, "premium": 32000, "luxury": 55000 } },
+    { "key": "showtrial",   "group": "showroom", "label": "Trial and fitting rooms", "basis": "unit", "maxQty": 20, "defaultQty": 0, "rates": { "essential": 70000, "premium": 110000, "luxury": 180000 } },
+    { "key": "showlounge",  "group": "showroom", "label": "Customer lounge", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 100000, "premium": 170000, "luxury": 280000 } },
+    { "key": "showstock",   "group": "showroom", "label": "Stock and storage room", "basis": "unit", "maxQty": 5, "defaultQty": 0, "rates": { "essential": 60000, "premium": 100000, "luxury": 170000 } },
+    { "key": "showsign",    "group": "showroom", "label": "Signage and feature lighting", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 90000, "premium": 150000, "luxury": 260000 } }
+  ],
+  "extras": [
+    { "key": "smart", "label": "Smart-home wiring and controls", "amount": { "essential": 60000, "premium": 100000, "luxury": 180000 } },
+    { "key": "decor", "label": "Furniture and decor styling", "amount": { "essential": 80000, "premium": 160000, "luxury": 320000 } },
+    { "key": "viz", "label": "3D visualisation pack", "amount": { "essential": 25000, "premium": 40000, "luxury": 60000 } }
+  ],
+  "assumptions": [
+    "Figures are indicative ranges generated from the details you entered and a simple area-based model.",
+    "Room areas are estimated from your total size and a standard layout for your configuration.",
+    "Final cost depends on site conditions, scope, material and brand selections confirmed after consultation."
+  ],
+  "exclusions": [
+    "Civil, structural, plumbing and electrical rework not listed",
+    "Loose furniture, appliances and soft furnishings unless an extra is selected",
+    "Government approvals, building or society charges and applicable taxes unless shown",
+    "Items outside the selected spaces"
+  ]
+}

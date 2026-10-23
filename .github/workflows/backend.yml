@@ -1,0 +1,27 @@
+name: Backend
+
+on:
+  push:
+    branches: [main, "feature/**"]
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+  pull_request:
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+      - name: Compile and run all tests (unit, integration with a real PostgreSQL, security)
+        run: ./mvnw -B verify

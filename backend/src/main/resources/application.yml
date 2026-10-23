@@ -1,0 +1,126 @@
+# Single Dot Studio API. Secrets and per-environment values come from environment variables; none are committed.
+# See docs/environment-variables.md for the full list.
+
+spring:
+  application:
+    name: singledotstudio-backend
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/singledotstudio}
+    username: ${DATABASE_USERNAME:singledotstudio}
+    password: ${DATABASE_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:10}
+      minimum-idle: 2
+      connection-timeout: 5000
+      max-lifetime: 1500000
+      # A runaway query is cancelled by the database after 10 seconds.
+      connection-init-sql: SET statement_timeout = 10000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: true
+  session:
+    timeout: ${SESSION_TIMEOUT:30m}
+    jdbc:
+      initialize-schema: never
+  mail:
+    # SPRING_MAIL_HOST / _PORT / _USERNAME / _PASSWORD turn sending on. With no host, mail is recorded as "skipped".
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 8000
+      mail.smtp.writetimeout: 8000
+  servlet:
+    multipart:
+      enabled: false
+  mvc:
+    problemdetails:
+      enabled: false
+
+server:
+  port: ${PORT:8080}
+  # Behind a reverse proxy the real client address is read from X-Forwarded-For, but only when the proxy is trusted.
+  forward-headers-strategy: native
+  shutdown: graceful
+  max-http-request-header-size: 16KB
+  tomcat:
+    connection-timeout: 10s
+    max-swallow-size: 128KB
+    remoteip:
+      remote-ip-header: x-forwarded-for
+      protocol-header: x-forwarded-proto
+      internal-proxies: ${TRUSTED_PROXY_REGEX:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1}
+  servlet:
+    session:
+      cookie:
+        name: SDS_SESSION
+        http-only: true
+        secure: ${COOKIE_SECURE:true}
+        same-site: ${COOKIE_SAMESITE:lax}
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+    include-exception: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+  health:
+    mail:
+      enabled: false
+
+app:
+  frontend-origins: ${APP_FRONTEND_ORIGINS:http://localhost:8000}
+  public-base-url: ${APP_PUBLIC_BASE_URL:http://localhost:8000}
+  max-body-bytes: 65536
+  mail:
+    enabled: ${APP_MAIL_ENABLED:true}
+    from: ${APP_MAIL_FROM:}
+    lead-inbox: ${APP_MAIL_LEAD_INBOX:}
+    max-attempts: 3
+    retry-after-minutes: 10
+  company:
+    name: ${APP_COMPANY_NAME:Single Dot Studio}
+    tagline: ${APP_COMPANY_TAGLINE:Interiors · Design & Build}
+    address: ${APP_COMPANY_ADDRESS:}
+    phone: ${APP_COMPANY_PHONE:}
+    email: ${APP_COMPANY_EMAIL:}
+    website: ${APP_COMPANY_WEBSITE:}
+    quotation-valid-days: ${APP_COMPANY_QUOTE_VALID_DAYS:15}
+    payment-terms: ${APP_COMPANY_PAYMENT_TERMS:}
+    footer: ${APP_COMPANY_FOOTER:Thank you for your interest.}
+  rate-limits:
+    form-max: 8
+    form-window-seconds: 600
+    login-max: 10
+    login-window-seconds: 900
+    admin-max: 120
+    admin-window-seconds: 60
+  admin:
+    bootstrap-email: ${APP_ADMIN_BOOTSTRAP_EMAIL:}
+    bootstrap-password-hash: ${APP_ADMIN_BOOTSTRAP_PASSWORD_HASH:}
+    max-failed-logins: 5
+    lock-seconds: 900
+  duplicates:
+    window-seconds: 900
+
+logging:
+  level:
+    root: INFO
+    com.singledotstudio: INFO
+    org.hibernate.SQL: WARN

@@ -1,3 +1,33 @@
+# Single Dot Studio
+
+This repository is mid-migration from a Next.js (Node.js) application to a **Java back end** and a plain HTML/CSS/JavaScript
+front end. Read `docs/architecture.md` for the exact status.
+
+| Folder | What it is | State |
+| --- | --- | --- |
+| `backend/` | Spring Boot 4.1.2 API on Java 25: quotation estimates, consultations, PDF, email, staff login, leads | **Done and tested** |
+| `frontend/` | Static HTML/CSS/JS site | **Not started** |
+| `src/`, `config/`, `public/` | The current live site (Next.js) | Unchanged, still the live site |
+| `docs/` | Architecture, API, security, deployment, environment variables, SEO | Written for the back end |
+
+## Run the Java back end (no Node.js or PHP involved)
+
+You need a JDK 25 (for example Temurin) and PostgreSQL. Maven is included as the Maven Wrapper.
+
+```bash
+cd backend
+./mvnw -B test                                   # 50 tests; the integration tests start their own PostgreSQL
+export DATABASE_URL=jdbc:postgresql://localhost:5432/singledotstudio DATABASE_USERNAME=... DATABASE_PASSWORD=...
+./mvnw spring-boot:run                           # http://localhost:8080/actuator/health
+```
+
+On Windows use `mvnw.cmd`. Configuration is by environment variable: see `docs/environment-variables.md` and
+`backend/.env.example`. Endpoints are in `docs/api.md`. Security notes and open risks are in `docs/security.md`.
+
+The sections below describe the existing Next.js site, which stays until the new front end replaces it.
+
+---
+
 # Interior design studio website
 
 Premium multi-page website built with **Next.js (App Router, TypeScript)**. Designed for Vercel.

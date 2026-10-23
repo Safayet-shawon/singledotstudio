@@ -1,0 +1,588 @@
+[
+ {
+  "input": {
+   "propertyType": "apartment",
+   "sqft": 1500,
+   "bhk": 3,
+   "items": {
+    "master": 1,
+    "child": 2,
+    "family": 1,
+    "dining": 1,
+    "kitchen": 1,
+    "toilet": 3
+   },
+   "package": "premium",
+   "extras": [
+    "smart"
+   ]
+  },
+  "tier": "premium",
+  "subtotal": 2854000,
+  "tax": 0,
+  "total": 2854000,
+  "low": 2569000,
+  "high": 3140000,
+  "tierTotals": {
+   "essential": 1860000,
+   "premium": 2854000,
+   "luxury": 4402000
+  },
+  "lines": [
+   [
+    "master",
+    1,
+    271,
+    461170
+   ],
+   [
+    "child",
+    2,
+    383,
+    574468
+   ],
+   [
+    "family",
+    1,
+    255,
+    434043
+   ],
+   [
+    "dining",
+    1,
+    191,
+    287234
+   ],
+   [
+    "kitchen",
+    1,
+    160,
+    446809
+   ],
+   [
+    "toilet",
+    3,
+    239,
+    550532
+   ]
+  ],
+  "extras": [
+   [
+    "smart",
+    100000
+   ]
+  ],
+  "rationale": []
+ },
+ {
+  "input": {
+   "propertyType": "villa",
+   "sqft": 2800,
+   "bhk": 5,
+   "items": {
+    "master": 1,
+    "child": 4,
+    "guest": 1,
+    "family": 1,
+    "drawing": 1,
+    "dining": 1,
+    "kitchen": 1,
+    "openkitchen": 1,
+    "toilet": 5,
+    "prayer": 1,
+    "foyer": 1,
+    "wardrobe": 5,
+    "study": 1,
+    "balcony": 1,
+    "ceiling": 1
+   },
+   "package": "luxury",
+   "extras": [
+    "smart",
+    "decor",
+    "viz"
+   ]
+  },
+  "tier": "luxury",
+  "subtotal": 12672000,
+  "tax": 0,
+  "total": 12672000,
+  "low": 11405000,
+  "high": 13939000,
+  "tierTotals": {
+   "essential": 5230000,
+   "premium": 8124000,
+   "luxury": 12672000
+  },
+  "lines": [
+   [
+    "master",
+    1,
+    372,
+    966875
+   ],
+   [
+    "child",
+    4,
+    1050,
+    2415000
+   ],
+   [
+    "guest",
+    1,
+    219,
+    503125
+   ],
+   [
+    "family",
+    1,
+    350,
+    910000
+   ],
+   [
+    "drawing",
+    1,
+    219,
+    568750
+   ],
+   [
+    "dining",
+    1,
+    263,
+    603750
+   ],
+   [
+    "kitchen",
+    1,
+    219,
+    918750
+   ],
+   [
+    "openkitchen",
+    1,
+    175,
+    805000
+   ],
+   [
+    "toilet",
+    5,
+    547,
+    1968750
+   ],
+   [
+    "prayer",
+    1,
+    66,
+    183750
+   ],
+   [
+    "foyer",
+    1,
+    null,
+    140000
+   ],
+   [
+    "wardrobe",
+    5,
+    null,
+    750000
+   ],
+   [
+    "study",
+    1,
+    175,
+    402500
+   ],
+   [
+    "balcony",
+    1,
+    null,
+    80000
+   ],
+   [
+    "ceiling",
+    1,
+    2800,
+    896000
+   ]
+  ],
+  "extras": [
+   [
+    "smart",
+    180000
+   ],
+   [
+    "decor",
+    320000
+   ],
+   [
+    "viz",
+    60000
+   ]
+  ],
+  "rationale": []
+ },
+ {
+  "input": {
+   "propertyType": "office",
+   "sqft": 2000,
+   "bhk": 1,
+   "items": {
+    "reception": 1,
+    "workstation": 10,
+    "cabin": 1,
+    "meeting": 1,
+    "pantry": 1,
+    "collab": 1,
+    "officestorage": 1
+   },
+   "package": "premium",
+   "extras": []
+  },
+  "tier": "premium",
+  "subtotal": 1526000,
+  "tax": 0,
+  "total": 1526000,
+  "low": 1373000,
+  "high": 1679000,
+  "tierTotals": {
+   "essential": 936000,
+   "premium": 1526000,
+   "luxury": 2478000
+  },
+  "lines": [
+   [
+    "reception",
+    1,
+    null,
+    260000
+   ],
+   [
+    "workstation",
+    10,
+    null,
+    280000
+   ],
+   [
+    "cabin",
+    1,
+    null,
+    230000
+   ],
+   [
+    "meeting",
+    1,
+    null,
+    200000
+   ],
+   [
+    "pantry",
+    1,
+    null,
+    150000
+   ],
+   [
+    "collab",
+    1,
+    240,
+    336000
+   ],
+   [
+    "officestorage",
+    1,
+    null,
+    70000
+   ]
+  ],
+  "extras": [],
+  "rationale": []
+ },
+ {
+  "input": {
+   "propertyType": "showroom",
+   "sqft": 1500,
+   "bhk": 1,
+   "items": {
+    "showfloor": 1,
+    "showcounter": 1,
+    "showunits": 12
+   },
+   "package": "essential",
+   "extras": [
+    "viz"
+   ]
+  },
+  "tier": "essential",
+  "subtotal": 1210000,
+  "tax": 0,
+  "total": 1210000,
+  "low": 1089000,
+  "high": 1331000,
+  "tierTotals": {
+   "essential": 1210000,
+   "premium": 1944000,
+   "luxury": 3205000
+  },
+  "lines": [
+   [
+    "showfloor",
+    1,
+    825,
+    825000
+   ],
+   [
+    "showcounter",
+    1,
+    null,
+    120000
+   ],
+   [
+    "showunits",
+    12,
+    null,
+    240000
+   ]
+  ],
+  "extras": [
+   [
+    "viz",
+    25000
+   ]
+  ],
+  "rationale": []
+ },
+ {
+  "input": {
+   "propertyType": "apartment",
+   "sqft": 2400,
+   "bhk": 4,
+   "items": {
+    "master": 1,
+    "child": 3,
+    "guest": 1,
+    "family": 1,
+    "drawing": 1,
+    "dining": 1,
+    "kitchen": 1,
+    "openkitchen": 1,
+    "toilet": 4,
+    "prayer": 1,
+    "foyer": 1,
+    "wardrobe": 4,
+    "study": 1,
+    "balcony": 1,
+    "ceiling": 1
+   },
+   "package": "bestfit",
+   "extras": []
+  },
+  "tier": "luxury",
+  "subtotal": 10730000,
+  "tax": 0,
+  "total": 10730000,
+  "low": 9657000,
+  "high": 11803000,
+  "tierTotals": {
+   "essential": 4489000,
+   "premium": 6939000,
+   "luxury": 10730000
+  },
+  "lines": [
+   [
+    "master",
+    1,
+    368,
+    955676
+   ],
+   [
+    "child",
+    3,
+    778,
+    1790270
+   ],
+   [
+    "guest",
+    1,
+    216,
+    497297
+   ],
+   [
+    "family",
+    1,
+    346,
+    899459
+   ],
+   [
+    "drawing",
+    1,
+    216,
+    562162
+   ],
+   [
+    "dining",
+    1,
+    259,
+    596757
+   ],
+   [
+    "kitchen",
+    1,
+    216,
+    908108
+   ],
+   [
+    "openkitchen",
+    1,
+    173,
+    795676
+   ],
+   [
+    "toilet",
+    4,
+    432,
+    1556757
+   ],
+   [
+    "prayer",
+    1,
+    65,
+    181622
+   ],
+   [
+    "foyer",
+    1,
+    null,
+    140000
+   ],
+   [
+    "wardrobe",
+    4,
+    null,
+    600000
+   ],
+   [
+    "study",
+    1,
+    173,
+    397838
+   ],
+   [
+    "balcony",
+    1,
+    null,
+    80000
+   ],
+   [
+    "ceiling",
+    1,
+    2400,
+    768000
+   ]
+  ],
+  "extras": [],
+  "rationale": [
+   "Your 2400 sq ft is at or above 1000 sq ft, where Premium detailing is usually the balanced choice.",
+   "At 2400 sq ft the scale suits a bespoke Luxury treatment."
+  ]
+ },
+ {
+  "input": {
+   "propertyType": "apartment",
+   "sqft": 900,
+   "bhk": 2,
+   "items": {
+    "master": 1,
+    "family": 1
+   },
+   "package": "bestfit",
+   "extras": []
+  },
+  "tier": "essential",
+  "subtotal": 424000,
+  "tax": 0,
+  "total": 424000,
+  "low": 382000,
+  "high": 467000,
+  "tierTotals": {
+   "essential": 424000,
+   "premium": 656000,
+   "luxury": 1003000
+  },
+  "lines": [
+   [
+    "master",
+    1,
+    199,
+    218571
+   ],
+   [
+    "family",
+    1,
+    187,
+    205714
+   ]
+  ],
+  "extras": [],
+  "rationale": [
+   "Your size and number of spaces point to the Essential package as the most efficient fit."
+  ]
+ },
+ {
+  "input": {
+   "propertyType": "apartment",
+   "sqft": 1350,
+   "bhk": 2,
+   "items": {
+    "master": 1,
+    "child": 1,
+    "family": 1,
+    "kitchen": 1
+   },
+   "package": "bestfit",
+   "extras": [],
+   "targetBudget": 2000000
+  },
+  "tier": "premium",
+  "subtotal": 1790000,
+  "tax": 0,
+  "total": 1790000,
+  "low": 1611000,
+  "high": 1969000,
+  "tierTotals": {
+   "essential": 1162000,
+   "premium": 1790000,
+   "luxury": 2725000
+  },
+  "lines": [
+   [
+    "master",
+    1,
+    298,
+    506688
+   ],
+   [
+    "child",
+    1,
+    210,
+    315584
+   ],
+   [
+    "family",
+    1,
+    281,
+    476883
+   ],
+   [
+    "kitchen",
+    1,
+    175,
+    490909
+   ]
+  ],
+  "extras": [],
+  "rationale": [
+   "Your 1350 sq ft is at or above 1000 sq ft, where Premium detailing is usually the balanced choice.",
+   "Adjusted to the highest package within your target budget of 2,000,000."
+  ]
+ }
+]

@@ -13,3 +13,11 @@ data/leads.jsonl
 .vercel
 .env*
 SETUP-KEY.txt
+
+# Java backend
+backend/target/
+*.class
+*.jar
+!backend/.mvn/wrapper/maven-wrapper.jar
+.idea/
+*.iml
