@@ -19,6 +19,9 @@ const credits = [
   { use: 'Project card: Studio Workspace', author: 'Crew', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Ornate_office_space_(Unsplash).jpg` },
   { use: 'Why choose us section', author: 'Crew', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Wood_table_in_front_of_white_wall_(Unsplash).jpg` },
   { use: 'About page studio image', author: 'Breather', licence: 'CC0', licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', page: `${base}Chairs_in_a_meeting_room_(Unsplash).jpg` },
+  { use: 'Showroom service card', author: 'Huy Phan', licence: 'Unsplash License', licenceUrl: 'https://unsplash.com/license', page: 'https://unsplash.com/photos/jPaZgriwcm4' },
+  { use: 'Showroom page hero', author: 'Danny Greenberg', licence: 'Unsplash License', licenceUrl: 'https://unsplash.com/license', page: 'https://unsplash.com/photos/usnU4StgpC8' },
+  { use: 'Showroom page detail image', author: 'Ulises Ramirez', licence: 'Unsplash License', licenceUrl: 'https://unsplash.com/license', page: 'https://unsplash.com/photos/aGgmKntVLJQ' },
 ];
 
 export default function Credits() {
@@ -26,7 +29,7 @@ export default function Credits() {
     <>
       <PageHead eyebrow="Credits" title="Photo credits" />
       <div className="container prose" style={{ paddingBottom: 'var(--section)' }}>
-        <p className="notice">These are stand-in photographs from Wikimedia Commons. They are not our projects. They are resized and cropped. They will be replaced with the studio’s own photography.</p>
+        <p className="notice">These are stand-in photographs from Wikimedia Commons and Unsplash. They are not our projects. They are resized and cropped. They will be replaced with the studio’s own photography.</p>
         <ul>
           {credits.map((c) => (
             <li key={c.page}>{c.use}: <a href={c.page} rel="noopener noreferrer" target="_blank">photo</a> by {c.author}, <a href={c.licenceUrl} rel="noopener noreferrer" target="_blank">{c.licence}</a>.</li>
