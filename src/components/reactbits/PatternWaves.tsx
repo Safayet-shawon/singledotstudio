@@ -154,7 +154,7 @@ const ATLAS_TILE = 128;
 const WAVE_UNIT = 520;
 const RIPPLE_CELL = 8;
 const RIPPLE_RATE = 60;
-const PIXEL_BUDGET = 4.5e6;
+const PIXEL_BUDGET = 2.2e6; // keeps the shader affordable on integrated GPUs (the dots are soft, so a lower resolution is not visible)
 const INTRO_SECONDS = 2;
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);

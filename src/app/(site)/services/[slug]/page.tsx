@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const base = serviceBySlug((await params).slug);
   if (!base) return {};
   const s = { ...base, intro: (await getContent()).services[base.slug]?.intro ?? base.intro };
-  return { title: `${s.name} Interior Design`, description: s.intro, alternates: { canonical: `/services/${s.slug}` }, openGraph: { title: `${s.name} Interior Design | ${site.brand.name}`, description: s.intro } };
+  return { title: `${s.name} Interior Design`, description: s.intro, alternates: { canonical: `/services/${s.slug}` }, openGraph: { type: 'website', siteName: site.brand.name, title: `${s.name} Interior Design | ${site.brand.name}`, description: s.intro, images: [{ url: '/media/img/home-poster.jpg', alt: site.brand.name }] }, twitter: { card: 'summary_large_image', title: `${s.name} Interior Design | ${site.brand.name}`, description: s.intro, images: ['/media/img/home-poster.jpg'] } };
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {

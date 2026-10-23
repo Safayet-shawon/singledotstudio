@@ -3,7 +3,7 @@
   --cream: #efe8da;
   --sand: #e3d8c5;
   --taupe: #b9ab97;
-  --stone: #857b6d;
+  --stone: #6f665a;
   --olive: #66664a;
   --olive-dark: #4d4d36;
   --charcoal: #26231f;
@@ -188,7 +188,7 @@ button.chip[aria-pressed='true'] { background: var(--charcoal); color: var(--ivo
 .marquee-controls { display: flex; gap: 0.6rem; align-items: center; margin-top: 1.5rem; }
 .marquee-controls button { border: 1px solid var(--charcoal); background: none; width: 44px; height: 44px; display: grid; place-items: center; }
 .marquee-controls button:hover { background: var(--charcoal); color: var(--ivory); }
-.marquee-controls span { font-size: 0.8rem; color: var(--stone); margin-left: 0.6rem; }
+.marquee-controls span { font-size: 0.8rem; color: #6b6358; margin-left: 0.6rem; }
 .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
 .proj-grid .proj { width: auto; }
 
@@ -213,7 +213,7 @@ button.chip[aria-pressed='true'] { background: var(--charcoal); color: var(--ivo
 .consult { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
 .contact-list { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: 0.8rem; color: var(--stone); }
 .contact-list li span { display: block; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive); }
-.tbd { font-style: italic; opacity: 0.8; }
+.tbd { font-style: italic; color: inherit; }
 .form { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 1.4rem; background: var(--ivory); padding: clamp(22px, 3vw, 44px); border: 1px solid var(--line); }
 .section--cream .form { background: var(--ivory); }
 .field { display: grid; gap: 6px; }
@@ -388,9 +388,9 @@ dialog.calc { max-width: 100vw; max-height: 100svh; }
 .carousel__slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.02); transition: opacity 1.6s ease, transform 8s ease-out; }
 .carousel__slide.is-on { opacity: 1; transform: scale(1.12); }
 .carousel__ui { position: absolute; z-index: 3; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 6px 12px; border-radius: 999px; background: rgba(20, 18, 15, 0.35); backdrop-filter: blur(6px); }
-.carousel__dots { display: flex; gap: 8px; }
-.carousel__dots button { width: 9px; height: 9px; padding: 0; border-radius: 99px; border: 0; background: rgba(247, 242, 233, 0.5); cursor: pointer; transition: width 0.4s var(--ease), background 0.3s; }
-.carousel__dots button.is-on { width: 30px; background: #d98a57; }
+.carousel__dots { display: flex; gap: 0; }
+.carousel__dots button { box-sizing: border-box; width: 24px; height: 24px; padding: 7.5px; background-clip: content-box; border-radius: 99px; border: 0; background-color: rgba(247, 242, 233, 0.5); cursor: pointer; transition: width 0.4s var(--ease), background 0.3s; }
+.carousel__dots button.is-on { width: 45px; background-color: #d98a57; }
 .carousel__arrow, .carousel__pause { background: none; border: 0; color: var(--ivory); font-size: 1.3rem; line-height: 1; min-width: 28px; min-height: 28px; cursor: pointer; }
 .carousel__pause { font-size: 0.6rem; }
 @media (prefers-reduced-motion: reduce) { .carousel__slide { transition: opacity 0.4s; transform: none !important; } .fab, .fab__pulse, .fab::before, .fab__core { animation: none; } }
@@ -692,7 +692,7 @@ button.chip[aria-pressed='true']::before { content: '✓ '; color: #e7a67a; }
 .ba__range{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
 .ba__tag{position:absolute;top:12px;padding:4px 12px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
 .ba__tag--l{left:12px}.ba__tag--r{right:12px}
-.ba__note{margin:0;font-size:.78rem;color:var(--muted,#7b7268)}
+.ba__note{margin:0;font-size:.78rem;color:var(--muted,#675f55)}
 
 /* ---- Send cartoon (SendToss): paper toss into the logo; timings are percentages of --toss-T ---- */
 dialog.toss{border:0;padding:0;margin:0;max-width:none;max-height:none;width:100%;height:100%;background:transparent;color:var(--ink);overflow:hidden}
@@ -748,3 +748,5 @@ dialog.toss::backdrop{background:rgba(38,35,31,.62);backdrop-filter:blur(3px)}
 @keyframes toss-pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
 @keyframes toss-blink{0%,100%{opacity:.2}50%{opacity:1}}
 @media (prefers-reduced-motion: reduce){.toss__svg{display:none}.toss__card,.toss__tick{animation:none}.toss__wait i{animation:none;opacity:1}}
+
+.calc-loading{min-height:min(720px,85svh);margin:0}

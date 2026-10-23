@@ -9,7 +9,7 @@ import { processSteps as steps, values } from '@/config/site';
 
 export const metadata: Metadata = {
   title: 'About the Studio',
-  description: 'Our design philosophy, process and values.',
+  description: 'Learn about Single Dot Studio: our design philosophy, how we plan and deliver interior projects, and the values behind our work.',
   alternates: { canonical: '/about' },
 };
 

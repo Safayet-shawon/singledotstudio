@@ -62,7 +62,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
               <button type="button" className="x" aria-label="Dismiss suggestion" onClick={dismiss}><Icon name="close" size={16} /></button>
             </div>
           )}
-          <button type="button" className="fab" onClick={open} aria-haspopup="dialog" aria-label="Calculate now: get a free quotation">
+          <button type="button" className="fab" onClick={open} aria-haspopup="dialog">
             <span className="fab__pulse" aria-hidden="true" />
             <span className="fab__badge" aria-hidden="true">Free</span>
             <span className="fab__core"><Icon name="calc" size={24} /></span>
