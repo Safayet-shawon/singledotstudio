@@ -693,3 +693,58 @@ button.chip[aria-pressed='true']::before { content: '✓ '; color: #e7a67a; }
 .ba__tag{position:absolute;top:12px;padding:4px 12px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
 .ba__tag--l{left:12px}.ba__tag--r{right:12px}
 .ba__note{margin:0;font-size:.78rem;color:var(--muted,#7b7268)}
+
+/* ---- Send cartoon (SendToss): paper toss into the logo; timings are percentages of --toss-T ---- */
+dialog.toss{border:0;padding:0;margin:0;max-width:none;max-height:none;width:100%;height:100%;background:transparent;color:var(--ink);overflow:hidden}
+dialog.toss[open]{display:grid;place-items:center}
+dialog.toss::backdrop{background:rgba(38,35,31,.62);backdrop-filter:blur(3px)}
+.toss{--toss-T:3.2s}
+.toss__card{width:min(520px,calc(100vw - 32px));background:var(--ivory);border-radius:22px;padding:22px 18px 24px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.35);animation:toss-in .35s var(--ease) both}
+.toss__svg{display:block;width:100%;height:auto;overflow:visible;color:var(--navy)}
+.toss-ground{stroke:var(--taupe);stroke-width:2;stroke-linecap:round}
+.toss-fig{stroke:var(--charcoal)}
+.toss-fig--b{stroke:var(--olive)}
+.toss-head{fill:var(--ivory)}
+.toss-fig--a .toss-eye{fill:var(--charcoal)}.toss-fig--b .toss-eye{fill:var(--olive)}
+.toss-paper{fill:#fffdf8;stroke:var(--charcoal);stroke-width:1.6}
+.toss-ball-shape{fill:#fffdf8;stroke:var(--charcoal);stroke-width:1.6;stroke-linejoin:round}
+.toss-ball-line{stroke:var(--stone);stroke-width:1.2;stroke-linecap:round}
+.toss-dot{fill:#c97a4a}.toss-ring{stroke:#c97a4a;opacity:0}
+.toss-a-l1{transform:rotate(8deg)}.toss-a-l2{transform:rotate(-8deg)}
+.toss-a-arm,.toss-a-body,.toss-paper,.toss-ball,.toss-carry,.toss-b-arm,.toss-b-face,.toss-b-walk,.toss-b-hop,.toss-b-shrink,.toss-b-l1,.toss-b-l2,.toss-logo,.toss-ring{transform-origin:0 0;animation-duration:var(--toss-T);animation-fill-mode:both;animation-timing-function:linear}
+.toss-a-arm{animation-name:toss-a-arm;animation-timing-function:ease-in-out}
+.toss-a-body{animation-name:toss-a-body}
+.toss-paper{animation-name:toss-paper}
+.toss-ball{animation-name:toss-ball}
+.toss-carry{animation-name:toss-carry}
+.toss-b-arm{animation-name:toss-b-arm;animation-timing-function:ease-in-out}
+.toss-b-face{animation-name:toss-b-face}
+.toss-b-walk{animation-name:toss-b-walk}
+.toss-b-hop{animation-name:toss-b-hop}
+.toss-b-shrink{animation-name:toss-b-shrink;transform-origin:0 -40px}
+.toss-b-l1{animation-name:toss-b-l1}.toss-b-l2{animation-name:toss-b-l2}
+.toss-logo{animation-name:toss-logo}
+.toss-ring{animation-name:toss-ring;transform-origin:800px 577px}
+@keyframes toss-in{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toss-a-arm{0%,8%{transform:rotate(25deg)}11%{transform:rotate(18deg)}14%{transform:rotate(32deg)}17%{transform:rotate(18deg)}20%{transform:rotate(32deg)}23%,27.8%{transform:rotate(25deg)}34.7%{transform:rotate(-115deg)}37.5%,44%{transform:rotate(-15deg)}54%{transform:rotate(25deg)}60%,68%{transform:rotate(-150deg)}74%,100%{transform:rotate(25deg)}}
+@keyframes toss-a-body{0%,8%{transform:translate(0,0)}9%{transform:translate(-1.5px,0)}11%{transform:translate(1.5px,0)}13%{transform:translate(-1.5px,0)}15%{transform:translate(1.5px,0)}17%{transform:translate(-1.5px,0)}19%{transform:translate(1.5px,0)}21%{transform:translate(-1.5px,0)}23%{transform:translate(1.5px,0)}25%,58.6%{transform:translate(0,0)}61%{transform:translate(0,-9px)}64%,66%{transform:translate(0,0)}69%{transform:translate(0,-9px)}72%,100%{transform:translate(0,0)}}
+@keyframes toss-paper{0%,8%{transform:scale(1,1) rotate(0);opacity:1}12%{transform:scale(.8,.9) rotate(-8deg)}16%{transform:scale(.6,.7) rotate(10deg)}20%{transform:scale(.45,.5) rotate(-12deg)}24%{transform:scale(.3) rotate(0);opacity:1}25%,100%{transform:scale(.2);opacity:0}}
+@keyframes toss-ball{0%,24.9%{transform:translate(100px,149px) scale(0) rotate(0);opacity:0}25%{transform:translate(100px,149px) scale(.4) rotate(0);opacity:1}27.8%{transform:translate(100px,149px) scale(1.15) rotate(0)}29%{transform:translate(100px,149px) scale(1) rotate(0)}34.7%{transform:translate(73px,119px) scale(1) rotate(0)}37.5%{transform:translate(101px,132px) scale(1) rotate(0)}42.8%{transform:translate(135px,73px) scale(1) rotate(200deg)}48.1%{transform:translate(169px,52px) scale(1) rotate(400deg)}53.3%{transform:translate(203px,68px) scale(1) rotate(600deg)}58.6%{transform:translate(237px,122px) scale(1) rotate(800deg);opacity:1}58.9%,100%{transform:translate(237px,122px) scale(1) rotate(800deg);opacity:0}}
+@keyframes toss-carry{0%,58.8%{transform:translate(12.6px,-78px) scale(1);opacity:0}58.9%{transform:translate(12.6px,-78px) scale(1.25);opacity:1}61%{transform:translate(12.6px,-78px) scale(1)}65.3%,100%{transform:translate(17px,-46px) scale(1);opacity:1}}
+@keyframes toss-b-arm{0%,30%{transform:rotate(75deg)}37.5%,58.6%{transform:rotate(-55deg)}59.6%{transform:rotate(-66deg)}61.5%{transform:rotate(-50deg)}66%,100%{transform:rotate(40deg)}}
+@keyframes toss-b-face{0%,61%{transform:scaleX(-1)}62.5%{transform:scaleX(0)}64%,100%{transform:scaleX(1)}}
+@keyframes toss-b-walk{0%,65.3%{transform:translateX(0)}90.3%,100%{transform:translateX(142px)}}
+@keyframes toss-b-hop{0%,58.6%{transform:translateY(0)}60%{transform:translateY(-8px)}62%,100%{transform:translateY(0)}}
+@keyframes toss-b-shrink{0%,87%{transform:scale(1);opacity:1}93%,100%{transform:scale(.35);opacity:0}}
+@keyframes toss-b-l1{0%,65%{transform:rotate(8deg)}69%{transform:rotate(30deg)}73%{transform:rotate(-26deg)}77%{transform:rotate(30deg)}81%{transform:rotate(-26deg)}85%{transform:rotate(30deg)}89%{transform:rotate(-22deg)}92%,100%{transform:rotate(8deg)}}
+@keyframes toss-b-l2{0%,65%{transform:rotate(-8deg)}69%{transform:rotate(-30deg)}73%{transform:rotate(26deg)}77%{transform:rotate(-30deg)}81%{transform:rotate(26deg)}85%{transform:rotate(-30deg)}89%{transform:rotate(22deg)}92%,100%{transform:rotate(-8deg)}}
+@keyframes toss-logo{0%,89%{transform:scale(1,1)}91%{transform:scale(1.14,.88)}94%{transform:scale(.95,1.08)}97%{transform:scale(1.04,.98)}100%{transform:scale(1,1)}}
+@keyframes toss-ring{0%,90%{transform:scale(1);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+.toss__msg{margin:6px 0 0;min-height:2.4rem;display:flex;align-items:center;justify-content:center;gap:.5rem;font-family:var(--display);font-size:clamp(1.5rem,5vw,2rem);line-height:1.2;color:var(--charcoal)}
+.toss__tick{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--olive);color:#fff;animation:toss-pop .45s var(--ease) both}
+.toss__wait{font-size:1.2rem;color:var(--stone);font-family:var(--sans)}
+.toss__wait i{font-style:normal;animation:toss-blink 1s infinite both}.toss__wait i:nth-child(2){animation-delay:.2s}.toss__wait i:nth-child(3){animation-delay:.4s}
+.toss__note{margin:.3rem 0 0;font-size:.92rem;color:var(--stone)}
+@keyframes toss-pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+@keyframes toss-blink{0%,100%{opacity:.2}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.toss__svg{display:none}.toss__card,.toss__tick{animation:none}.toss__wait i{animation:none;opacity:1}}

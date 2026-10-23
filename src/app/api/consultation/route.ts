@@ -1,3 +1,4 @@
+import { after } from 'next/server';
 import { sendMail, leadInbox } from '@/lib/mail';
 import { saveLead } from '@/lib/leads';
 import { json, rateLimited, readJson, sameOrigin, str, validateContact } from '@/lib/guard';
@@ -19,18 +20,23 @@ export async function POST(req: Request) {
   const segment = SEGMENTS.includes(str(b.segment, 10)) ? str(b.segment, 10) : 'home';
   const detail = { segment, service: str(b.service, 40), budget: str(b.budget, 60), message: str(b.message, 1000) };
 
-  const emailed = await sendMail({
+  const mail = {
     to: leadInbox(),
     subject: `New consultation request: ${c.name}`,
     text: `${c.name}\n${c.phone}\n${c.email}\n${c.address}\n\n${Object.entries(detail).map(([k, v]) => `${k}: ${v || '-'}`).join('\n')}`,
     replyTo: c.email,
-  });
+  };
   const at = new Date().toISOString();
   const saved = await saveLead({ reference: `CON-${at.slice(0, 10).replace(/-/g, '')}-${Math.random().toString(16).slice(2, 6).toUpperCase()}`, kind: 'consultation', at, contact: c, ...detail });
 
-  if (emailed !== 'sent' && !saved) {
-    // Never claim success when nothing was delivered.
-    return json({ error: 'Online requests are not switched on for this site yet (no lead inbox is configured). Please contact the studio directly.', unconfigured: true }, 503);
+  if (!saved) {
+    // Nothing stored, so the email is the only copy: wait for it and never claim success if it did not go.
+    if ((await sendMail(mail)) !== 'sent') {
+      return json({ error: 'Online requests are not switched on for this site yet (no lead inbox is configured). Please contact the studio directly.', unconfigured: true }, 503);
+    }
+    return json({ ok: true });
   }
+  // The request is safely stored: answer now and send the studio alert after the response.
+  after(() => sendMail(mail));
   return json({ ok: true });
 }

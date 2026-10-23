@@ -1,8 +1,9 @@
 import crypto from 'node:crypto';
+import { after } from 'next/server';
 import { computeEstimate, formatMoney, type EstimateInput } from '@/lib/estimate';
 import { pricing } from '@/lib/pricing';
 import { buildEstimatePdf } from '@/lib/pdf';
-import { sendMailX, leadInbox } from '@/lib/mail';
+import { sendMailX, leadInbox, mailConfigured } from '@/lib/mail';
 import { saveLead } from '@/lib/leads';
 import { quoteEmail } from '@/lib/quote-mail';
 import { json, rateLimited, readJson, sameOrigin, str, validateContact } from '@/lib/guard';
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
   const contact = validateContact(body);
   if ('error' in contact) return json({ error: contact.error }, 400);
 
-  let estimate;
+  let estimate: ReturnType<typeof computeEstimate>;
   try {
     const input = { ...(body.estimateInput as EstimateInput) };
     // The size band is display text chosen from a fixed list (or a typed number): accept only that shape.
@@ -37,18 +38,20 @@ export async function POST(req: Request) {
   const whatsapp = body.whatsapp === true;
   const c = { ...contact.value, address, whatsapp };
 
-  try {
-    const pdf = await buildEstimatePdf({ estimate, contact: c, pricing, reference, date: now });
-    const attachments = [{ filename: `${reference}.pdf`, content: pdf }];
-    const money = (n: number) => formatMoney(n, pricing, true);
-    const summary = `${reference}: ${estimate.input.propertyType}, ${estimate.input.sqft} sq ft, ${pricing.packages[estimate.tier].label} package, ${money(estimate.low)} to ${money(estimate.high)}`;
-
-    const q = quoteEmail(estimate, pricing, c.name, reference);
-    const customerMail = await sendMailX({ to: c.email, subject: `Your interior design quotation, ${site.brand.name} (${reference})`, text: q.text, html: q.html, attachments });
-    const teamMail = await sendMailX({
-      to: leadInbox(),
-      subject: `New quotation request: ${c.name} (${reference})`,
-      text: `A customer requested a quotation.
+  /** Builds the PDF and sends both emails at the same time. Never throws. */
+  async function deliver() {
+    try {
+      const pdf = await buildEstimatePdf({ estimate, contact: c, pricing, reference, date: now });
+      const attachments = [{ filename: `${reference}.pdf`, content: pdf }];
+      const money = (n: number) => formatMoney(n, pricing, true);
+      const summary = `${reference}: ${estimate.input.propertyType}, ${estimate.input.sqft} sq ft, ${pricing.packages[estimate.tier].label} package, ${money(estimate.low)} to ${money(estimate.high)}`;
+      const q = quoteEmail(estimate, pricing, c.name, reference);
+      const [customerMail, teamMail] = await Promise.all([
+        sendMailX({ to: c.email, subject: `Your interior design quotation, ${site.brand.name} (${reference})`, text: q.text, html: q.html, attachments }),
+        sendMailX({
+          to: leadInbox(),
+          subject: `New quotation request: ${c.name} (${reference})`,
+          text: `A customer requested a quotation.
 
 ${c.name}
 ${c.phone}${whatsapp ? ' (WhatsApp)' : ''}
@@ -58,15 +61,28 @@ ${address || '-'}
 ${summary}
 
 The customer's copy of the quotation is attached.`,
-      replyTo: c.email,
-      attachments,
-    });
-    const saved = await saveLead({
-      reference, kind: 'quotation', at: now.toISOString(), contact: c, estimate,
-      mail: { customer: customerMail.status, team: teamMail.status, customerPreview: customerMail.preview ?? null, teamPreview: teamMail.preview ?? null },
-    });
+          replyTo: c.email,
+          attachments,
+        }),
+      ]);
+      return { customer: customerMail.status, team: teamMail.status, customerPreview: customerMail.preview ?? null, teamPreview: teamMail.preview ?? null };
+    } catch (err) {
+      console.error('[estimate] delivery failed:', (err as Error).message);
+      return { customer: 'failed', team: 'failed', customerPreview: null, teamPreview: null };
+    }
+  }
 
-    return json({ reference, customerEmail: customerMail.status, teamNotified: teamMail.status === 'sent' || saved });
+  try {
+    const lead = { reference, kind: 'quotation' as const, at: now.toISOString(), contact: c, estimate };
+    // Store the request first (one quick write) and answer the customer straight away; the PDF and emails follow in the background.
+    const saved = await saveLead({ ...lead, mail: { customer: 'queued', team: 'queued', customerPreview: null, teamPreview: null } });
+    if (saved) {
+      after(async () => { await saveLead({ ...lead, mail: await deliver() }); });
+      return json({ reference, customerEmail: mailConfigured() ? 'queued' : 'not_configured', teamNotified: true });
+    }
+    // Nothing could be stored, so the email is the only copy: wait for it.
+    const mail = await deliver();
+    return json({ reference, customerEmail: mail.customer, teamNotified: mail.team === 'sent' });
   } catch (err) {
     console.error('[estimate]', (err as Error).message);
     return json({ error: 'We could not prepare your quotation. Please try again.' }, 500);

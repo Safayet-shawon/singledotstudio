@@ -16,7 +16,7 @@ const localFile = () => path.join(process.cwd(), 'data', 'leads.jsonl');
 export async function saveLead(lead: LeadRecord): Promise<boolean> {
   if (hasBlob()) {
     try {
-      await put(`leads/${lead.at}_${lead.reference}.json`, JSON.stringify(lead), { access: 'private', addRandomSuffix: false, contentType: 'application/json' });
+      await put(`leads/${lead.at}_${lead.reference}.json`, JSON.stringify(lead), { access: 'private', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
       return true;
     } catch (err) {
       console.error('[leads] blob save failed:', (err as Error).message);

@@ -1,6 +1,7 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Icon } from './Icon';
+import { SendToss } from './SendToss';
 import { pricing } from '@/lib/pricing';
 import { store, KEYS } from '@/lib/storage';
 import { itemsFor, maxQty, isResidential, type EstimateInput, type PackageKey, type PropertyType } from '@/lib/estimate';
@@ -22,7 +23,7 @@ const PKGS: { key: PackageKey; tone: string }[] = [
 ];
 const STEP_NAMES = ['Space', 'Rooms', 'Package', 'Details'];
 
-interface Result { reference: string; customerEmail: 'sent' | 'sample' | 'not_configured' | 'failed'; teamNotified: boolean }
+interface Result { reference: string; customerEmail: 'sent' | 'queued' | 'sample' | 'not_configured' | 'failed'; teamNotified: boolean }
 interface State {
   step: number; type: PropertyType | null; range: string | null; custom: string; bhk: number | null;
   items: Record<string, number>; extras: string[]; pkg: PackageKey | null;
@@ -35,6 +36,8 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   const [ready, setReady] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [toss, setToss] = useState<'off' | 'sending' | 'done'>('off');
+  const closeToss = useCallback(() => setToss('off'), []);
   const [serverError, setServerError] = useState('');
   const [result, setResult] = useState<Result | null>(null);
   const [hp, setHp] = useState('');
@@ -100,7 +103,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   async function submit() {
     if (!validate(4) || !type || !s.pkg) return;
     const estimateInput: EstimateInput = { propertyType: type, sqft, bhk: bhk || 1, items: s.items, package: s.pkg, extras: s.extras, targetBudget: null, sizeLabel };
-    setSubmitting(true); setServerError('');
+    setSubmitting(true); setServerError(''); setToss('sending');
     try {
       const res = await fetch('/api/estimate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -109,8 +112,8 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
       store.set(KEYS.prompt, 'completed'); store.remove(KEYS.draft);
-      setResult(data as Result);
-    } catch (e) { setServerError((e as Error).message); } finally { setSubmitting(false); }
+      setResult(data as Result); setToss('done');
+    } catch (e) { setToss('off'); setServerError((e as Error).message); } finally { setSubmitting(false); }
   }
   const reset = () => { store.remove(KEYS.draft); setS(initial); setErrors({}); setServerError(''); setResult(null); setDir('back'); };
   const err = (k: string) => (errors[k] ? <p className="err" role="alert">{errors[k]}</p> : null);
@@ -138,17 +141,17 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
 
   /* ---------- result ---------- */
   if (result) {
-    return frame(
+    return <>{frame(
       <div className="cqw-done">
         <span className="cqw-done__icon"><Icon name="check" size={36} /></span>
         <h3>Your quotation request is in</h3>
-        {result.customerEmail === 'sent'
-          ? <p>We have emailed your quotation to <strong>{s.email}</strong>. Please check your inbox, and the spam folder if you do not see it.</p>
+        {result.customerEmail === 'sent' || result.customerEmail === 'queued'
+          ? <p>We are emailing your quotation to <strong>{s.email}</strong>. Please check your inbox, and the spam folder if you do not see it.</p>
           : <p>We received your request and will email your quotation to <strong>{s.email}</strong> shortly.</p>}
         <p className="hint">Reference {result.reference}</p>
       </div>,
       <><button type="button" className="cqw-btn ghost" onClick={reset}>New request</button>{variant === 'dialog' && <button type="button" className="cqw-btn" onClick={onClose}>Close</button>}</>,
-    );
+    )}<SendToss phase={toss} onClose={closeToss} /></>;
   }
 
   /* ---------- steps ---------- */
@@ -161,7 +164,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
     </>
   );
 
-  return frame(
+  return <>{frame(
       <div key={s.step} className={`cqw-page ${dir}`}>
         {s.step === 1 && (
           <>
@@ -292,7 +295,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
         )}
       </div>,
     foot,
-  );
+  )}<SendToss phase={toss} onClose={closeToss} /></>;
 }
 
 function RoomOption({ label, qty, max, onToggle, onQty, i }: { label: string; qty: number; max: number; onToggle: () => void; onQty: (q: number) => void; i: number }) {

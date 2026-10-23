@@ -1,18 +1,22 @@
 'use client';
-import { useState, type FormEvent } from 'react';
+import { useCallback, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { services } from '@/config/site';
+import { SendToss } from './SendToss';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error' | 'unconfigured';
 
 export function ConsultationForm({ defaultService = '' }: { defaultService?: string }) {
   const [status, setStatus] = useState<Status>('idle');
+  const [toss, setToss] = useState<'off' | 'sending' | 'done'>('off');
+  const closeToss = useCallback(() => setToss('off'), []);
   const [msg, setMsg] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const f = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const f = new FormData(form);
     const v = (k: string) => String(f.get(k) ?? '').trim();
     const er: Record<string, string> = {};
     if (v('name').length < 2) er.name = 'Enter your full name.';
@@ -23,27 +27,29 @@ export function ConsultationForm({ defaultService = '' }: { defaultService?: str
     setErrors(er);
     if (Object.keys(er).length) return;
 
-    setStatus('submitting'); setMsg('');
+    setStatus('submitting'); setMsg(''); setToss('sending');
     try {
       const res = await fetch('/api/consultation', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: v('name'), phone: v('phone'), email: v('email'), address: v('address'), segment: v('segment'), service: v('service'), budget: v('budget'), message: v('message'), consent: true, website: v('website') }),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.ok) { setStatus('success'); (e.target as HTMLFormElement).reset(); return; }
+      if (res.ok) { setStatus('success'); setToss('done'); form.reset(); return; }
+      setToss('off');
       setStatus(data.unconfigured ? 'unconfigured' : 'error');
       setMsg(data.error || 'Something went wrong. Please try again.');
     } catch {
-      setStatus('error'); setMsg('Network error. Please check your connection and try again.');
+      setToss('off'); setStatus('error'); setMsg('Network error. Please check your connection and try again.');
     }
   }
 
   const Err = ({ k }: { k: string }) => (errors[k] ? <span className="err" role="alert">{errors[k]}</span> : null);
 
   if (status === 'success') {
-    return <div className="form" role="status"><div className="field--full"><h3>Thank you.</h3><p>Your request has been received and passed to the studio. We will get in touch using the details you provided.</p></div></div>;
+    return <><div className="form" role="status"><div className="field--full"><h3>Thank you.</h3><p>Your request has been received and passed to the studio. We will get in touch using the details you provided.</p></div></div><SendToss phase={toss} onClose={closeToss} /></>;
   }
   return (
+    <>
     <form className="form" onSubmit={onSubmit} noValidate aria-label="Book a consultation">
       <div className="field"><label htmlFor="c-name">Full name</label><input id="c-name" name="name" type="text" autoComplete="name" aria-invalid={!!errors.name} /><Err k="name" /></div>
       <div className="field"><label htmlFor="c-phone">Phone number</label><input id="c-phone" name="phone" type="tel" autoComplete="tel" aria-invalid={!!errors.phone} /><Err k="phone" /></div>
@@ -72,5 +78,7 @@ export function ConsultationForm({ defaultService = '' }: { defaultService?: str
       {(status === 'error' || status === 'unconfigured') && <p className={`notice ${status === 'error' ? 'notice--error' : 'notice--warn'} field--full`} role="alert">{msg}</p>}
       <div className="field--full"><button className="btn btn--solid" type="submit" disabled={status === 'submitting'}>{status === 'submitting' ? 'Sending…' : 'Book a consultation'}</button></div>
     </form>
+    <SendToss phase={toss} onClose={closeToss} />
+    </>
   );
 }

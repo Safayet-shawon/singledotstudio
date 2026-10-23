@@ -15,6 +15,8 @@ function getTransport() {
     port: Number(process.env.SMTP_PORT || 587),
     secure: process.env.SMTP_SECURE === 'true',
     auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
+    // Fail fast instead of hanging for minutes on a dead SMTP host.
+    connectionTimeout: 8000, greetingTimeout: 8000, socketTimeout: 20000,
   });
   return transport;
 }
