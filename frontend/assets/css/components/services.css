@@ -1,0 +1,23 @@
+/* Service cards and the Home / Office / Showroom switcher. */
+/* Services */
+.switch { display: flex; width: fit-content; max-width: 100%; border: 1px solid var(--charcoal); margin-bottom: 1.6rem; }
+.switch button { flex: 1 1 auto; background: none; border: 0; padding: 0.85em clamp(0.9em, 4.4vw, 2.2em); font-size: 0.78rem; letter-spacing: clamp(0.06em, 0.9vw, 0.18em); text-transform: uppercase; font-weight: 500; min-height: 46px; }
+.switch button[aria-selected='true'] { background: var(--charcoal); color: var(--ivory); }
+.svc-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(16px, 2vw, 28px); }
+.svc { position: relative; display: block; overflow: hidden; background: var(--sand); min-height: 320px; color: var(--ivory); grid-column: span 4; aspect-ratio: 4/4.7; transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease); will-change: transform; }
+.svc:hover, .svc:focus-visible { transform: scale(1.045); z-index: 5; box-shadow: 0 34px 60px -26px rgba(20, 18, 15, 0.6); }
+.svc .media { position: absolute; inset: 0; transition: transform 1.2s var(--ease); }
+.svc:hover .media, .svc:focus-visible .media { transform: scale(1.14); }
+.svc::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(20, 18, 15, 0.74), rgba(20, 18, 15, 0) 58%); transition: opacity 0.5s; }
+.svc:hover::after { background: linear-gradient(0deg, rgba(20, 18, 15, 0.86), rgba(20, 18, 15, 0.1) 70%); }
+.svc__body h3 { transition: transform 0.5s var(--ease); }
+.svc:hover .svc__body h3 { transform: translateY(-4px); }
+.svc__body { position: absolute; inset: auto 0 0 0; z-index: 2; padding: clamp(18px, 2.4vw, 32px); display: grid; gap: 6px; }
+.svc__body h3 { color: var(--ivory); }
+.svc__body p { margin: 0; font-size: 0.95rem; color: rgba(247, 242, 233, 0.85); max-width: 38ch; }
+.svc__body .more { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; opacity: 0; transform: translateY(6px); transition: all 0.4s var(--ease); }
+.svc:hover .more, .svc:focus-visible .more { opacity: 1; transform: none; }
+.areas { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.4rem; }
+.chip { border: 1px solid var(--line); padding: 0.45em 1em; font-size: 0.82rem; background: transparent; color: var(--ink); }
+button.chip { cursor: pointer; }
+button.chip[aria-pressed='true'] { background: var(--charcoal); color: var(--ivory); border-color: var(--charcoal); }

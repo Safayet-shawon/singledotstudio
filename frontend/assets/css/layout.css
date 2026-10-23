@@ -1,0 +1,7 @@
+/* Page container, sections and section heads. */
+.container { width: 100%; max-width: calc(var(--max) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.section { padding-block: var(--section); }
+.section--cream { background: var(--cream); }
+.section--dark { background: var(--charcoal); color: var(--sand); }
+.section-head { display: grid; gap: 0.8rem; margin-bottom: clamp(24px, 3.4vw, 44px); }
+.section-head--split { grid-template-columns: 1fr 1fr; align-items: end; gap: 3rem; }

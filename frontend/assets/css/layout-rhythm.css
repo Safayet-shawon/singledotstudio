@@ -1,0 +1,9 @@
+/* Tighter vertical rhythm between sections. */
+/* ===== Tighter section rhythm ===== */
+.section-head { margin-bottom: clamp(16px, 2.2vw, 28px); }
+.page-head { padding-bottom: clamp(8px, 1.4vw, 16px); }
+.footer { padding-block: clamp(36px, 5vw, 56px) 24px; }
+.cta-band { gap: 1rem; }
+.stats { gap: 1.2rem; }
+.why__item { padding-block: 1.1rem; }
+.why, .consult, .split { gap: clamp(20px, 4vw, 56px); }

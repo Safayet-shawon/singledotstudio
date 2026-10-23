@@ -1,0 +1,19 @@
+/* Project cards, filters and the scrolling gallery. */
+/* Marquee */
+.filters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
+.marquee { position: relative; overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.marquee.is-dragging { cursor: grabbing; }
+.marquee__track { display: flex; gap: clamp(14px, 1.8vw, 24px); width: max-content; will-change: transform; }
+.proj { position: relative; flex: 0 0 auto; width: clamp(260px, 30vw, 420px); aspect-ratio: 4/5; overflow: hidden; background: var(--sand); color: var(--ivory); display: block; }
+.proj .media { position: absolute; inset: 0; }
+.proj::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(20, 18, 15, 0.7), transparent 50%); }
+.proj__body { position: absolute; inset: auto 0 0 0; z-index: 2; padding: 1.2rem 1.3rem; }
+.proj__body h3 { color: var(--ivory); font-size: 1.5rem; }
+.proj__meta { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.8; }
+.badge { display: inline-block; font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 3px 8px; background: rgba(247, 242, 233, 0.9); color: var(--charcoal); margin-bottom: 8px; }
+.marquee-controls { display: flex; gap: 0.6rem; align-items: center; margin-top: 1.5rem; }
+.marquee-controls button { border: 1px solid var(--charcoal); background: none; width: 44px; height: 44px; display: grid; place-items: center; }
+.marquee-controls button:hover { background: var(--charcoal); color: var(--ivory); }
+.marquee-controls span { font-size: 0.8rem; color: var(--stone); margin-left: 0.6rem; }
+.proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+.proj-grid .proj { width: auto; }

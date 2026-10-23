@@ -1,0 +1,9 @@
+/* Site footer. */
+/* Footer */
+.footer { background: var(--charcoal); color: var(--taupe); padding-block: clamp(56px, 8vw, 96px) 32px; font-size: 0.95rem; }
+.footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 3rem; }
+.footer__title { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ivory); margin-bottom: 1.2rem; font-weight: 500; }
+.footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.footer a:hover { color: var(--ivory); }
+.footer .brand { color: var(--ivory); margin-bottom: 1rem; }
+.footer__bottom { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(185, 171, 151, 0.25); font-size: 0.82rem; }

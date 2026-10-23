@@ -1,0 +1,18 @@
+/* Staff leads list. */
+/* ===== Admin ===== */
+.admin { padding-top: calc(var(--header-h) + 28px); padding-bottom: var(--section); min-height: 70svh; }
+.admin__top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 8px; flex-wrap: wrap; }
+.leads { display: grid; gap: 10px; margin-top: 18px; }
+.lead { border: 1px solid var(--line); background: #fff; padding: 0; }
+.lead summary { display: grid; grid-template-columns: 170px 1fr auto auto; gap: 14px; align-items: center; padding: 14px 16px; list-style: none; font-family: var(--sans); font-size: 0.95rem; }
+.lead summary::after { display: none; }
+.lead__ref { font-weight: 600; font-size: 0.8rem; letter-spacing: 0.06em; }
+.lead__kind { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; background: var(--copper); color: #fff; }
+.lead__kind--consultation { background: var(--navy); }
+.lead time { color: var(--stone); font-size: 0.8rem; }
+.lead__body { padding: 4px 16px 18px; border-top: 1px solid var(--line); }
+.lead dl { display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; margin: 14px 0 0; font-size: 0.92rem; }
+.lead dt { color: var(--stone); }
+.lead dd { margin: 0; }
+.lead a { color: var(--copper); }
+@media (max-width: 720px) { .lead summary { grid-template-columns: 1fr auto; } .lead time { grid-column: 1 / -1; } .lead dl { grid-template-columns: 90px 1fr; } }

@@ -1,12 +1,12 @@
 # Single Dot Studio
 
 This repository is mid-migration from a Next.js (Node.js) application to a **Java back end** and a plain HTML/CSS/JavaScript
-front end. Read `docs/architecture.md` for the exact status.
+front end. Read `docs/architecture.md` for the exact status. The old app is still the live site until cutover.
 
 | Folder | What it is | State |
 | --- | --- | --- |
 | `backend/` | Spring Boot 4.1.2 API on Java 25: quotation estimates, consultations, PDF, email, staff login, leads | **Done and tested** |
-| `frontend/` | Static HTML/CSS/JS site | **Not started** |
+| `frontend/` | Static HTML/CSS/JS site (25 pages, calculator, forms, staff page) | **Done and tested** (see `frontend/README.md`) |
 | `src/`, `config/`, `public/` | The current live site (Next.js) | Unchanged, still the live site |
 | `docs/` | Architecture, API, security, deployment, environment variables, SEO | Written for the back end |
 

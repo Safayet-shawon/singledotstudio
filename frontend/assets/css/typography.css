@@ -1,0 +1,10 @@
+/* Headings, paragraphs and text roles. */
+h1, h2, h3, h4 { font-family: var(--display); font-weight: var(--hw, 500); line-height: 1.08; letter-spacing: -0.01em; margin: 0; color: var(--charcoal); }
+h1 { font-size: clamp(2.6rem, 6vw, 5.2rem); }
+h2 { font-size: clamp(2rem, 4vw, 3.4rem); }
+h3 { font-size: clamp(1.4rem, 2vw, 1.9rem); }
+p { margin: 0 0 1em; }
+.section--dark h2, .section--dark h3 { color: var(--ivory); }
+.eyebrow { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.8rem; display: block; font-weight: 500; }
+.section--dark .eyebrow { color: var(--taupe); }
+.lede { font-size: clamp(1.05rem, 1.4vw, 1.25rem); color: var(--stone); max-width: 56ch; }

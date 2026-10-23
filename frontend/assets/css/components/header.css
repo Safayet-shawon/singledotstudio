@@ -1,0 +1,35 @@
+/* Site header, navigation, dropdown and mobile drawer. */
+/* Header */
+.header { position: fixed; inset: 0 0 auto 0; z-index: 90; height: var(--header-h); display: flex; align-items: center; color: var(--ivory); transition: background 0.4s var(--ease), color 0.4s var(--ease), box-shadow 0.4s; }
+.header::before { content: ''; position: absolute; inset: 0 0 -46px 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgba(10, 8, 6, 0.62) 0%, rgba(10, 8, 6, 0.34) 55%, rgba(10, 8, 6, 0) 100%); transition: opacity 0.4s; }
+.header.is-solid::before { opacity: 0; }
+.header:not(.is-solid) .nav a, .header:not(.is-solid) .nav button, .header:not(.is-solid) .brand { text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55); }
+.header.is-solid { background: rgba(247, 242, 233, 0.96); color: var(--charcoal); box-shadow: 0 1px 0 var(--line); backdrop-filter: blur(6px); }
+.header__inner { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 2rem; width: 100%; }
+.brand { display: inline-flex; align-items: center; gap: 0.8rem; }
+.brand__mark { width: 40px; height: 40px; border: 1px solid currentColor; display: grid; place-items: center; font-family: var(--display); font-size: 1.15rem; letter-spacing: 0.04em; }
+.brand__logo { height: 46px; width: auto; flex: none; }
+.brand__name { white-space: nowrap; }
+.brand__name { font-family: var(--display); font-size: 1.45rem; letter-spacing: 0.02em; line-height: 1; }
+.brand__tag { display: block; font-family: var(--sans); font-size: 0.62rem; letter-spacing: 0.26em; text-transform: uppercase; opacity: 0.75; margin-top: 4px; }
+.nav { display: flex; justify-content: center; gap: clamp(1.2rem, 2.6vw, 2.8rem); }
+.nav a, .nav button { background: none; border: 0; padding: 0.5rem 0; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; position: relative; display: inline-flex; align-items: center; gap: 0.4em; }
+.nav a::after, .nav button::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.35s var(--ease); }
+.nav a:hover::after, .nav button:hover::after, .nav [aria-current='page']::after { transform: scaleX(1); }
+.nav__group { position: relative; }
+.dropdown { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%) translateY(6px); min-width: 280px; background: var(--ivory); color: var(--charcoal); padding: 0.8rem; box-shadow: 0 24px 60px -24px rgba(38, 35, 31, 0.35); border: 1px solid var(--line); opacity: 0; visibility: hidden; transition: opacity 0.25s, transform 0.25s var(--ease), visibility 0.25s; }
+.nav__group:hover .dropdown, .nav__group:focus-within .dropdown, .dropdown.is-open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.dropdown a { display: flex; justify-content: space-between; padding: 0.75rem 1rem; letter-spacing: 0.12em; }
+.dropdown a::after { display: none; }
+.dropdown a:hover { background: var(--cream); }
+.header__cta { justify-self: end; }
+.header .btn { padding: 0.75em 1.5em; min-height: 42px; }
+.header:not(.is-solid) .btn { border-color: rgba(247, 242, 233, 0.7); color: var(--ivory); }
+.header:not(.is-solid) .btn:hover { background: var(--ivory); color: var(--charcoal); }
+.menu-btn { display: none; background: none; border: 0; width: 44px; height: 44px; justify-self: end; align-items: center; justify-content: center; }
+.drawer { position: fixed; inset: 0; z-index: 120; background: var(--ivory); color: var(--charcoal); padding: 24px var(--gutter) 40px; display: flex; flex-direction: column; overflow-y: auto; transform: translateX(100%); visibility: hidden; transition: transform 0.45s var(--ease), visibility 0.45s; }
+.drawer.is-open { transform: none; visibility: visible; }
+.drawer__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.drawer a.big { font-family: var(--display); font-size: 2rem; padding: 0.55rem 0; display: block; border-bottom: 1px solid var(--line); }
+.drawer .sub { padding-left: 1rem; }
+.drawer .sub a { font-size: 1.15rem; font-family: var(--sans); padding: 0.45rem 0; display: block; color: var(--stone); }

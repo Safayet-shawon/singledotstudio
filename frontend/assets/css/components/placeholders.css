@@ -1,0 +1,5 @@
+/* Photo placeholders and "to be added" tags. */
+/* Placeholders */
+.ph { position: absolute; inset: 0; display: grid; place-items: center; background: linear-gradient(135deg, var(--ph-a, #d8cbb4), var(--ph-b, #b8a78c)); color: rgba(38, 35, 31, 0.55); text-align: center; padding: 1rem; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.ph svg { margin: 0 auto 10px; opacity: 0.5; }
+.ph__tag { position: absolute; left: 10px; bottom: 10px; background: rgba(247, 242, 233, 0.8); color: var(--charcoal); padding: 3px 8px; font-size: 0.62rem; letter-spacing: 0.1em; }

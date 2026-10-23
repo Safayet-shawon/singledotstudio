@@ -44,7 +44,7 @@ addresses matching `TRUSTED_PROXY_REGEX`; set it to your proxy. If the database 
 
 **Headers.** `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`,
 `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, a restrictive `Permissions-Policy`, `Cache-Control: no-store`, and
-HSTS (one year, subdomains) on HTTPS responses. The front end's own CSP is set by the static host.
+HSTS (one year, subdomains) on HTTPS responses. The static site's own CSP and cache headers are in `frontend/_headers` (script and font sources limited to the site itself, `connect-src` limited to the site and the API origin, no framing).
 
 **Errors and logging.** One JSON error shape. No stack traces, SQL or configuration in responses. Unexpected errors get a
 short correlation id that appears in the log. Mail failures log only the exception class. Passwords, cookies, tokens and
@@ -70,6 +70,7 @@ suite on every push.
   Dependency-Check or GitHub code scanning) has **not** been run for this work.
 * **Docker image** (`backend/Dockerfile`) has not been built or scanned in this environment (Docker was not available).
 * **Backups, monitoring and alerting** are documented in `docs/deployment.md` but must be set up with the hosting provider.
+* **Front end:** no secrets and no privileged logic live in `frontend/`. `config.js` holds only the public API address. The CSP in `_headers` allows inline `style` attributes (`style-src 'unsafe-inline'`) because the pages and the calculator use them; scripts are `self` only. The staff page shows only what the API returns to a signed-in session.
 * **The studio OS admin** (employees, projects, finance, documents, CMS) still runs in the old Next.js code and has the
   controls described in that code's own history; it is not part of this back end yet.
 * **Email addresses and phone numbers** are stored in plain columns. Disk encryption and access control are the database

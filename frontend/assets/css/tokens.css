@@ -1,0 +1,22 @@
+/* Design tokens: colour, spacing, type and motion variables shared by every stylesheet. */
+:root {
+  --ivory: #f7f2e9;
+  --cream: #efe8da;
+  --sand: #e3d8c5;
+  --taupe: #b9ab97;
+  --stone: #6b6256; /* darkened from #857b6d so muted text reaches WCAG AA contrast on ivory and cream */
+  --olive: #66664a;
+  --olive-dark: #4d4d36;
+  --charcoal: #26231f;
+  --navy: #2b273e;
+  --ink: #3a3631;
+  --line: rgba(38, 35, 31, 0.14);
+  --gutter: clamp(20px, 5vw, 72px);
+  --max: 1280px;
+  --section: clamp(20px, 2.6vw, 34px);
+  --header-h: 84px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --f-dmsans: 'DM Sans';
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Nunito Sans', system-ui, sans-serif;
+}

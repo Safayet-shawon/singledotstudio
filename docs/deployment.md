@@ -11,8 +11,9 @@ visitors --> static host / CDN (frontend/)  --fetch-->  api.<your domain>  -->  
                                                                                      +--> SMTP provider
 ```
 
-* **Front end:** static files. Any static host or CDN works (no Node.js runtime is needed). Not migrated yet; until it is,
-  the existing Next.js site continues to run where it is today.
+* **Front end:** the `frontend/` folder, uploaded as is to any static host or CDN (no Node.js runtime or build is needed). Set
+  `apiBase` in `frontend/assets/js/config.js` to the API origin, and apply the headers in `frontend/_headers` (or the same headers in
+  your host's settings). Try it locally with `jwebserver -d frontend -p 8000`.
 * **API:** any host that runs a container or a Java 25 process. A `backend/Dockerfile` is provided (multi-stage, JRE only,
   non-root). It has **not** been built here because Docker is not installed on this machine.
 * **Database:** managed PostgreSQL (the tests ran on PostgreSQL 14; use 14 or newer).

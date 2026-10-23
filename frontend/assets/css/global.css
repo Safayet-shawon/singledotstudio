@@ -1,0 +1,11 @@
+/* Reset and element defaults. */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + 12px); }
+body { margin: 0; background: var(--ivory); color: var(--ink); font-family: var(--sans); font-size: 16.5px; line-height: 1.7; font-weight: var(--bw, 400); letter-spacing: 0.005em; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+img, video, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--olive); outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: 12px; top: -60px; background: var(--charcoal); color: var(--ivory); padding: 10px 16px; z-index: 200; }
+.skip:focus { top: 12px; }

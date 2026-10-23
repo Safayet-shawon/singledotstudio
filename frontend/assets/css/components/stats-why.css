@@ -1,0 +1,17 @@
+/* Studio numbers and "why choose us". */
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: center; }
+.stat { padding-block: 1rem; border-top: 1px solid rgba(227, 216, 197, 0.25); }
+.stat__num { font-family: var(--display); font-size: clamp(3.4rem, 8vw, 6.4rem); line-height: 1; color: var(--ivory); }
+.stat__label { font-size: 0.78rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--taupe); margin-top: 0.8rem; }
+.stat__tag { display: inline-block; margin-top: 0.7rem; font-size: 0.65rem; letter-spacing: 0.12em; border: 1px dashed var(--taupe); padding: 2px 8px; color: var(--taupe); }
+
+/* Why */
+.why { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
+.why__image { position: sticky; top: calc(var(--header-h) + 24px); aspect-ratio: 4/5; overflow: hidden; background: var(--sand); }
+.why__list { display: grid; }
+.why__item { display: grid; grid-template-columns: 56px 1fr; gap: 1.4rem; padding-block: 1.8rem; border-top: 1px solid var(--line); }
+.why__item:last-child { border-bottom: 1px solid var(--line); }
+.why__item h3 { margin-bottom: 0.4rem; }
+.why__item p { margin: 0; color: var(--stone); }
+.icon-ring { width: 56px; height: 56px; border: 1px solid var(--taupe); display: grid; place-items: center; color: var(--olive); }

@@ -1,36 +1,37 @@
 # Architecture
 
-Single Dot Studio is moving from a Next.js application (Node.js) to a Java back end plus a plain HTML/CSS/JavaScript
-front end. This document describes the target and the current state of that migration.
+Single Dot Studio is moving from a Next.js application (Node.js) to a Java back end plus a plain HTML/CSS/JavaScript front end.
+This document describes the target and the exact state of the migration.
 
 ## Status
 
 | Part | State |
 | --- | --- |
-| `backend/` Spring Boot API: estimates, consultations, mail, PDF, staff login, leads view | **Done and tested** (see the test list in the README) |
-| `frontend/` static site in HTML, CSS and browser JavaScript | **Not started yet.** The public site still lives in `src/` (Next.js) and is unchanged |
-| Studio OS admin (employees, projects, tasks, finance, documents, CMS) | **Not migrated.** Agreed scope for this phase: public features and a leads/admin login only |
+| `backend/`: Spring Boot API with estimates, consultations, mail, PDF, staff login, leads view | **Done and tested** |
+| `frontend/`: static site (25 pages), split CSS, ES-module JavaScript, calculator, forms, staff page | **Done and tested** |
+| Studio OS admin (employees, projects, tasks, finance, documents) | **Not migrated** (agreed scope: public features and a leads login first) |
+| CMS and admin before/after pair manager | **Not migrated.** The static site shows labelled sample before/after photos |
+| Old Next.js app (`src/`, `config/`, `public/`, `package.json`) | **Still in the repository and still the live site.** Remove it only after cutover (see below) |
 
-Until the front end is migrated, the Next.js site remains the live site and the Java API runs beside it, unused. Nothing
-in `src/` was changed by the back-end work.
+The old app was left untouched so the live site keeps working. The new site and API are verified locally but are **not deployed**.
+
+## Runtime
+
+```
+browser --> static host/CDN (frontend/) --fetch, HTTPS--> Spring Boot API (backend/) --> PostgreSQL
+                                                              |
+                                                              +--> SMTP provider
+```
 
 ## Back end
 
-```
-browser (static site)  --HTTPS-->  Spring Boot API  -->  PostgreSQL
-                                        |
-                                        +--> SMTP provider (email, async, retried)
-```
+Java 25 LTS, Spring Boot 4.1.2, Spring MVC, Spring Security 7, Spring Data JPA (Hibernate 7), Flyway, PostgreSQL, OpenPDF 3,
+Jakarta Mail through Spring. Maven with the Maven Wrapper. No PHP or Node.js.
 
-Java 25 LTS, Spring Boot 4.1.2, Spring MVC, Spring Security 7, Spring Data JPA (Hibernate 7), Flyway, PostgreSQL,
-OpenPDF 3, Jakarta Mail through Spring. Maven with the Maven Wrapper. No PHP or Node.js is used to build or run it.
-
-Packages under `com.singledotstudio`:
-
-| Package | Responsibility |
+| Package (`com.singledotstudio`) | Responsibility |
 | --- | --- |
 | `config` | Properties, Spring Security, session cookie, async mail pool, request-size and Origin filters, production start-up checks |
-| `common` | The shared JSON error shape, exception handling, small text helpers |
+| `common` | The shared JSON error shape, exception handling, text helpers |
 | `ratelimit` | PostgreSQL-backed request limiter shared by all instances |
 | `estimates` | Price book, server-side calculator, persistence, PDF, public endpoint |
 | `consultations` | Consultation requests: validation, de-duplication, persistence, public endpoint |
@@ -38,35 +39,38 @@ Packages under `com.singledotstudio`:
 | `security` | Staff accounts, login, lockout, session revocation, first-admin bootstrap |
 | `admin` | Read-only lead views and the quotation PDF download for signed-in staff |
 
-### Request flow: quotation
+### Quotation flow
 
-1. The form posts the customer's **choices** (property type, size, rooms, package, add-ons) and contact details.
-2. Bean Validation checks shape and length; business rules then check every option against the price book.
-3. `EstimateCalculator` works out every figure on the server. The response contains a reference only, never a price.
-4. The estimate and its line items are saved in one transaction; a `LeadCreatedEvent` is published.
-5. After the commit, a small thread pool builds the PDF from the stored data and sends two emails (customer and studio).
-   Each send is logged in `notification_deliveries`. A failure marks the row `FAILED` and a scheduler retries it (up to
-   3 attempts, 10 minutes apart). The estimate is never lost because of mail.
+1. The calculator sends the customer's **choices** and contact details.
+2. Bean Validation checks shape and length; business rules check every option against the price book.
+3. `EstimateCalculator` works out every figure on the server. The response carries a reference only, never a price.
+4. The estimate and its lines are saved in one transaction; a `LeadCreatedEvent` is published.
+5. After commit, a small pool builds the PDF from stored data and sends two emails. Each send is logged in
+   `notification_deliveries`; failures are retried (3 attempts, 10 minutes apart). A mail outage never loses an estimate.
 
 ### Price book
 
-`backend/src/main/resources/pricing.json` is the single source of prices. **Every number in it is a placeholder** until
-the studio confirms its rates (the file says so). The Java engine was checked against the previous TypeScript engine for
-seven representative inputs (home, villa, office, showroom, and three "best fit" cases); all figures match exactly.
+`backend/src/main/resources/pricing.json` is the single source of prices. **Every number is a placeholder** until the studio confirms
+its rates. The Java engine reproduces the previous TypeScript engine exactly on seven representative inputs.
 
 ### Database
 
-Flyway migrations in `backend/src/main/resources/db/migration`:
+Flyway migrations in `backend/src/main/resources/db/migration`: `V1__core_schema.sql` (estimates, estimate_items, consultations,
+notification_deliveries, rate_limit_counters, admin_users, with constraints and indexes) and `V2__spring_session.sql`. Hibernate runs
+with `ddl-auto: validate`; Flyway cannot clean the database. Migrations are additive.
 
-* `V1__core_schema.sql`: `estimates`, `estimate_items`, `consultations`, `notification_deliveries`,
-  `rate_limit_counters`, `admin_users`, with foreign keys, check constraints and indexes.
-* `V2__spring_session.sql`: the staff session store.
+## Front end
 
-Hibernate runs with `ddl-auto: validate`, so the application refuses to start if the schema and the code disagree.
-`flyway.clean-disabled` is `true`. Migrations are additive.
+Static HTML pages written for content first: the main text of every public page is in the HTML, with no script needed to read it.
+JavaScript adds the splash, scroll reveal, hero carousel, services switcher, project gallery, before/after slider, calculator and
+form submission. CSS lives in 29 small files (tokens, global, typography, layout, components, pages, animations, responsive) joined
+into `bundle.css` by `frontend/tools/bundle-css.sh`. See `frontend/README.md`.
 
-## Front end (planned)
+## Cutover from the old site
 
-Static HTML pages, CSS split into tokens, global, layout, typography, components, pages, responsive and animation files,
-and small browser-native JavaScript modules, all under `frontend/`. It will talk to the API over HTTPS with `fetch`.
-Hosting is a static host or CDN; no Node.js process is needed.
+1. Deploy the API and the static site (`docs/deployment.md`); set `apiBase` in `frontend/assets/js/config.js`.
+2. Point the domain at the static site; confirm both forms and the calculator against the live API; confirm emails arrive.
+3. Only then remove the legacy app from the repository: `git rm -r src config public package.json package-lock.json next.config.ts tsconfig.json test scripts data skills-lock.json AGENTS.md`
+   and the Vercel project. After that, no Node.js file remains in the repository.
+4. Anything from the old Studio OS admin you still need (projects, finance, documents, CMS, before/after manager) has to be
+   rebuilt in Java before step 3, or kept running separately.

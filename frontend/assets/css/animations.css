@@ -1,0 +1,4 @@
+/* Scroll reveal and shared motion. */
+/* Reveal */
+.js-ready [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+.js-ready [data-reveal].in { opacity: 1; transform: none; }

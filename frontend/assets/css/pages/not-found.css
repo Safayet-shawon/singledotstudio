@@ -1,0 +1,2 @@
+/* 404 page. */
+.notfound { min-height: 100svh; display: grid; place-items: center; text-align: center; padding: var(--gutter); }

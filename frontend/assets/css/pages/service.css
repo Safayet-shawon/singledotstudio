@@ -1,0 +1,28 @@
+/* Service and project detail pages, cost tables, FAQs. */
+/* Service page */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); }
+.facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 3rem; }
+.facts h3 { font-size: 1.4rem; margin-bottom: 0.7rem; }
+.facts ul, .plain-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; color: var(--stone); }
+.facts li::before, .plain-list li::before { content: ''; display: inline-block; width: 14px; height: 1px; background: var(--olive); vertical-align: middle; margin-right: 10px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); }
+table { width: 100%; border-collapse: collapse; min-width: 560px; background: var(--ivory); }
+th, td { padding: 1rem 1.2rem; text-align: left; border-bottom: 1px solid var(--line); }
+th { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: #5d554c; font-weight: 500; }
+tr:last-child td { border-bottom: 0; }
+details { border-bottom: 1px solid var(--line); padding: 1.1rem 0; }
+details summary { cursor: pointer; font-family: var(--display); font-size: 1.35rem; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+details summary::after { content: '+'; font-family: var(--sans); }
+details[open] summary::after { content: '–'; }
+details p { margin: 0.8rem 0 0; color: var(--stone); }
+.cta-band { text-align: center; display: grid; gap: 1.6rem; justify-items: center; }
+.cta-band .row { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.process { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.4rem; counter-reset: p; }
+.process li { list-style: none; border-top: 1px solid var(--taupe); padding-top: 1rem; counter-increment: p; }
+.process li::before { content: '0' counter(p); font-family: var(--display); font-size: 1.6rem; color: var(--olive); display: block; margin-bottom: 0.4rem; }
+.process h3 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+.process p { color: var(--stone); font-size: 0.95rem; }
+.values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+.prose { max-width: 70ch; }
+.prose h2 { font-size: 1.8rem; margin: 2.4rem 0 0.8rem; }
+.page-head { padding-top: calc(var(--header-h) + clamp(24px, 4vw, 48px)); padding-bottom: clamp(14px, 2.4vw, 28px); }

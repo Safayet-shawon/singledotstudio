@@ -1,0 +1,287 @@
+{
+ "limits": {
+  "minSqft": 200,
+  "maxSqft": 50000,
+  "maxBhk": 8
+ },
+ "packages": {
+  "essential": {
+   "label": "Essential",
+   "tagline": "Smart, durable basics",
+   "features": [
+    "Affordable Pricing",
+    "Functional 2D Layout",
+    "Convenient 3D Design",
+    "Standard Accessories",
+    "Durable Materials",
+    "Max 3 Items In a room",
+    "Execution"
+   ]
+  },
+  "premium": {
+   "label": "Premium",
+   "tagline": "Refined and well-appointed",
+   "features": [
+    "Value Driven Pricing",
+    "Functional 2D Layout",
+    "High-end 3D Design",
+    "Wide Range Accessories",
+    "High Grade Materials",
+    "Laminates",
+    "Max 4 Items In a room",
+    "Execution"
+   ]
+  },
+  "luxury": {
+   "label": "Luxury",
+   "tagline": "Bespoke, high-end detailing",
+   "features": [
+    "Exclusive Pricing",
+    "Functional 2D Layout",
+    "Luxury 3D Design",
+    "Branded Accessories",
+    "Premium Materials",
+    "Laminates, Acrylic & Mirror Sheet",
+    "Decor Items",
+    "Max 3 Items In a room",
+    "Execution"
+   ]
+  },
+  "bestfit": {
+   "label": "Custom Package",
+   "tagline": "Designed around you",
+   "features": [
+    "Tailored to your space and budget",
+    "Our designers get in touch with you",
+    "Same design process as the other packages",
+    "Adjustable after consultation"
+   ]
+  }
+ },
+ "items": [
+  {
+   "key": "master",
+   "group": "residential",
+   "label": "Master Bedroom",
+   "maxQty": 1,
+   "defaultQty": 1
+  },
+  {
+   "key": "child",
+   "group": "residential",
+   "label": "Child Bedroom",
+   "maxQty": "bhk-1",
+   "defaultQty": "bhk-1"
+  },
+  {
+   "key": "guest",
+   "group": "residential",
+   "label": "Guest Bedroom",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "family",
+   "group": "residential",
+   "label": "Family Living",
+   "maxQty": 1,
+   "defaultQty": 1
+  },
+  {
+   "key": "drawing",
+   "group": "residential",
+   "label": "Drawing Room",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "dining",
+   "group": "residential",
+   "label": "Dining Room",
+   "maxQty": 1,
+   "defaultQty": 1
+  },
+  {
+   "key": "kitchen",
+   "group": "residential",
+   "label": "Kitchen",
+   "maxQty": 1,
+   "defaultQty": 1
+  },
+  {
+   "key": "openkitchen",
+   "group": "residential",
+   "label": "Open Kitchen",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "toilet",
+   "group": "residential",
+   "label": "Toilet",
+   "maxQty": "bhk",
+   "defaultQty": "bhk"
+  },
+  {
+   "key": "prayer",
+   "group": "residential",
+   "label": "Prayer Space",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "foyer",
+   "group": "residential",
+   "label": "Foyer and entrance",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "wardrobe",
+   "group": "residential",
+   "label": "Wardrobes and storage (per unit)",
+   "maxQty": 8,
+   "defaultQty": 0
+  },
+  {
+   "key": "study",
+   "group": "residential",
+   "label": "Study room",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "balcony",
+   "group": "residential",
+   "label": "Balcony",
+   "maxQty": 4,
+   "defaultQty": 0
+  },
+  {
+   "key": "ceiling",
+   "group": "residential",
+   "label": "False ceiling and lighting (whole home)",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "reception",
+   "group": "office",
+   "label": "Reception",
+   "maxQty": 1,
+   "defaultQty": 1
+  },
+  {
+   "key": "workstation",
+   "group": "office",
+   "label": "Workstations (per seat)",
+   "maxQty": 500,
+   "defaultQty": 10
+  },
+  {
+   "key": "cabin",
+   "group": "office",
+   "label": "Executive cabins",
+   "maxQty": 20,
+   "defaultQty": 1
+  },
+  {
+   "key": "meeting",
+   "group": "office",
+   "label": "Meeting rooms",
+   "maxQty": 20,
+   "defaultQty": 1
+  },
+  {
+   "key": "pantry",
+   "group": "office",
+   "label": "Pantry",
+   "maxQty": 2,
+   "defaultQty": 1
+  },
+  {
+   "key": "collab",
+   "group": "office",
+   "label": "Collaborative and breakout areas",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "officestorage",
+   "group": "office",
+   "label": "Storage",
+   "maxQty": 10,
+   "defaultQty": 0
+  },
+  {
+   "key": "showfloor",
+   "group": "showroom",
+   "label": "Main display floor",
+   "maxQty": 1,
+   "defaultQty": 1
+  },
+  {
+   "key": "showentry",
+   "group": "showroom",
+   "label": "Entrance and facade",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "showcounter",
+   "group": "showroom",
+   "label": "Reception and billing counter",
+   "maxQty": 1,
+   "defaultQty": 1
+  },
+  {
+   "key": "showunits",
+   "group": "showroom",
+   "label": "Display units and shelving (per unit)",
+   "maxQty": 200,
+   "defaultQty": 10
+  },
+  {
+   "key": "showtrial",
+   "group": "showroom",
+   "label": "Trial and fitting rooms",
+   "maxQty": 20,
+   "defaultQty": 0
+  },
+  {
+   "key": "showlounge",
+   "group": "showroom",
+   "label": "Customer lounge",
+   "maxQty": 1,
+   "defaultQty": 0
+  },
+  {
+   "key": "showstock",
+   "group": "showroom",
+   "label": "Stock and storage room",
+   "maxQty": 5,
+   "defaultQty": 0
+  },
+  {
+   "key": "showsign",
+   "group": "showroom",
+   "label": "Signage and feature lighting",
+   "maxQty": 1,
+   "defaultQty": 0
+  }
+ ],
+ "extras": [
+  {
+   "key": "smart",
+   "label": "Smart-home wiring and controls"
+  },
+  {
+   "key": "decor",
+   "label": "Furniture and decor styling"
+  },
+  {
+   "key": "viz",
+   "label": "3D visualisation pack"
+  }
+ ]
+}
