@@ -5,7 +5,7 @@ import { pricing } from '@/lib/pricing';
 import { store, KEYS } from '@/lib/storage';
 import { itemsFor, maxQty, isResidential, type EstimateInput, type PackageKey, type PropertyType } from '@/lib/estimate';
 
-const TYPE_LABEL: Record<PropertyType, string> = { apartment: 'Apartment', villa: 'House / Villa', office: 'Office' };
+const TYPE_LABEL: Record<PropertyType, string> = { apartment: 'Home', villa: 'Home', office: 'Office', showroom: 'Showroom' };
 const RANGES = [
   { id: '600-899', label: '600-899', mid: 750 }, { id: '900-1199', label: '900-1199', mid: 1050 },
   { id: '1200-1349', label: '1200-1349', mid: 1275 }, { id: '1350-1499', label: '1350-1499', mid: 1425 },
@@ -116,7 +116,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   const err = (k: string) => (errors[k] ? <p className="err" role="alert">{errors[k]}</p> : null);
 
   const titles: Record<number, ReactNode> = {
-    1: <>Tell us about your <em>{resid ? 'home' : 'office'}</em></>,
+    1: <>Tell us about your <em>{type === 'office' ? 'office' : type === 'showroom' ? 'showroom' : 'home'}</em></>,
     2: <>Which spaces should we <em>design</em>?</>,
     3: <>Choose the <em>package</em> that suits you</>,
     4: <>Where should we send your <em>quotation</em>?</>,
@@ -168,14 +168,14 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
             <section className={sec(0, stage1)}>
               <p className="cqw-sub cqw-sub--first">1 · What are you designing?</p>
               <div className="cqw-types" role="group" aria-label="Property type">
-                {(['apartment', 'villa', 'office'] as const).map((k) => (
-                  <button key={k} type="button" className="cqw-pill" aria-pressed={type === k} onClick={() => set({ type: k, bhk: k === 'office' ? 1 : s.bhk, items: type === k ? s.items : {} })}>{TYPE_LABEL[k]}</button>
+                {(['apartment', 'office', 'showroom'] as const).map((k) => (
+                  <button key={k} type="button" className="cqw-pill" aria-pressed={type === k} onClick={() => set({ type: k, bhk: isResidential(k) ? s.bhk : 1, items: type === k ? s.items : {} })}>{TYPE_LABEL[k]}</button>
                 ))}
               </div>
               {err('type')}
             </section>
             <section className={sec(1, stage1)} inert={stage1 < 1}>
-              <p className="cqw-sub">2 · {resid ? 'Carpet area' : 'Office area'} in sq ft</p>
+              <p className="cqw-sub">2 · {resid ? 'Carpet area' : type === 'showroom' ? 'Showroom area' : 'Office area'} in sq ft</p>
               <div className="cqw-sizes" role="radiogroup" aria-label="Size in square feet">
                 {RANGES.map((r, i) => {
                   const on = !s.custom.trim() && s.range === r.id;

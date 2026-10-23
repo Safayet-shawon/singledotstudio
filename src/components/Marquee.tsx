@@ -9,7 +9,7 @@ const SPEED = 40; // px per second, left-to-right
 
 export function ProjectGallery({ cards, filters = true }: { cards: GalleryCard[]; filters?: boolean }) {
   const [filter, setFilter] = useState<string>('all');
-  const shown = cards.filter((c) => filter === 'all' || (filter === 'residential' ? c.category !== 'office' : c.category === filter));
+  const shown = cards.filter((c) => filter === 'all' || (filter === 'residential' ? c.category !== 'office' && c.category !== 'showroom' : c.category === filter));
   return (
     <div>
       {filters && (

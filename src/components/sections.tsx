@@ -64,17 +64,19 @@ export async function ServicesSection() {
   const cards: ServiceCard[] = [
     ...home.map((s, i) => ({ slug: s.slug, audience: 'home' as const, node: <ServiceCardNode s={s} i={i} intro={intros[s.slug]?.intro ?? s.intro} /> })),
     ...services.filter((s) => s.audience === 'office').map((s, i) => ({ slug: s.slug, audience: 'office' as const, node: <ServiceCardNode s={s} i={i} intro={intros[s.slug]?.intro ?? s.intro} /> })),
+    ...services.filter((s) => s.audience === 'showroom').map((s, i) => ({ slug: s.slug, audience: 'showroom' as const, node: <ServiceCardNode s={s} i={i} intro={intros[s.slug]?.intro ?? s.intro} /> })),
   ];
   const office = services.find((s) => s.slug === 'office')!;
+  const showroom = services.find((s) => s.slug === 'showroom')!;
   return (
     <section className="section section--cream" id="services" aria-labelledby="svc-h">
       <div className="container">
         <Reveal className="section-head">
           <span className="eyebrow">What we design</span>
           <h2 id="svc-h">Interiors for the way you live and work</h2>
-          <p className="lede">Choose Home or Office to see the spaces we design, each with its own page.</p>
+          <p className="lede">Choose Home, Office or Showroom to see the spaces we design, each with its own page.</p>
         </Reveal>
-        <ServicesSwitcher cards={cards} officeAreas={office.officeAreas ?? []} />
+        <ServicesSwitcher cards={cards} officeAreas={office.officeAreas ?? []} showroomAreas={showroom.showroomAreas ?? []} />
       </div>
     </section>
   );
@@ -152,7 +154,7 @@ export async function ConsultSection({ defaultService, id = 'consultation' }: { 
         <Reveal>
           <span className="eyebrow">Get in touch</span>
           <h2 id="consult-h">Book a consultation</h2>
-          <p className="lede" style={{ marginTop: 16 }}>Tell us about your home or office. We will respond to discuss your space, scope and budget. Not ready yet? Try the budget calculator first.</p>
+          <p className="lede" style={{ marginTop: 16 }}>Tell us about your home, office or showroom. We will respond to discuss your space, scope and budget. Not ready yet? Try the budget calculator first.</p>
           <ul className="contact-list">
             <li><span>Phone</span>{tbd(c.phone, 'Phone')}</li>
             <li><span>Email</span>{tbd(c.email, 'Email')}</li>

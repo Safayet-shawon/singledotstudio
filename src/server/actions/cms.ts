@@ -76,8 +76,8 @@ export async function savePortfolioAction(_: R, fd: FormData): Promise<R> {
     assertCan(u, 'cms.portfolio');
     let list: unknown; try { list = JSON.parse(s(fd, 'items', 60_000)); } catch { throw bad('Invalid portfolio data.'); }
     if (!Array.isArray(list) || list.length > 60) throw bad('Too many portfolio entries.');
-    const cats = ['residential', 'kitchen', 'bedroom', 'bathroom', 'living-dining', 'office'];
-    const svcs = ['kitchen', 'bedroom', 'bathroom', 'living-dining', 'office'];
+    const cats = ['residential', 'kitchen', 'bedroom', 'bathroom', 'living-dining', 'office', 'showroom'];
+    const svcs = ['kitchen', 'bedroom', 'bathroom', 'living-dining', 'office', 'showroom'];
     const seen = new Set<string>();
     const items: Project[] = list.map((raw: Record<string, unknown>) => {
       const title = String(raw.title ?? '').trim().slice(0, 100);

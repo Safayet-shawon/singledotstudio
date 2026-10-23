@@ -27,13 +27,13 @@ export const site = {
   ],
 };
 
-export type ServiceSlug = 'kitchen' | 'bedroom' | 'bathroom' | 'living-dining' | 'office';
+export type ServiceSlug = 'kitchen' | 'bedroom' | 'bathroom' | 'living-dining' | 'office' | 'showroom';
 
 export interface Service {
   slug: ServiceSlug;
   name: string;
   short: string;
-  audience: 'home' | 'office';
+  audience: 'home' | 'office' | 'showroom';
   costKeys: string[]; // pricing.json item keys used for the indicative cost table
   videoSlot: string;
   intro: string;
@@ -45,6 +45,7 @@ export interface Service {
   faqs: { q: string; a: string }[];
   related: ServiceSlug[];
   officeAreas?: string[];
+  showroomAreas?: string[];
 }
 
 export const services: Service[] = [
@@ -116,6 +117,21 @@ export const services: Service[] = [
     ],
     related: ['living-dining', 'kitchen'],
   },
+  {
+    slug: 'showroom', name: 'Showroom', short: 'Showrooms', audience: 'showroom', costKeys: ['showfloor', 'showcounter', 'showunits', 'showtrial'], videoSlot: 'showroom',
+    intro: 'Showrooms that draw people in, show products at their best and turn a visit into a sale.',
+    approach: ['We start with your products, your customers and how they move through the space, then plan display, circulation and brand presence together.', 'Every zone is lit and detailed so the product leads and the interior supports it.'],
+    materials: ['Durable, easy-clean flooring such as vitrified tile or polished concrete', 'Laminates, veneer and metal for display units', 'Glass, mirror and backlit panels for feature walls'],
+    lighting: ['Adjustable track and spot lighting on products', 'Warm ambient light for a welcoming first impression', 'Feature and signage lighting for the facade'],
+    planning: ['Customer flow from entrance to counter', 'Hero display, secondary display and storage zoning', 'Power, data and lighting load for display units'],
+    factors: ['Showroom area and facade scope', 'Number and type of display units', 'Fitting rooms, counter and lounge requirements', 'Lighting, signage and approvals'],
+    showroomAreas: ['Entrance and facade', 'Main display floor', 'Display units and shelving', 'Reception and billing counter', 'Trial and fitting rooms', 'Customer lounge', 'Stock and storage room', 'Signage and feature lighting', 'Complete showroom fit-out'],
+    faqs: [
+      { q: 'Do you design the facade and signage as well?', a: 'Yes. Entrance, facade, signage and feature lighting can be selected in the budget calculator as separate items.' },
+      { q: 'Can you work with our brand guidelines?', a: 'Yes. Share your brand colours, materials and fixtures and we design around them. [Placeholder: confirm studio offering.]' },
+    ],
+    related: ['office', 'living-dining'],
+  },
 ];
 
 export const serviceBySlug = (s: string) => services.find((x) => x.slug === s);
@@ -143,7 +159,7 @@ export const processSteps = [
   { title: 'Handover', text: 'Final styling, checks and a walkthrough.' },
 ];
 
-export type ProjectCategory = 'residential' | 'kitchen' | 'bedroom' | 'bathroom' | 'living-dining' | 'office';
+export type ProjectCategory = 'residential' | 'kitchen' | 'bedroom' | 'bathroom' | 'living-dining' | 'office' | 'showroom';
 export interface Project {
   slug: string;
   title: string;
@@ -181,4 +197,4 @@ export const categoryFilters: { key: 'all' | ProjectCategory; label: string }[] 
   { key: 'all', label: 'All' }, { key: 'residential', label: 'Residential' }, { key: 'kitchen', label: 'Kitchen' }, { key: 'bedroom', label: 'Bedroom' },
   { key: 'bathroom', label: 'Bathroom' }, { key: 'living-dining', label: 'Living & Dining' }, { key: 'office', label: 'Office' },
 ];
-export const matchesFilter = (p: Project, f: string) => f === 'all' || (f === 'residential' ? p.category !== 'office' : p.category === f);
+export const matchesFilter = (p: Project, f: string) => f === 'all' || (f === 'residential' ? p.category !== 'office' && p.category !== 'showroom' : p.category === f);

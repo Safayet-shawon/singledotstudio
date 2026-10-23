@@ -4,7 +4,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from './Icon';
 import { Brand } from './Brand';
-import { services } from '@/config/site';
+
+const SEGMENT_LINKS = [{ label: 'Home', href: '/services' }, { label: 'Office', href: '/services/office' }, { label: 'Showroom', href: '/services/showroom' }];
 
 const lightPages = ['/privacy', '/terms', '/calculate-budget', '/projects', '/contact'];
 const hasDarkHero = (p: string) => !lightPages.some((x) => p === x || p.startsWith(x + '/')) && p !== '/_not-found';
@@ -45,8 +46,7 @@ export function Header() {
                 Our Services <Icon name="down" size={14} />
               </button>
               <div className={`dropdown${dd ? ' is-open' : ''}`}>
-                <Link href="/services">All services</Link>
-                {services.map((s) => <Link key={s.slug} href={`/services/${s.slug}`}>{s.name}</Link>)}
+                {SEGMENT_LINKS.map((l) => <Link key={l.href} href={l.href}>{l.label}</Link>)}
               </div>
             </div>
             <Link href="/about" aria-current={cur('/about')}>More About Us</Link>
@@ -65,7 +65,7 @@ export function Header() {
         <nav aria-label="Mobile">
           <Link className="big" href="/">Home</Link>
           <Link className="big" href="/services">Our Services</Link>
-          <div className="sub">{services.map((s) => <Link key={s.slug} href={`/services/${s.slug}`}>{s.name}</Link>)}</div>
+          <div className="sub">{SEGMENT_LINKS.map((l) => <Link key={l.href} href={l.href}>{l.label}</Link>)}</div>
           <Link className="big" href="/projects">Projects</Link>
           <Link className="big" href="/about">More About Us</Link>
           <Link className="big" href="/contact">Get in Touch</Link>

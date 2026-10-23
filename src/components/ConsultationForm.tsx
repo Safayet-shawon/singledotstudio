@@ -54,6 +54,7 @@ export function ConsultationForm({ defaultService = '' }: { defaultService?: str
         <div className="seg" role="radiogroup" aria-labelledby="c-seg">
           <label><input type="radio" name="segment" value="home" defaultChecked /><span>Home</span></label>
           <label><input type="radio" name="segment" value="office" /><span>Office</span></label>
+          <label><input type="radio" name="segment" value="showroom" /><span>Showroom</span></label>
         </div>
       </div>
       <div className="field">

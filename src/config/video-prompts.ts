@@ -9,6 +9,7 @@ export const videoPrompts: Record<string, { motion: string; scene: string }> = {
   bathroom: { motion: 'Slow glide forward', scene: 'through a serene bathroom with travertine-look walls, a floating timber vanity, a freestanding stone bath and soft warm lighting' },
   'living-dining': { motion: 'Slow dolly sideways', scene: 'across an elegant living and dining area with a sculptural pendant above a timber dining table, textured plaster walls and natural light' },
   office: { motion: 'Slow forward tracking shot', scene: 'through a refined modern office with a timber reception desk, acoustic wall panels, a glass-walled meeting room and warm task lighting' },
+  showroom: { motion: 'Slow forward dolly', scene: 'through a bright modern showroom with backlit display walls, timber and metal display units, a sleek billing counter and warm track lighting on the products' },
   about: { motion: 'Slow upward tilt', scene: 'across a designer material library with fabric swatches, timber samples and stone tiles on a sunlit table' },
 };
 

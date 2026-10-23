@@ -18,7 +18,7 @@ export function ProjectRing({ projects, filters = true }: { projects: RingProjec
     window.addEventListener('resize', fit);
     return () => window.removeEventListener('resize', fit);
   }, []);
-  const shown = projects.filter((p) => filter === 'all' || (filter === 'residential' ? p.category !== 'office' : p.category === filter));
+  const shown = projects.filter((p) => filter === 'all' || (filter === 'residential' ? p.category !== 'office' && p.category !== 'showroom' : p.category === filter));
   return (
     <div className="project-ring">
       {filters && (

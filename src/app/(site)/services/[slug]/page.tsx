@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Hero } from '@/components/Hero';
 import { Icon } from '@/components/Icon';
 import { BeforeAfter } from '@/components/BeforeAfter';
+import { Photo } from '@/components/Photo';
 import { Reveal } from '@/components/Reveal';
 import { OpenBudgetButton } from '@/components/BudgetProvider';
 import { ConsultSection, CostTable, CtaBand, GallerySection } from '@/components/sections';
@@ -54,14 +55,18 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <span className="eyebrow">Design approach</span>
             <h2 id="approach-h" style={{ marginBottom: 24 }}>How we approach the {s.name.toLowerCase()}</h2>
             {s.approach.map((p) => <p key={p} className="lede">{p}</p>)}
-            {s.officeAreas && (
+            {(s.officeAreas ?? s.showroomAreas) && (
               <>
                 <h3 style={{ margin: '28px 0 12px' }}>Areas we design</h3>
-                <div className="areas" style={{ marginTop: 0 }}>{s.officeAreas.map((a) => <span key={a} className="chip">{a}</span>)}</div>
+                <div className="areas" style={{ marginTop: 0 }}>{(s.officeAreas ?? s.showroomAreas ?? []).map((a) => <span key={a} className="chip">{a}</span>)}</div>
               </>
             )}
           </Reveal>
-          <Reveal><BeforeAfter items={pairs.length ? pairs : (SAMPLES[s.slug] ?? []).map((x) => ({ ...x, alt: `${s.name} ${x.label.toLowerCase()}` }))} /></Reveal>
+          <Reveal>
+            {pairs.length || SAMPLES[s.slug]
+              ? <BeforeAfter items={pairs.length ? pairs : (SAMPLES[s.slug] ?? []).map((x) => ({ ...x, alt: `${s.name} ${x.label.toLowerCase()}` }))} />
+              : <div className="portrait" style={{ aspectRatio: '4/3' }}><Photo slot={`service-${s.slug}-detail`} alt={`${s.name} design detail`} label={`${s.slug} detail`} /></div>}
+          </Reveal>
         </div>
         <div className="container" style={{ marginTop: 'clamp(28px, 4vw, 48px)' }}>
           <Reveal className="facts">

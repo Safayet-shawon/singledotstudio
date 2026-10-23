@@ -57,6 +57,15 @@ test('office estimates work and complete selection is valid', () => {
   assert.ok(home.total > 0);
 });
 
+test('showroom estimates use only showroom spaces and tiers are ordered', () => {
+  const items = completeSelection(pricing, 'showroom', 1);
+  assert.ok(items.showfloor && items.showcounter);
+  assert.equal(items.master, undefined);
+  const e = computeEstimate({ propertyType: 'showroom', sqft: 1500, bhk: 1, items, package: 'premium' }, pricing);
+  assert.ok(e.tierTotals.essential < e.tierTotals.premium && e.tierTotals.premium < e.tierTotals.luxury);
+  assert.throws(() => computeEstimate({ propertyType: 'showroom', sqft: 1500, bhk: 1, items: { master: 1 }, package: 'premium' }, pricing));
+});
+
 test('rejects invalid input', () => {
   assert.throws(() => computeEstimate(base({ sqft: 10 }), pricing));
   assert.throws(() => computeEstimate(base({ bhk: 0 }), pricing));

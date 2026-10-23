@@ -4,7 +4,7 @@ import { json, rateLimited, readJson, sameOrigin, str, validateContact } from '@
 
 export const runtime = 'nodejs';
 
-const SEGMENTS = ['home', 'office'];
+const SEGMENTS = ['home', 'office', 'showroom'];
 
 export async function POST(req: Request) {
   if (!sameOrigin(req)) return json({ error: 'Invalid request.' }, 403);

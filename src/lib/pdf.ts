@@ -4,7 +4,7 @@ import { formatMoney, type Estimate, type Pricing } from './estimate';
 
 export interface PdfContact { name: string; phone: string; email: string; address?: string }
 
-const TYPE = { apartment: 'Apartment', villa: 'Independent house / villa', office: 'Office' } as const;
+const TYPE = { apartment: 'Home', villa: 'Independent house / villa', office: 'Office', showroom: 'Showroom' } as const;
 const day = (d: Date) => d.toISOString().slice(0, 10);
 
 /**
@@ -23,7 +23,7 @@ export async function buildEstimatePdf(args: { estimate: Estimate; contact: PdfC
     ...e.extras.map((x) => ({ description: `Add-on: ${x.label}`, qty: 1, unit: 'lot', price: x.amount })),
   ];
   const size = e.input.sizeLabel ? (e.input.sizeLabel.endsWith('sq ft') ? e.input.sizeLabel : `${e.input.sizeLabel} sq ft`) : `${e.input.sqft} sq ft`;
-  const prop = e.input.propertyType === 'office' ? `Office, ${size}` : `${TYPE[e.input.propertyType]}, ${e.input.bhk} BHK, ${size}`;
+  const prop = e.input.propertyType === 'office' || e.input.propertyType === 'showroom' ? `${TYPE[e.input.propertyType]}, ${size}` : `${TYPE[e.input.propertyType]}, ${e.input.bhk} BHK, ${size}`;
   return buildDocumentPdf({
     number: reference, type: 'quotation', version: 1, status: 'sent', company,
     client: { name: contact.name, company: null, phone: contact.phone, email: contact.email, address: contact.address ?? null },

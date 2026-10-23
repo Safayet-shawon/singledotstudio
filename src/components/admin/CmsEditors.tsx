@@ -57,8 +57,8 @@ export function SlidesEditor({ initial, options, action }: { initial: string[]; 
 }
 
 interface Entry { slug: string; title: string; category: string; service: string; status: string; location: string | null; image: string; narrative: string; materials: string[]; scope: string[] }
-const CATS = ['residential', 'kitchen', 'bedroom', 'bathroom', 'living-dining', 'office'];
-const SVCS = ['kitchen', 'bedroom', 'bathroom', 'living-dining', 'office'];
+const CATS = ['residential', 'kitchen', 'bedroom', 'bathroom', 'living-dining', 'office', 'showroom'];
+const SVCS = ['kitchen', 'bedroom', 'bathroom', 'living-dining', 'office', 'showroom'];
 
 export function PortfolioEditor({ initial, action }: { initial: Entry[]; action: (p: R, fd: FormData) => Promise<R> }) {
   const [items, setItems] = useState<Entry[]>(initial);

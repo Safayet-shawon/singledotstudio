@@ -3,22 +3,25 @@ import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { homeAreas } from '@/config/site';
 
-export interface ServiceCard { slug: string; audience: 'home' | 'office'; node: ReactNode }
+export interface ServiceCard { slug: string; audience: 'home' | 'office' | 'showroom'; node: ReactNode }
 
-export function ServicesSwitcher({ cards, officeAreas }: { cards: ServiceCard[]; officeAreas: string[] }) {
-  const [seg, setSeg] = useState<'home' | 'office'>('home');
-  const visible = cards.filter((c) => (seg === 'home' ? c.audience === 'home' : c.audience === 'office'));
+const LABEL = { home: 'Home', office: 'Office', showroom: 'Showroom' } as const;
+
+export function ServicesSwitcher({ cards, officeAreas, showroomAreas }: { cards: ServiceCard[]; officeAreas: string[]; showroomAreas: string[] }) {
+  const [seg, setSeg] = useState<'home' | 'office' | 'showroom'>('home');
+  const visible = cards.filter((c) => c.audience === seg);
+  const areas = seg === 'home' ? homeAreas : seg === 'office' ? officeAreas : showroomAreas;
   return (
     <div>
       <div className="switch" role="tablist" aria-label="Project type">
-        {(['home', 'office'] as const).map((k) => (
-          <button key={k} type="button" role="tab" aria-selected={seg === k} onClick={() => setSeg(k)}>{k === 'home' ? 'Home' : 'Office'}</button>
+        {(['home', 'office', 'showroom'] as const).map((k) => (
+          <button key={k} type="button" role="tab" aria-selected={seg === k} onClick={() => setSeg(k)}>{LABEL[k]}</button>
         ))}
       </div>
       <div className="svc-grid" role="tabpanel">{visible.map((c) => <div key={c.slug} style={{ display: 'contents' }}>{c.node}</div>)}</div>
-      <div className="areas" aria-label={seg === 'home' ? 'Residential areas we design' : 'Office areas we design'}>
-        {(seg === 'home' ? homeAreas : officeAreas).map((a) => <span key={a} className="chip">{a}</span>)}
-        {seg === 'office' && <Link className="chip" href="/services/office">See office services →</Link>}
+      <div className="areas" aria-label={`${LABEL[seg]} areas we design`}>
+        {areas.map((a) => <span key={a} className="chip">{a}</span>)}
+        {seg !== 'home' && <Link className="chip" href={`/services/${seg}`}>See {seg} services →</Link>}
       </div>
     </div>
   );

@@ -2,11 +2,11 @@
 
 export type PackageKey = 'essential' | 'premium' | 'luxury' | 'bestfit';
 export type Tier = 'essential' | 'premium' | 'luxury';
-export type PropertyType = 'apartment' | 'villa' | 'office';
+export type PropertyType = 'apartment' | 'villa' | 'office' | 'showroom';
 
 export interface PricingItem {
   key: string;
-  group: 'residential' | 'office';
+  group: 'residential' | 'office' | 'showroom';
   label: string;
   basis: 'layout' | 'unit' | 'flat' | 'share';
   weight?: number;
@@ -59,10 +59,10 @@ export interface Estimate {
 
 const TIERS: Tier[] = ['essential', 'premium', 'luxury'];
 
-export const isResidential = (t: PropertyType) => t !== 'office';
+export const isResidential = (t: PropertyType) => t === 'apartment' || t === 'villa';
 
 export function itemsFor(pricing: Pricing, type: PropertyType) {
-  return pricing.items.filter((i) => i.group === (isResidential(type) ? 'residential' : 'office'));
+  return pricing.items.filter((i) => i.group === (isResidential(type) ? 'residential' : type));
 }
 
 function resolveRule(v: number | string, bhk: number): number {
@@ -79,7 +79,7 @@ export function completeSelection(pricing: Pricing, type: PropertyType, bhk: num
   const out: Record<string, number> = {};
   for (const i of itemsFor(pricing, type)) {
     const max = maxQty(i, bhk);
-    let q = i.key === 'wardrobe' ? bhk : Math.max(defaultQty(i, bhk), i.group === 'office' ? 1 : max === 0 ? 0 : 1);
+    let q = i.key === 'wardrobe' ? bhk : Math.max(defaultQty(i, bhk), i.group !== 'residential' ? 1 : max === 0 ? 0 : 1);
     if (i.maxQty === 'bhk' || i.maxQty === 'bhk-1') q = max;
     q = Math.min(q, max);
     if (q > 0) out[i.key] = q;
@@ -98,7 +98,7 @@ export function defaultSelection(pricing: Pricing, type: PropertyType, bhk: numb
 
 function validate(input: EstimateInput, pricing: Pricing) {
   const { minSqft, maxSqft, maxBhk } = pricing.limits;
-  if (!['apartment', 'villa', 'office'].includes(input.propertyType)) throw new Error('Please choose a property type.');
+  if (!['apartment', 'villa', 'office', 'showroom'].includes(input.propertyType)) throw new Error('Please choose a property type.');
   const sqft = Number(input.sqft);
   if (!Number.isFinite(sqft) || sqft < minSqft || sqft > maxSqft) throw new Error(`Size must be between ${minSqft} and ${maxSqft} sq ft.`);
   let bhk = Number(input.bhk);

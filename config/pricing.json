@@ -37,7 +37,15 @@
     { "key": "meeting",     "group": "office", "label": "Meeting rooms", "basis": "unit", "maxQty": 20, "defaultQty": 1, "rates": { "essential": 120000, "premium": 200000, "luxury": 330000 } },
     { "key": "pantry",      "group": "office", "label": "Pantry", "basis": "unit", "maxQty": 2, "defaultQty": 1, "rates": { "essential": 90000, "premium": 150000, "luxury": 250000 } },
     { "key": "collab",      "group": "office", "label": "Collaborative and breakout areas", "basis": "share", "share": 0.12, "maxQty": 1, "defaultQty": 0, "rates": { "essential": 900, "premium": 1400, "luxury": 2200 } },
-    { "key": "officestorage", "group": "office", "label": "Storage", "basis": "unit", "maxQty": 10, "defaultQty": 0, "rates": { "essential": 40000, "premium": 70000, "luxury": 120000 } }
+    { "key": "officestorage", "group": "office", "label": "Storage", "basis": "unit", "maxQty": 10, "defaultQty": 0, "rates": { "essential": 40000, "premium": 70000, "luxury": 120000 } },
+    { "key": "showfloor",   "group": "showroom", "label": "Main display floor", "basis": "share", "share": 0.55, "maxQty": 1, "defaultQty": 1, "rates": { "essential": 1000, "premium": 1600, "luxury": 2600 } },
+    { "key": "showentry",   "group": "showroom", "label": "Entrance and facade", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 180000, "premium": 320000, "luxury": 560000 } },
+    { "key": "showcounter", "group": "showroom", "label": "Reception and billing counter", "basis": "unit", "maxQty": 1, "defaultQty": 1, "rates": { "essential": 120000, "premium": 200000, "luxury": 340000 } },
+    { "key": "showunits",   "group": "showroom", "label": "Display units and shelving (per unit)", "basis": "unit", "maxQty": 200, "defaultQty": 10, "rates": { "essential": 20000, "premium": 32000, "luxury": 55000 } },
+    { "key": "showtrial",   "group": "showroom", "label": "Trial and fitting rooms", "basis": "unit", "maxQty": 20, "defaultQty": 0, "rates": { "essential": 70000, "premium": 110000, "luxury": 180000 } },
+    { "key": "showlounge",  "group": "showroom", "label": "Customer lounge", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 100000, "premium": 170000, "luxury": 280000 } },
+    { "key": "showstock",   "group": "showroom", "label": "Stock and storage room", "basis": "unit", "maxQty": 5, "defaultQty": 0, "rates": { "essential": 60000, "premium": 100000, "luxury": 170000 } },
+    { "key": "showsign",    "group": "showroom", "label": "Signage and feature lighting", "basis": "unit", "maxQty": 1, "defaultQty": 0, "rates": { "essential": 90000, "premium": 150000, "luxury": 260000 } }
   ],
   "extras": [
     { "key": "smart", "label": "Smart-home wiring and controls", "amount": { "essential": 60000, "premium": 100000, "luxury": 180000 } },
