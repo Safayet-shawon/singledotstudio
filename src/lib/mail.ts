@@ -27,7 +27,7 @@ function getSample() {
   return sample;
 }
 
-type Opts = { to: string | null; subject: string; text: string; html?: string; replyTo?: string; attachments?: { filename: string; content: Buffer }[] };
+type Opts = { to: string | null; subject: string; text: string; html?: string; replyTo?: string; headers?: Record<string, string>; attachments?: { filename: string; content: Buffer }[] };
 
 /** Never throws. With real SMTP configured it sends for real; otherwise (unless MAIL_SAMPLE=off) it uses a sample test inbox. */
 export async function sendMailX(opts: Opts): Promise<MailResult> {

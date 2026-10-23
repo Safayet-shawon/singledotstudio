@@ -5,7 +5,7 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const TYPE = { apartment: 'Home', villa: 'Independent house / villa', office: 'Office', showroom: 'Showroom' } as const;
 
 /** Customer quotation: selected package in detail with its price, the other packages listed small underneath. */
-export function quoteEmail(e: Estimate, pricing: Pricing, name: string, reference: string) {
+export function quoteEmail(e: Estimate, pricing: Pricing, name: string, reference: string, pdfUrl?: string) {
   const m = (n: number) => formatMoney(n, pricing, true);
   const chosen = e.input.package === 'bestfit' ? e.tier : e.input.package;
   const pk = pricing.packages[e.input.package];
@@ -31,9 +31,13 @@ export function quoteEmail(e: Estimate, pricing: Pricing, name: string, referenc
 <p style="font-size:13px;line-height:1.7;color:#5d554c;margin:0 0 20px">${esc(spaces.join(', '))}</p>
 <p style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7b7268;margin:0 0 6px">Other packages</p>
 ${others.map((k) => `<p style="font-size:12px;line-height:1.5;color:#7b7268;margin:0 0 4px"><strong style="color:#26231f">${esc(pricing.packages[k].label)}</strong> · ${esc(pricing.packages[k].tagline)}${k === 'bestfit' ? '' : ` · about ${esc(m(e.tierTotals[k]))}`}</p>`).join('')}
-<p style="font-size:12px;color:#7b7268;margin:22px 0 0">The detailed quotation is attached as a PDF. Our team will contact you shortly.</p>
+<p style="font-size:12px;color:#7b7268;margin:22px 0 0">The detailed quotation is attached as a PDF${pdfUrl ? ` and can also be opened here: <a href="${esc(pdfUrl)}" style="color:#4d4d36">${esc(reference)}.pdf</a>` : ''}. Our team will contact you shortly. Just reply to this email if you have a question.</p>
+<p style="font-size:11px;color:#9a9086;margin:18px 0 0;border-top:1px solid #ddd3c3;padding-top:10px">You received this single message because you requested a quotation on our website. We do not send newsletters or marketing email. ${esc(site.brand.name)}.</p>
 </div>`;
 
-  const text = `Hello ${name},\n\nYour quotation for ${prop}\n\nSelected package: ${pricing.packages[chosen].label}\n${pricing.packages[chosen].scope}\n${pk.features.map((f) => `- ${f}`).join('\n')}\n\nEstimated price: ${m(e.low)} to ${m(e.high)}\nReference: ${reference}\n\nIncluded: ${spaces.join(', ')}\n\nOther packages:\n${others.map((k) => `${pricing.packages[k].label} - ${pricing.packages[k].tagline}${k === 'bestfit' ? '' : ` (about ${m(e.tierTotals[k])})`}`).join('\n')}\n\nThe detailed quotation is attached. ${site.brand.name}`;
+  const text = `Hello ${name},\n\nYour quotation for ${prop}\n\nSelected package: ${pricing.packages[chosen].label}\n${pricing.packages[chosen].scope}\n${pk.features.map((f) => `- ${f}`).join('\n')}\n\nEstimated price: ${m(e.low)} to ${m(e.high)}\nReference: ${reference}\n\nIncluded: ${spaces.join(', ')}\n\nOther packages:\n${others.map((k) => `${pricing.packages[k].label} - ${pricing.packages[k].tagline}${k === 'bestfit' ? '' : ` (about ${m(e.tierTotals[k])})`}`).join('\n')}\n\nThe detailed quotation is attached.${pdfUrl ? ` You can also open it here: ${pdfUrl}` : ''} Reply to this email if you have a question.
+
+You received this single message because you requested a quotation on our website. We do not send newsletters or marketing email.
+${site.brand.name}`;
   return { html, text };
 }

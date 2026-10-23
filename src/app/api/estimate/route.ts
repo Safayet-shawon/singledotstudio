@@ -6,6 +6,7 @@ import { buildEstimatePdf } from '@/lib/pdf';
 import { sendMailX, leadInbox, mailConfigured } from '@/lib/mail';
 import { saveLead } from '@/lib/leads';
 import { quoteEmail } from '@/lib/quote-mail';
+import { quoteUrl } from '@/lib/quote-link';
 import { json, rateLimited, readJson, sameOrigin, str, validateContact } from '@/lib/guard';
 import { site } from '@/config/site';
 
@@ -45,9 +46,9 @@ export async function POST(req: Request) {
       const attachments = [{ filename: `${reference}.pdf`, content: pdf }];
       const money = (n: number) => formatMoney(n, pricing, true);
       const summary = `${reference}: ${estimate.input.propertyType}, ${estimate.input.sqft} sq ft, ${pricing.packages[estimate.tier].label} package, ${money(estimate.low)} to ${money(estimate.high)}`;
-      const q = quoteEmail(estimate, pricing, c.name, reference);
+      const q = quoteEmail(estimate, pricing, c.name, reference, quoteUrl(reference));
       const [customerMail, teamMail] = await Promise.all([
-        sendMailX({ to: c.email, subject: `Your interior design quotation, ${site.brand.name} (${reference})`, text: q.text, html: q.html, attachments }),
+        sendMailX({ to: c.email, subject: `Your interior design quotation, ${site.brand.name} (${reference})`, text: q.text, html: q.html, replyTo: leadInbox() || process.env.MAIL_FROM, headers: { 'Auto-Submitted': 'auto-generated', 'X-Auto-Response-Suppress': 'All' }, attachments }),
         sendMailX({
           to: leadInbox(),
           subject: `New quotation request: ${c.name} (${reference})`,
