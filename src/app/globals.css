@@ -695,6 +695,16 @@ button.chip[aria-pressed='true']::before { content: '✓ '; color: #e7a67a; }
 .cqw-select { display: block; width: 100%; padding: 0.85em 1em; border: 0; border-radius: 3px; background: linear-gradient(90deg, var(--c1), var(--c2)); color: #fff; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; box-shadow: 0 8px 16px -8px var(--c1); transition: background 0.5s var(--ease), color 0.5s var(--ease); }
 .cqw-pkg:hover .cqw-select, .cqw-pkg.is-on .cqw-select { background: #fff; color: var(--c1); }
 
+/* guided order: active group glows, waiting groups sit in the shadow, finished groups stay put */
+.cqw-sec { position: relative; border-radius: 22px; padding: 6px clamp(10px, 2vw, 22px) 18px; margin: 0 0 14px; transition: opacity 0.6s var(--ease), filter 0.6s var(--ease), box-shadow 0.6s var(--ease), background 0.6s var(--ease), transform 0.6s var(--ease); }
+.cqw-sec.is-locked { opacity: 0.32; filter: grayscale(0.7) blur(0.4px); pointer-events: none; user-select: none; transform: scale(0.985); }
+.cqw-sec.is-done { opacity: 1; }
+.cqw-sec.is-active { background: #fff; animation: cqwSecPop 0.7s var(--ease) both, cqwSecGlow 2.4s ease-in-out 0.7s infinite; }
+@keyframes cqwSecPop { from { opacity: 0.4; transform: translateY(18px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes cqwSecGlow { 0%, 100% { box-shadow: 0 0 0 2px rgba(102, 102, 74, 0.35), 0 0 18px 2px rgba(179, 104, 62, 0.22); } 50% { box-shadow: 0 0 0 3px rgba(102, 102, 74, 0.7), 0 0 34px 8px rgba(179, 104, 62, 0.4); } }
+.cqw-sec .cqw-sub--first { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .cqw-sec.is-active { animation: none; box-shadow: 0 0 0 3px rgba(102, 102, 74, 0.6); } }
+
 /* details: illustrated panel + form */
 .cqw-details { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr); border-radius: 28px; overflow: hidden; border: 1px solid var(--taupe); box-shadow: 0 30px 50px -34px rgba(38, 35, 31, 0.55); background: #f3dfcf; }
 .cqw-art { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(22px, 3vw, 34px) clamp(20px, 3vw, 30px) 0; background: radial-gradient(circle at 30% 20%, #fbeadb, #f1d8c4 70%); overflow: hidden; }

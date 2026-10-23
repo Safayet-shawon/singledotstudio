@@ -58,6 +58,12 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   const defs = useMemo(() => (type ? itemsFor(pricing, type) : []), [type]);
   const roomDefs = defs.filter((d) => maxQty(d, bhk || 1) > 0);
 
+  // Guided order: the next unfinished group glows, later groups wait in the shadow, finished groups stay visible and editable.
+  const sizeOk = sqft >= pricing.limits.minSqft && sqft <= pricing.limits.maxSqft;
+  const stage1 = !type ? 0 : !sizeOk ? 1 : resid && !s.bhk ? 2 : 3;
+  const stage2 = Object.keys(s.items).length === 0 ? 0 : 1;
+  const sec = (n: number, stage: number) => `cqw-sec ${stage === n ? 'is-active' : n < stage ? 'is-done' : 'is-locked'}`;
+
   function validate(step: number) {
     const e: Record<string, string> = {};
     if (step === 1) {
@@ -159,48 +165,57 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
       <div key={s.step} className={`cqw-page ${dir}`}>
         {s.step === 1 && (
           <>
-            <div className="cqw-types" role="group" aria-label="Property type">
-              {(['apartment', 'villa', 'office'] as const).map((k) => (
-                <button key={k} type="button" className="cqw-pill" aria-pressed={type === k} onClick={() => set({ type: k, bhk: k === 'office' ? 1 : s.bhk, items: type === k ? s.items : {} })}>{TYPE_LABEL[k]}</button>
-              ))}
-            </div>
-            {err('type')}
-            <p className="cqw-sub cqw-sub--first">{resid ? 'Carpet area' : 'Office area'} in sq ft</p>
-            <div className="cqw-sizes" role="radiogroup" aria-label="Size in square feet">
-              {RANGES.map((r, i) => {
-                const on = !s.custom.trim() && s.range === r.id;
-                return (
-                  <button key={r.id} type="button" role="radio" aria-checked={on} className={`cqw-size${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i }} onClick={() => set({ range: r.id, custom: '' })}>{r.label}</button>
-                );
-              })}
-            </div>
-            {err('size')}
+            <section className={sec(0, stage1)}>
+              <p className="cqw-sub cqw-sub--first">1 · What are you designing?</p>
+              <div className="cqw-types" role="group" aria-label="Property type">
+                {(['apartment', 'villa', 'office'] as const).map((k) => (
+                  <button key={k} type="button" className="cqw-pill" aria-pressed={type === k} onClick={() => set({ type: k, bhk: k === 'office' ? 1 : s.bhk, items: type === k ? s.items : {} })}>{TYPE_LABEL[k]}</button>
+                ))}
+              </div>
+              {err('type')}
+            </section>
+            <section className={sec(1, stage1)} inert={stage1 < 1}>
+              <p className="cqw-sub">2 · {resid ? 'Carpet area' : 'Office area'} in sq ft</p>
+              <div className="cqw-sizes" role="radiogroup" aria-label="Size in square feet">
+                {RANGES.map((r, i) => {
+                  const on = !s.custom.trim() && s.range === r.id;
+                  return (
+                    <button key={r.id} type="button" role="radio" aria-checked={on} className={`cqw-size${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i }} onClick={() => set({ range: r.id, custom: '' })}>{r.label}</button>
+                  );
+                })}
+              </div>
+              <div className="cqw-custom">
+                <label htmlFor="cqw-sq">Or type your exact size (sq ft)</label>
+                <input id="cqw-sq" type="number" inputMode="numeric" placeholder="e.g. 1420" value={s.custom} onChange={(e) => set({ custom: e.target.value, range: e.target.value ? null : s.range })} />
+              </div>
+              {err('size')}
+            </section>
             {resid && (
-              <>
-                <p className="cqw-sub">Bedrooms (BHK)</p>
+              <section className={sec(2, stage1)} inert={stage1 < 2}>
+                <p className="cqw-sub">3 · Bedrooms (BHK)</p>
                 <div className="cqw-bhks" role="radiogroup" aria-label="BHK type">
                   {BHKS.map((n) => <button key={n} type="button" role="radio" aria-checked={s.bhk === n} className={`cqw-bhk${s.bhk === n ? ' is-on' : ''}`} onClick={() => set({ bhk: n })}>{n}{n === 6 ? '+' : ''}<small>BHK</small></button>)}
                 </div>
                 {err('bhk')}
-              </>
+              </section>
             )}
-            <div className="cqw-custom">
-              <label htmlFor="cqw-sq">Or type your exact size (sq ft)</label>
-              <input id="cqw-sq" type="number" inputMode="numeric" placeholder="e.g. 1420" value={s.custom} onChange={(e) => set({ custom: e.target.value, range: e.target.value ? null : s.range })} />
-            </div>
           </>
         )}
 
         {s.step === 2 && (
           <>
+            <section className={sec(0, stage2)}>
             <div className="cqw-grid cqw-rooms" role="group" aria-label="Rooms to design">
               {roomDefs.filter((d) => !OPTIONAL.has(d.key)).map((d, i) => <RoomOption key={d.key} i={i} label={d.label} qty={s.items[d.key] ?? 0} max={maxQty(d, bhk || 1)} onToggle={() => toggleItem(d.key, maxQty(d, bhk || 1))} onQty={(q) => setQty(d.key, q, maxQty(d, bhk || 1))} />)}
             </div>
             {err('items')}
+            </section>
+            <section className={sec(1, stage2)} inert={stage2 < 1}>
             <p className="cqw-sub">Add-on</p>
             <div className="cqw-chips">
               {pricing.extras.filter((x) => x.key === 'smart').map((x) => <button key={x.key} type="button" className="cqw-chip" aria-pressed={s.extras.includes(x.key)} onClick={() => set({ extras: s.extras.includes(x.key) ? s.extras.filter((k) => k !== x.key) : [...s.extras, x.key] })}>{x.label}</button>)}
             </div>
+            </section>
           </>
         )}
 
