@@ -17,10 +17,8 @@ const RANGES = [
 ];
 const BHKS = [1, 2, 3, 4, 5, 6];
 const OPTIONAL = new Set(['foyer', 'wardrobe', 'study', 'balcony', 'ceiling']);
-const PKGS: { key: PackageKey; tone: 'sand' | 'olive' | 'night'; no: string; badge?: string }[] = [
-  { key: 'essential', tone: 'sand', no: '01' },
-  { key: 'premium', tone: 'olive', no: '02', badge: 'Most chosen' },
-  { key: 'luxury', tone: 'night', no: '03' },
+const PKGS: { key: PackageKey; tone: string }[] = [
+  { key: 'essential', tone: 'c1' }, { key: 'premium', tone: 'c2' }, { key: 'luxury', tone: 'c3' }, { key: 'bestfit', tone: 'c4' },
 ];
 const STEP_NAMES = ['Space', 'Rooms', 'Package', 'Details'];
 
@@ -198,18 +196,10 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
             <div className="cqw-grid cqw-rooms" role="group" aria-label="Rooms to design">
               {roomDefs.filter((d) => !OPTIONAL.has(d.key)).map((d, i) => <RoomOption key={d.key} i={i} label={d.label} qty={s.items[d.key] ?? 0} max={maxQty(d, bhk || 1)} onToggle={() => toggleItem(d.key, maxQty(d, bhk || 1))} onQty={(q) => setQty(d.key, q, maxQty(d, bhk || 1))} />)}
             </div>
-            {resid && roomDefs.some((d) => OPTIONAL.has(d.key)) && (
-              <>
-                <p className="cqw-sub">Also add (optional)</p>
-                <div className="cqw-grid cqw-rooms">
-                  {roomDefs.filter((d) => OPTIONAL.has(d.key)).map((d, i) => <RoomOption key={d.key} i={i} label={d.label.replace(' (whole home)', '').replace(' (per unit)', '')} qty={s.items[d.key] ?? 0} max={maxQty(d, bhk || 1)} onToggle={() => toggleItem(d.key, maxQty(d, bhk || 1))} onQty={(q) => setQty(d.key, q, maxQty(d, bhk || 1))} />)}
-                </div>
-              </>
-            )}
             {err('items')}
-            <p className="cqw-sub">Add-ons (optional)</p>
+            <p className="cqw-sub">Add-on</p>
             <div className="cqw-chips">
-              {pricing.extras.map((x) => <button key={x.key} type="button" className="cqw-chip" aria-pressed={s.extras.includes(x.key)} onClick={() => set({ extras: s.extras.includes(x.key) ? s.extras.filter((k) => k !== x.key) : [...s.extras, x.key] })}>{x.label}</button>)}
+              {pricing.extras.filter((x) => x.key === 'smart').map((x) => <button key={x.key} type="button" className="cqw-chip" aria-pressed={s.extras.includes(x.key)} onClick={() => set({ extras: s.extras.includes(x.key) ? s.extras.filter((k) => k !== x.key) : [...s.extras, x.key] })}>{x.label}</button>)}
             </div>
           </>
         )}
@@ -217,24 +207,24 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
         {s.step === 3 && (
           <>
             <div className="cqw-pkgs" role="radiogroup" aria-label="Package">
-              {PKGS.map(({ key, tone, no, badge }, i) => {
+              {PKGS.map(({ key, tone }, i) => {
                 const p = pricing.packages[key];
                 const on = s.pkg === key;
                 return (
                   <div key={key} className={`cqw-pkg cqw-pkg--${tone}${on ? ' is-on' : ''}`} style={{ ['--i' as string]: i }} onClick={() => set({ pkg: key })}>
-                    {badge && <span className="cqw-pkg__badge">{badge}</span>}
-                    <span className="cqw-pkg__no" aria-hidden="true">{no}</span>
-                    <h3>{p.label}</h3>
-                    <p className="cqw-pkg__tag">{p.tagline}</p>
+                    <h3 className="cqw-pkg__name">{p.label}</h3>
+                    <div className="cqw-pkg__blob">
+                      <svg viewBox="0 0 280 140" preserveAspectRatio="none" aria-hidden="true">
+                        <defs><linearGradient id={`pg-${key}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" style={{ stopColor: 'var(--c1)' }} /><stop offset="1" style={{ stopColor: 'var(--c2)' }} /></linearGradient></defs>
+                        <path d="M0 22C0 8 8 0 24 0h232c16 0 24 8 24 22v34c0 30-40 28-86 14-48-15-86-20-130 24-26 26-64 32-64 8z" fill={`url(#pg-${key})`} />
+                      </svg>
+                      <p className="cqw-pkg__tag">{key === 'bestfit' ? 'Designed around you' : p.tagline}</p>
+                    </div>
                     <ul>{p.features.map((f) => <li key={f}>{f}</li>)}</ul>
-                    <button type="button" role="radio" aria-checked={on} className="cqw-select" onClick={(e) => { e.stopPropagation(); set({ pkg: key }); }}>{on ? 'Chosen' : 'Choose this'}</button>
+                    <div className="cqw-pkg__ribbon"><button type="button" role="radio" aria-checked={on} className="cqw-select" onClick={(e) => { e.stopPropagation(); set({ pkg: key }); }}>{on ? 'Selected ✓' : 'Select'}</button></div>
                   </div>
                 );
               })}
-            </div>
-            <div className={`cqw-bespoke${s.pkg === 'bestfit' ? ' is-on' : ''}`} onClick={() => set({ pkg: 'bestfit' })}>
-              <div><h3>Not sure yet? Let us shape it</h3><p>We recommend the package that fits your rooms and budget, and a designer will call to refine it.</p></div>
-              <button type="button" role="radio" aria-checked={s.pkg === 'bestfit'} className="cqw-select" onClick={(e) => { e.stopPropagation(); set({ pkg: 'bestfit' }); }}>{s.pkg === 'bestfit' ? 'Chosen' : 'Recommend for me'}</button>
             </div>
             {err('pkg')}
           </>
