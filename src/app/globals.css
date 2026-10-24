@@ -750,3 +750,5 @@ dialog.toss::backdrop{background:rgba(38,35,31,.62);backdrop-filter:blur(3px)}
 @media (prefers-reduced-motion: reduce){.toss__svg{display:none}.toss__card,.toss__tick{animation:none}.toss__wait i{animation:none;opacity:1}}
 
 .calc-loading{min-height:min(720px,85svh);margin:0}
+
+.cqw-sec{scroll-margin-top:12px}.calc-panel--page .cqw-sec{scroll-margin-top:calc(var(--header-h) + 16px)}

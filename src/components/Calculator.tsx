@@ -53,6 +53,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   useEffect(() => { if (ready && !result) store.set(KEYS.draft, s); }, [s, ready, result]);
   useEffect(() => { bodyRef.current?.scrollTo({ top: 0 }); }, [s.step, result]);
 
+
   const type = s.type;
   const resid = type ? isResidential(type) : true;
   const bhk = resid ? s.bhk ?? 0 : 1;
@@ -65,6 +66,19 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   const sizeOk = sqft >= pricing.limits.minSqft && sqft <= pricing.limits.maxSqft;
   const stage1 = !type ? 0 : !sizeOk ? 1 : resid && !s.bhk ? 2 : 3;
   const stage2 = Object.keys(s.items).length === 0 ? 0 : 1;
+
+  // After a choice reveals the next section, scroll it into view automatically (the content moves up). Not on restore, step change or repeat picks.
+  const seen = useRef({ armed: false, s1: 0, s2: 0, step: 1 });
+  useEffect(() => {
+    const p = seen.current;
+    const now = { armed: p.armed || ready, s1: stage1, s2: stage2, step: s.step };
+    seen.current = now;
+    if (!p.armed || now.step !== p.step) return;
+    if ((now.step === 1 && now.s1 > p.s1) || (now.step === 2 && now.s2 > p.s2)) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      bodyRef.current?.querySelector('.cqw-sec.is-active')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
+  }, [ready, stage1, stage2, s.step]);
   const sec = (n: number, stage: number) => `cqw-sec ${stage === n ? 'is-active' : n < stage ? 'is-done' : 'is-locked'}`;
 
   function validate(step: number) {
