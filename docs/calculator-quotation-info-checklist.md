@@ -6,7 +6,7 @@ confirmed. Nothing here is invented: every missing value is shown as "to be adde
 ## Pricing (`config/pricing.json`, `"placeholder": true`)
 
 - [ ] Rate per sq ft or per unit for every space, for each package (Essential, Premium, Luxury).
-- [ ] Rate for the office "Air conditioning provisions (per AC point)" option (ceiling cut-outs, concealed ducting, controls; currently a placeholder).
+- [ ] Rate for the office "Air conditioning provisions" option, a single selection for the whole office (ceiling cut-outs, concealed ducting, controls; currently a placeholder).
 - [ ] Rates for office and showroom spaces (display floor, counter, display units, fitting rooms, lounge, stock room, signage).
 - [ ] Add-on prices: smart-home wiring, furniture and decor styling, 3D visualisation pack.
 - [ ] Tax: whether VAT applies, label and percentage (`tax`).

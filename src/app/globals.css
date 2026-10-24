@@ -752,3 +752,7 @@ dialog.toss::backdrop{background:rgba(38,35,31,.62);backdrop-filter:blur(3px)}
 .calc-loading{min-height:min(720px,85svh);margin:0}
 
 .cqw-sec{scroll-margin-top:12px}.calc-panel--page .cqw-sec{scroll-margin-top:calc(var(--header-h) + 16px)}
+
+/* Step 1 fits without scrolling: size tiles in two compact rows on wide screens, tighter spacing */
+.cqw-custom{margin-top:12px}
+@media (min-width: 901px){.cqw-sizes{grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.cqw-size{padding:.7em .2em;font-size:.95rem}}
