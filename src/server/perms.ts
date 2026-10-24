@@ -15,6 +15,7 @@ export const PERM_GROUPS: PermGroup[] = [
     { key: 'project.milestones', label: 'Manage milestones' },
     { key: 'project.reports', label: 'View project reports' },
     { key: 'project.approve', label: 'Approve project work' },
+    { key: 'project.updates', label: 'Post project progress updates' },
     { key: 'project.view_all', label: 'See every project', hint: 'Administrative scope' },
   ] },
   { id: 'tasks', label: 'Tasks', perms: [
@@ -41,6 +42,9 @@ export const PERM_GROUPS: PermGroup[] = [
     { key: 'hr.edit_salary', label: 'Edit salary records', hint: 'Confidential' },
     { key: 'hr.view_payroll', label: 'View payroll summaries', hint: 'Confidential' },
     { key: 'hr.approve_payroll', label: 'Approve payroll', hint: 'Confidential' },
+    { key: 'hr.attendance_view', label: 'View attendance and leave of all staff' },
+    { key: 'hr.attendance_edit', label: 'Correct attendance and set fingerprint IDs' },
+    { key: 'hr.leave_approve', label: 'Approve or reject leave requests' },
   ] },
   { id: 'finance', label: 'Finance', perms: [
     { key: 'fin.view', label: 'View authorised financial records' },
@@ -123,6 +127,7 @@ export const NAV: NavItem[] = [
   { href: '/admin/clients', label: 'Clients', icon: 'users', any: ['client.view_assigned', 'client.view_all', 'client.create'] },
   { href: '/admin/documents', label: 'Documents', icon: 'file', any: ['fin.view', 'fin.view_all_documents', 'client.view_docs', 'client.create_docs', 'fin.quote_create', 'fin.invoice_create', 'client.gen_quote', 'client.gen_invoice'] },
   { href: '/admin/finance', label: 'Finance', icon: 'coin', any: ['fin.view', 'fin.view_revenue', 'fin.view_profit', 'fin.expense_enter', 'fin.view_payments'] },
+  { href: '/admin/attendance', label: 'Attendance', icon: 'clock' },
   { href: '/admin/employees', label: 'Employees', icon: 'team', any: ['hr.view_profiles', 'hr.create_employee', 'hr.edit_employee', 'hr.view_payroll'] },
   { href: '/admin/website', label: 'Website', icon: 'globe', any: ['cms.edit_text', 'cms.upload_images', 'cms.portfolio', 'cms.fonts', 'cms.preview', 'cms.publish', 'cms.design', 'cms.replace_images'] },
   { href: '/admin/leads', label: 'Leads', icon: 'inbox', any: ['admin.leads'] },

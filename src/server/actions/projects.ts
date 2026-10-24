@@ -119,3 +119,19 @@ export async function uploadProjectFileAction(_: R, fd: FormData): Promise<R> {
     return { ok: true, message: 'File uploaded.' };
   } catch (e) { return fail(e); }
 }
+
+export async function addProjectUpdateAction(_: R, fd: FormData): Promise<R> {
+  try {
+    const u = await me();
+    const id = s(fd, 'project_id', 40);
+    assertCan(u, 'project.updates');
+    if (!UUID.test(id) || !(await canViewProject(u, id))) throw new Forbidden('You do not have access to this project.');
+    const title = s(fd, 'title', 140), body = s(fd, 'body', 2000), raw = s(fd, 'progress', 3);
+    if (title.length < 2) throw bad('Give the update a short title.');
+    const progress = raw === '' ? null : Number(raw);
+    if (progress !== null && (!Number.isInteger(progress) || progress < 0 || progress > 100)) throw bad('Progress is a whole number from 0 to 100.');
+    await q(`INSERT INTO project_updates (project_id, author_id, title, body, progress) VALUES ($1,$2,$3,$4,$5)`, [id, u.id, title, body || null, progress]);
+    revalidatePath(`/admin/projects/${id}`);
+    return { ok: true, message: 'Update posted.' };
+  } catch (e) { return fail(e); }
+}

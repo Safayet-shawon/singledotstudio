@@ -5,7 +5,7 @@ import { q, q1, num } from '@/server/db';
 import { canSeeBudget, canViewClient, canViewProject, clientScope, docScope, isProjectManager, taskScope } from '@/server/access';
 import { completionPct } from '@/server/perms';
 import { filesFor } from '@/server/files';
-import { addMilestoneAction, setMemberAction, toggleMilestoneAction, updateProjectAction, uploadProjectFileAction } from '@/server/actions/projects';
+import { addProjectUpdateAction, addMilestoneAction, setMemberAction, toggleMilestoneAction, updateProjectAction, uploadProjectFileAction } from '@/server/actions/projects';
 import { ActionButton, ActionForm } from '@/components/admin/Forms';
 import { MemberAdd } from '@/components/admin/ProjectTeam';
 import { ProjectFields } from '@/components/admin/ProjectFields';
@@ -34,6 +34,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     can(u, 'project.view_files') ? filesFor('project', id) : Promise.resolve([]),
     pr.client_id ? canViewClient(u, pr.client_id) : Promise.resolve(false),
   ]);
+  const updates = await q<{ id: string; title: string; body: string | null; progress: number | null; created_at: string; author: string | null }>(
+    `SELECT pu.id, pu.title, pu.body, pu.progress, pu.created_at, u.name AS author FROM project_updates pu LEFT JOIN users u ON u.id = pu.author_id WHERE pu.project_id = $1 ORDER BY pu.created_at DESC LIMIT 30`, [id]);
   const done = tasks.filter((t) => t.status === 'completed').length;
   const pct = completionPct(done, tasks.length);
   const clientRow = pr.client_id && clientVisible ? await q1<{ id: string; name: string }>(`SELECT id, name FROM clients WHERE id = $1`, [pr.client_id]) : null;
@@ -58,6 +60,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
         <Card title="Tasks" action={can(u, 'task.create') && <Link className="ad-btn sm primary" href={`/admin/tasks/new?project=${id}`}>+ Add task</Link>}>
           {tasks.length === 0 ? <Empty title="No tasks yet" /> : <ul className="ad-list">{tasks.map((t) => <li key={t.id}><span><Link href={`/admin/tasks/${t.id}`}><b>{t.title}</b></Link><br /><span className="muted small">Due {day(t.due_on)}</span></span><span style={{ display: 'flex', gap: 6 }}><PriorityBadge p={t.priority} /><StatusBadge s={t.status} /></span></li>)}</ul>}
+        </Card>
+
+        <Card title="Progress updates">
+          {updates.length === 0 ? <p className="muted">No updates posted yet.</p> : <ul className="ad-list">{updates.map((x) => (
+            <li key={x.id}><span><b>{x.title}</b>{x.progress !== null && <> <span className="ad-badge green">{x.progress}%</span></>}<br />{x.body && <span style={{ whiteSpace: 'pre-wrap' }}>{x.body}<br /></span>}<span className="muted small">{x.author ?? 'Team'} · {when(x.created_at)}</span></span></li>))}</ul>}
+          {can(u, 'project.updates') && (
+            <ActionForm action={addProjectUpdateAction} submit="Post update" resetOnOk>
+              <input type="hidden" name="project_id" value={id} />
+              <div className="ad-row"><div className="ad-field"><label htmlFor="pu-t">Update</label><input id="pu-t" name="title" type="text" required maxLength={140} /></div><div className="ad-field"><label htmlFor="pu-p">Progress % (optional)</label><input id="pu-p" name="progress" type="number" min={0} max={100} step={1} /></div></div>
+              <div className="ad-field"><label htmlFor="pu-b">Details (optional)</label><textarea id="pu-b" name="body" maxLength={2000} rows={3} /></div>
+            </ActionForm>
+          )}
         </Card>
 
         <Card title="Milestones">

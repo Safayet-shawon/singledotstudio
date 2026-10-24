@@ -7,6 +7,7 @@ import { sendMailX, leadInbox, mailConfigured } from '@/lib/mail';
 import { saveLead } from '@/lib/leads';
 import { quoteEmail } from '@/lib/quote-mail';
 import { quoteUrl } from '@/lib/quote-link';
+import { recordQuotation } from '@/server/quotations';
 import { json, rateLimited, readJson, sameOrigin, str, validateContact } from '@/lib/guard';
 import { site } from '@/config/site';
 
@@ -78,7 +79,7 @@ The customer's copy of the quotation is attached.`,
     // Store the request first (one quick write) and answer the customer straight away; the PDF and emails follow in the background.
     const saved = await saveLead({ ...lead, mail: { customer: 'queued', team: 'queued', customerPreview: null, teamPreview: null } });
     if (saved) {
-      after(async () => { await saveLead({ ...lead, mail: await deliver() }); });
+      after(async () => { await recordQuotation(reference, c, estimate); await saveLead({ ...lead, mail: await deliver() }); });
       return json({ reference, customerEmail: mailConfigured() ? 'queued' : 'not_configured', teamNotified: true });
     }
     // Nothing could be stored, so the email is the only copy: wait for it.

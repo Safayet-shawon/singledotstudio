@@ -1,5 +1,5 @@
 // Postgres schema for the management system. Applied automatically (idempotent) the first time the database is used.
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 6;
 
 export const SCHEMA: string[] = [
   `CREATE TABLE IF NOT EXISTS schema_meta (id int PRIMARY KEY, version int NOT NULL)`,
@@ -255,4 +255,73 @@ export const SCHEMA: string[] = [
     key text PRIMARY KEY,
     value jsonb NOT NULL
   )`,
+
+  // v6: website quotations as rows (with their spaces), project progress updates, leave and fingerprint attendance.
+  `CREATE TABLE IF NOT EXISTS quotations (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    reference text NOT NULL UNIQUE,
+    name text NOT NULL,
+    email text NOT NULL,
+    phone text NOT NULL,
+    whatsapp boolean NOT NULL DEFAULT false,
+    address text,
+    property_type text NOT NULL,
+    carpet_sqft int NOT NULL,
+    bhk int,
+    package text NOT NULL,
+    tier text,
+    configuration jsonb NOT NULL DEFAULT '{}'::jsonb,
+    low numeric(14,2) NOT NULL,
+    high numeric(14,2) NOT NULL,
+    status text NOT NULL DEFAULT 'new',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS quotations_created ON quotations(created_at DESC)`,
+  `CREATE TABLE IF NOT EXISTS quotation_spaces (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    quotation_id uuid NOT NULL REFERENCES quotations(id) ON DELETE CASCADE,
+    name text NOT NULL,
+    count int NOT NULL DEFAULT 1,
+    design_name text,
+    design_spec text
+  )`,
+  `CREATE INDEX IF NOT EXISTS quotation_spaces_q ON quotation_spaces(quotation_id)`,
+
+  `CREATE TABLE IF NOT EXISTS project_updates (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    author_id uuid REFERENCES users(id) ON DELETE SET NULL,
+    title text NOT NULL,
+    body text,
+    progress int CHECK (progress BETWEEN 0 AND 100),
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS project_updates_p ON project_updates(project_id, created_at DESC)`,
+
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS fingerprint_id text`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS users_fingerprint ON users(fingerprint_id) WHERE fingerprint_id IS NOT NULL`,
+  `CREATE TABLE IF NOT EXISTS attendance (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    work_date date NOT NULL,
+    check_in timestamptz,
+    check_out timestamptz,
+    source text NOT NULL DEFAULT 'web' CHECK (source IN ('web','fingerprint','manual')),
+    note text,
+    UNIQUE (user_id, work_date)
+  )`,
+  `CREATE TABLE IF NOT EXISTS leave_requests (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    kind text NOT NULL DEFAULT 'casual',
+    from_on date NOT NULL,
+    to_on date NOT NULL,
+    reason text,
+    status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected','cancelled')),
+    decided_by uuid REFERENCES users(id) ON DELETE SET NULL,
+    decided_at timestamptz,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    CHECK (to_on >= from_on)
+  )`,
+  `CREATE INDEX IF NOT EXISTS leave_user ON leave_requests(user_id, from_on DESC)`,
 ];
