@@ -105,8 +105,22 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
   const toggleItem = (key: string, max: number) => {
     const items = { ...s.items };
     if (items[key]) delete items[key];
-    else items[key] = key === 'workstation' ? 10 : key === 'child' || key === 'toilet' ? max : 1;
+    else {
+      items[key] = key === 'workstation' ? 10 : key === 'child' || key === 'toilet' ? max : 1;
+      // A BHK count is the number of bedrooms: choosing the master bedroom also adds the remaining ones as child bedrooms.
+      if (key === 'master' && resid && bhk > 1 && !items.child) items.child = bhk - 1;
+    }
     set({ items });
+  };
+  /** Changing BHK keeps the bedroom and toilet counts in step: counts that were at the old maximum follow the new one, others are capped. */
+  const chooseBhk = (n: number) => {
+    const items = { ...s.items }, old = s.bhk ?? 0;
+    for (const k of ['child', 'toilet'] as const) {
+      if (!items[k]) continue;
+      const oldMax = k === 'child' ? Math.max(0, old - 1) : old, max = k === 'child' ? Math.max(0, n - 1) : n;
+      if (max === 0) delete items[k]; else items[k] = items[k] >= oldMax ? max : Math.min(items[k], max);
+    }
+    set({ bhk: n, items });
   };
   const setQty = (key: string, q: number, max: number) => {
     const items = { ...s.items };
@@ -211,7 +225,7 @@ export default function Calculator({ variant, onClose }: { variant: 'dialog' | '
               <section className={sec(2, stage1)} inert={stage1 < 2}>
                 <p className="cqw-sub">3 · Bedrooms (BHK)</p>
                 <div className="cqw-bhks" role="radiogroup" aria-label="BHK type">
-                  {BHKS.map((n) => <button key={n} type="button" role="radio" aria-checked={s.bhk === n} className={`cqw-bhk${s.bhk === n ? ' is-on' : ''}`} onClick={() => set({ bhk: n })}>{n}{n === 6 ? '+' : ''}<small>BHK</small></button>)}
+                  {BHKS.map((n) => <button key={n} type="button" role="radio" aria-checked={s.bhk === n} className={`cqw-bhk${s.bhk === n ? ' is-on' : ''}`} onClick={() => chooseBhk(n)}>{n}{n === 6 ? '+' : ''}<small>BHK</small></button>)}
                 </div>
                 {err('bhk')}
               </section>
